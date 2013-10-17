@@ -6,8 +6,10 @@
 //  Copyright (c) 2013年 endo.tuyo. All rights reserved.
 //
 
-#import "ItemSelectViewController.h"
+#import "MenuViewController.h"
 #import "GameClassViewController.h"
+#import "ItemListViewController.h"
+#import "CreateComponentClass.h"
 #import <QuartzCore/QuartzCore.h>
 
 //#define COMPONENT_00 0
@@ -49,12 +51,14 @@ NSMutableArray *tagArray;
 
 UIView *subView;
 UIButton *closeButton;//閉じるボタン
-@interface ItemSelectViewController ()
+//CreateComponentClass *createComponentClass;
+
+@interface MenuViewController ()
 
 @end
 
 //コンポーネント動的配置：http://d.hatena.ne.jp/mohayonao/20100719/1279524706
-@implementation ItemSelectViewController
+@implementation MenuViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -275,7 +279,8 @@ UIButton *closeButton;//閉じるボタン
         case 200:{
             //武器バージョンアップ
             
-            subView = [self createView];
+            subView = [CreateComponentClass createView];
+            [self.view bringSubviewToFront:subView];
             [self.view addSubview:subView];
             
             
@@ -297,6 +302,9 @@ UIButton *closeButton;//閉じるボタン
             break;
         }
         case 211:{
+            
+            ItemListViewController *ilvc = [[ItemListViewController alloc]init];
+            [self presentViewController: ilvc animated:YES completion: nil];
             break;
         }
         case 212:{
@@ -356,6 +364,7 @@ UIButton *closeButton;//閉じるボタン
     return iv;
 }
 
+/*
 -(UIView *)createView{
     
     UIView *view = [[UIView alloc]init];
@@ -380,5 +389,6 @@ UIButton *closeButton;//閉じるボタン
     
 
 }
+ */
 
 @end

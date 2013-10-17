@@ -26,6 +26,7 @@
  */
 
 #import "GameClassViewController.h"
+#import "CreateComponentClass.h"
 #import "EnemyClass.h"
 //#import "BeamClass.h"
 #import "ItemClass.h"
@@ -35,6 +36,7 @@
 #import "ScoreBoardClass.h"
 #import "GoldBoardClass.h"
 #import <QuartzCore/QuartzCore.h>
+#define TIMEOVER_SECOND 2
 
 
 CGRect rect_frame, rect_myMachine, rect_enemyBeam, rect_beam_launch;
@@ -51,7 +53,6 @@ int x_frame, y_frame;
 int size_machine;
 int length_beam, thick_beam;//ビームの長さと太さ
 Boolean isGameMode;
-int center_x;
 
 
 UIPanGestureRecognizer *flick_frame;
@@ -183,10 +184,6 @@ float count = 0;
     
     
     size_machine = 100;
-    
-    center_x = rect_frame.size.width/2 - size_machine/2;//画面サイズに対して中央になるように左位置特定
-//    x_myMachine = center_x;//自機横位置は中心(ちなみにx_myMachineはイメージ画像の左端)
-//    y_myMachine = 250;//自機縦位置
     
     
     count = 0;
@@ -586,56 +583,12 @@ float count = 0;
         [self ordinaryAnimationStart];
         
         //一定時間経過するとゲームオーバー
-        if(count >= 30 || ![MyMachine getIsAlive]){
+        if(count >= TIMEOVER_SECOND || ![MyMachine getIsAlive]){
             NSLog(@"gameover");
             //経過したらタイマー終了
             [tm invalidate];
             
-            
-            //ゲームオーバー表示
-            CGRect rect_gameover = CGRectMake(50, 150, 250, 100);
-            UIImageView *iv_gameover = [[UIImageView alloc]initWithFrame:rect_gameover];
-            iv_gameover.image = [UIImage imageNamed:@"gameover.png"];
-            [self.view addSubview:iv_gameover];
-            
-            
-            
-            //_/_/_/_/_/得点とゴールドを端末に記録させる_/_/_/_/_/_/_/_/_/_/
-            //前回最高得点を取得する
-            NSUserDefaults* score_defaults =
-            [NSUserDefaults standardUserDefaults];
-            //    [id_defaults removeObjectForKey:@"user_id"];//値を削除：テスト用
-            int score_int = [score_defaults integerForKey:@"max_score"];
-            NSLog(@"now, score = %d", score_int);
-            //今回取得したスコアが前回までの最高得点を上回れば更新
-            if([ScoreBoard getScore] < score_int){
-                //update
-                [score_defaults setInteger:score_int forKey:@"max_score"];
-                NSLog(@"score update! => %d", [score_defaults integerForKey:@"max_score"]);
-                
-                //congrat!! view appear!
-                
-                
-                
-            }else{
-                NSLog(@"be going ...");
-            }
-            
-            //累積ゴールドを取得する
-            NSUserDefaults* gold_defaults =
-            [NSUserDefaults standardUserDefaults];
-            int gold_int = [gold_defaults integerForKey:@"gold_score"];
-            NSLog(@"now, gold = %d", gold_int);
-            if([GoldBoard getScore] < gold_int){
-                [gold_defaults setInteger:gold_int forKey:@"gold_score"];
-                NSLog(@"score update! => %d", [score_defaults integerForKey:@"max_score"]);
-            }else{
-                NSLog(@"be going ...");
-            }
-            
-            //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-            
-            
+            [self exitProcess];
         }
         
     }else{
@@ -698,17 +651,11 @@ float count = 0;
     if((int)(count * 10) % 5 ==0 && arc4random() % 2 == 0){
     
 //        NSLog(@"生成");
-//        EnemyClass *enemy = [[EnemyClass alloc]init:center_x size:50];
-//        int x = (int)(count * 10) % 200;
-//        int x = (int)(count * 100);// % 200;//arc4random() % 200;
-        int x = arc4random() % 200;
+        int x = arc4random() % 250;
 
         EnemyClass *enemy = [[EnemyClass alloc]init:x size:70];
         [EnemyArray addObject:enemy];//既に初期化済なので追加のみ
 //        NSLog(@"敵機 新規生成, %d, %d", [enemy getY], (int)(count * 10));
-//    [(EnemyClass *)[EnemyArray objectAtIndex:0] setSize:50 ];
-//    [(EnemyClass *)[EnemyArray objectAtIndex:0] setX:center_x];
-//    [(EnemyClass *)[EnemyArray objectAtIndex:0] setY:0];
     }
 
 
@@ -787,6 +734,90 @@ float count = 0;
     
 //    x_frame = rect_frame.size.width;
 //    y_frame = rect_frame.size.height;
+}
+
+
+-(void)exitProcess{
+
+    //ゲーム終了時に呼び出されるメソッド
+    //終了報告イメージ？ダイアログ？表示
+    //データ：attrclassで処理
+    
+    
+    
+    //ゲームオーバー表示
+    int go_width = 250;
+    int go_height = 100;
+    CGRect rect_gameover = CGRectMake(rect_frame.size.width/2 - go_width/2, 60, go_width, go_height);
+    [self.view addSubview:[CreateComponentClass createView:rect_gameover]];
+    [self.view addSubview:[CreateComponentClass createImageView:rect_gameover
+                                                          image:@"gameover.png"]];
+    
+    
+    
+    //_/_/_/_/_/得点とゴールドを端末に記録させる_/_/_/_/_/_/_/_/_/_/
+    //前回最高得点を取得する
+    NSUserDefaults* score_defaults =
+    [NSUserDefaults standardUserDefaults];
+    //    [id_defaults removeObjectForKey:@"user_id"];//値を削除：テスト用
+    int score_int = [score_defaults integerForKey:@"max_score"];
+    NSLog(@"now, score = %d", score_int);
+    //今回取得したスコアが前回までの最高得点を上回れば更新
+    if([ScoreBoard getScore] < score_int){
+        //update
+        [score_defaults setInteger:score_int forKey:@"max_score"];
+        NSLog(@"score update! => %d", [score_defaults integerForKey:@"max_score"]);
+        
+        //congrat!! view appear!
+        
+        
+        
+    }else{
+        NSLog(@"be going ...");
+    }
+    
+    //累積ゴールドを取得する
+    NSUserDefaults* gold_defaults =
+    [NSUserDefaults standardUserDefaults];
+    int gold_int = [gold_defaults integerForKey:@"gold_score"];
+    NSLog(@"now, gold = %d", gold_int);
+    if([GoldBoard getScore] < gold_int){
+        [gold_defaults setInteger:gold_int forKey:@"gold_score"];
+        NSLog(@"score update! => %d", [score_defaults integerForKey:@"max_score"]);
+    }else{
+        NSLog(@"be going ...");
+    }
+    
+    //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+    
+    
+    
+    //ダイアログで成績を表示(未)してからゲーム画面閉じる
+//    CreateComponentClass *createComponentClass = [[CreateComponentClass alloc]init];
+    [self.view addSubview:[CreateComponentClass createView]];
+    
+    //ボタン配置
+    UIButton *exitBtn = [CreateComponentClass createButton:self
+                                                  selector:@"pushExit"];
+    
+    [self.view addSubview:exitBtn];
+    
+    
+    UIButton *qbBtn = [CreateComponentClass createQBButton:0
+                                                      rect:CGRectMake(100, 200, 100, 40)
+                                                     image:nil
+                                                    target:self
+                                                  selector:@"pushExit"];
+    [self.view addSubview:qbBtn];
+    
+    return ;
+    
+}
+
+-(void)pushExit{
+    //終了ボタン押下時対応
+    //    [super viewWillDisappear:NO];//storyboard遷移からの場合
+    [self dismissViewControllerAnimated:NO completion:nil];//itemSelectVCのpresentViewControllerからの場合
 }
 
 -(void)onClickedStopButton{
