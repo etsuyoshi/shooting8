@@ -30,7 +30,7 @@
 	// Do any additional setup after loading the view.
     
     //backgroundの設定
-    UIImageView *background = [[UIImageView alloc]initWithFrame:self.view.frame];
+    UIImageView *background = [[UIImageView alloc]initWithFrame:self.view.bounds];
     background.image = [UIImage imageNamed:@"chara_test2.png"];
     background.alpha = 0.5f;
     [self.view sendSubviewToBack:background];

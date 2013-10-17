@@ -4,7 +4,7 @@
 //
 //  Created by 遠藤 豪 on 13/10/13.
 //  Copyright (c) 2013年 endo.tuyo. All rights reserved.
-//
+//　to-do リスト
 
 #import "DBAccessClass.h"
 

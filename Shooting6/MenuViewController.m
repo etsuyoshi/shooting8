@@ -138,7 +138,9 @@ UIButton *closeButton;//閉じるボタン
 //    NSLog(@"中心＝%d", (int)[[UIScreen mainScreen] bounds].origin.x);
     
     //背景作成
-    UIImageView *iv_back = [self createImageView:@"chara_test2.png" tag:0 frame:[[UIScreen mainScreen] bounds]];
+//    UIImageView *iv_back = [self createImageView:@"chara_test2.png" tag:0 frame:[[UIScreen mainScreen] bounds]];
+    UIImageView *iv_back = [self createImageView:@"chara_test2.png" tag:0 frame:CGRectMake(-50,-10, 480, 490)];
+    
     iv_back.alpha = ALPHA_COMPONENT;
     [self.view sendSubviewToBack:iv_back];
     [self.view addSubview:iv_back];

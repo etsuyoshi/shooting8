@@ -58,6 +58,8 @@
 		342C03AF17F4604E0023C11F /* flight.png in Resources */ = {isa = PBXBuildFile; fileRef = 342C03A117F4604E0023C11F /* flight.png */; };
 		342ECBBC17FC570500123886 /* star.png in Resources */ = {isa = PBXBuildFile; fileRef = 342ECBBB17FC570500123886 /* star.png */; };
 		342ECBC517FC5AF900123886 /* DamageParticleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 342ECBC417FC5AF900123886 /* DamageParticleView.m */; };
+		3436369C180FDA8B005A5C01 /* FontTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3436369B180FDA8B005A5C01 /* FontTestViewController.m */; };
+		3436369E180FECBB005A5C01 /* File in Resources */ = {isa = PBXBuildFile; fileRef = 3436369D180FECBB005A5C01 /* File */; };
 		343F802B17FF947100224839 /* ScoreBoardClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 343F802A17FF947100224839 /* ScoreBoardClass.m */; };
 		344928B218025E6100315F2D /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 344928B118025E6100315F2D /* MenuViewController.m */; };
 		3465539A180C160900788EE3 /* AttrClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 34FA1A30180BC2460011E1CA /* AttrClass.m */; };
@@ -199,6 +201,9 @@
 		342ECBBB17FC570500123886 /* star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star.png; sourceTree = "<group>"; };
 		342ECBC317FC5AF900123886 /* DamageParticleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DamageParticleView.h; sourceTree = "<group>"; };
 		342ECBC417FC5AF900123886 /* DamageParticleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DamageParticleView.m; sourceTree = "<group>"; };
+		3436369A180FDA8B005A5C01 /* FontTestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontTestViewController.h; path = TestsShootingTests/FontTestViewController.h; sourceTree = SOURCE_ROOT; };
+		3436369B180FDA8B005A5C01 /* FontTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FontTestViewController.m; path = TestsShootingTests/FontTestViewController.m; sourceTree = SOURCE_ROOT; };
+		3436369D180FECBB005A5C01 /* File */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = File; sourceTree = "<group>"; };
 		343F802917FF947100224839 /* ScoreBoardClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScoreBoardClass.h; sourceTree = "<group>"; };
 		343F802A17FF947100224839 /* ScoreBoardClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScoreBoardClass.m; sourceTree = "<group>"; };
 		344928B018025E6100315F2D /* MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuViewController.h; sourceTree = "<group>"; };
@@ -349,6 +354,8 @@
 				344928B118025E6100315F2D /* MenuViewController.m */,
 				34A6A1A1180EF48F006F26D6 /* ItemListViewController.h */,
 				34A6A1A2180EF48F006F26D6 /* ItemListViewController.m */,
+				3436369A180FDA8B005A5C01 /* FontTestViewController.h */,
+				3436369B180FDA8B005A5C01 /* FontTestViewController.m */,
 				3467B72017FD5980004EEE94 /* PowerGaugeClass.h */,
 				3467B72117FD5980004EEE94 /* PowerGaugeClass.m */,
 				3411FB8217FEE301001D1491 /* MyMachineClass.h */,
@@ -481,6 +488,7 @@
 				347E0D2F180C07AC00B0DC09 /* TestsShootingTests.h */,
 				347E0D30180C07AC00B0DC09 /* TestsShootingTests.m */,
 				347E0D2A180C07AC00B0DC09 /* Supporting Files */,
+				3436369D180FECBB005A5C01 /* File */,
 			);
 			path = TestsShootingTests;
 			sourceTree = "<group>";
@@ -660,6 +668,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				347E0D2E180C07AC00B0DC09 /* InfoPlist.strings in Resources */,
+				3436369E180FECBB005A5C01 /* File in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -705,6 +714,7 @@
 				340C7613180D37E500169658 /* CreateComponentClass.m in Sources */,
 				3476D05E180DE6B800839BD8 /* QBFlatButton.m in Sources */,
 				34A6A1A3180EF48F006F26D6 /* ItemListViewController.m in Sources */,
+				3436369C180FDA8B005A5C01 /* FontTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

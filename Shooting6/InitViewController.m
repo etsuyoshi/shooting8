@@ -5,8 +5,16 @@
 //  Created by 遠藤 豪 on 13/09/25.
 //  Copyright (c) 2013年 endo.tuyo. All rights reserved.
 //
+//  待機画面の作成：http://ameblo.jp/mal000n/entry-11477524801.html
+//　同期通信の場合はサブスレッド立てるhttp://www.yoheim.net/blog.php?q=20130206
+
+
 
 //DB側でログイン回数をカウントする(カラム追加、値取得して１を足す)
+//#define FONTTEST YES
+#ifdef FONTTEST
+    #import "FontTestViewController.h"
+#endif
 
 #import "InitViewController.h"
 #import "MenuViewController.h"
@@ -19,69 +27,73 @@
 
 @implementation InitViewController
 
+UIView *_loadingView;
+UIActivityIndicatorView *_indicator;
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    //フォントテストー＞本番時削除
+#ifdef FONTTEST
+    FontTestViewController *ftvc = [[FontTestViewController alloc]init];
+    [self presentViewController:ftvc animated:YES completion:nil];
+#endif
+    
 	// Do any additional setup after loading the view, typically from a nib.
     
 //    CGRect rect_frame = [[UIScreen mainScreen] bounds];
-    CGRect rect_main = CGRectMake(0,30, 320, 320);
+    CGRect rect_main = CGRectMake(-50,-20, 480, 480);
     UIImageView *iv_frame = [[UIImageView alloc]initWithFrame:rect_main];
     iv_frame.image = [UIImage imageNamed:@"chara_test2.png"];
     
     [self.view addSubview:iv_frame];
     
     
+    
+    // インジケーター表示
+    [self showActivityIndicator];
+    //サーバー通信
+    [self performSelector:@selector(sendRequestToServer) withObject:nil afterDelay:3.1];
+}
+
+
+//サーバーに登録するためにhttp通信
+-(void)sendRequestToServer{
     //ユーザー認証
     DBAccessClass *dbac = [[DBAccessClass alloc]init];
     //端末からidを取得してdbと照合(なければdbと端末自体に新規作成)
-//    [dbac setIdToDB:[dbac getIdFromDevice]];
+    //    [dbac setIdToDB:[dbac getIdFromDevice]];
     AttrClass *attr = [[AttrClass alloc]init];
     NSString *_id = [attr getIdFromDevice];
     if([dbac setIdToDB:_id]){//dbに登録(既存idならばそのまま)
         NSLog(@"データベース登録or承認完了");
+        
+        // インジケーター非表示
+        [self hideActivityIndicator];
+
+        
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+        UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"ItemSelectViewController"];
+        //    NSLog(@"%@", vc);
+        [self presentViewController: vc animated:YES completion: nil];
+        
+        
     }else{
         NSLog(@"データベース登録or承認失敗");
+        // インジケーター非表示
+        [self hideActivityIndicator];
+        
     }
-    
-    
-    /*
-    NSString *output = [dbac getValueFromDB:_id column:@"score"];
-    NSLog(@"output = %@", output);
-    [dbac updateValueToDB:_id column:@"score" newVal:@"100"];
-    
-    output = [dbac getValueFromDB:_id column:@"score"];
-    NSLog(@"output = %@", output);
-    
-    NSMutableArray *nameArray = [NSArray arrayWithObjects:@"name",
-                             @"score",
-                             @"gold",
-                             @"login",
-                             @"gameCnt",
-                             @"level",
-                             @"exp",
-                             nil];
-    
-    NSUserDefaults *_ud = [NSUserDefaults standardUserDefaults];
-    for(int i = 0 ; i < [nameArray count]; i++){
-        NSLog(@"%@ = %@", [nameArray objectAtIndex:i],
-              [_ud objectForKey:[nameArray objectAtIndex:i]]);
-    }
-
-    [attr setValueToDevice:@"exp" strValue:@"100"];
-    [attr addExp:200];
-    for(int i = 0 ; i < [nameArray count]; i++){
-        NSLog(@"%@ = %@", [nameArray objectAtIndex:i],
-              [_ud objectForKey:[nameArray objectAtIndex:i]]);
-    }
-     */
-    
-
-
-
 }
+
+
 -(void)viewDidAppear:(BOOL)animated{
     //viewDidLoadの次に呼び出される
+    
+    //画面遷移はid登録が完了後に実行する
+    /*
     CGRect rect_frame = [[UIScreen mainScreen] bounds];
     UIButton *bt = [self createButtonWithTitle:@"start"
                                            tag:0
@@ -93,7 +105,7 @@
     
     [bt addTarget:self action:@selector(pushed_button:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:bt];
-
+     */
     
 }
 
@@ -130,4 +142,34 @@
      forControlEvents:UIControlEventTouchUpInside];
     return button;
 }
+
+
+/*
+ * インジケーター表示
+ */
+- (void)showActivityIndicator
+{
+    // Activity Indicator 表示
+    _loadingView                 = [[UIView alloc] initWithFrame:self.navigationController.view.bounds];
+    _loadingView.backgroundColor = [UIColor blackColor];
+    _loadingView.alpha           = 0.5f;
+    _indicator                   = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    [_indicator setCenter:CGPointMake(_loadingView.bounds.size.width/2, _loadingView.bounds.size.height/2)];
+    [_loadingView addSubview:_indicator];
+    [self.navigationController.view addSubview:_loadingView];
+    [_indicator startAnimating];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+}
+
+/*
+ * インジケーター非表示
+ */
+- (void)hideActivityIndicator
+{
+    // Activity Indicator 非表示
+    [_indicator stopAnimating];
+    [_loadingView removeFromSuperview];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
 @end
