@@ -77,7 +77,7 @@
     
     NSString* resultString = [[NSString alloc] initWithData:result
                                                    encoding:NSUTF8StringEncoding];//phpファイルのechoが返って来る
-    NSLog(@"getValueFromDB = %@", resultString);
+    NSLog(@"updated : php comment = %@", resultString);
     
     
     

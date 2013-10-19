@@ -26,6 +26,8 @@
  */
 
 #import "GameClassViewController.h"
+#import "DBAccessClass.h"
+#import "AttrClass.h"
 #import "CreateComponentClass.h"
 #import "EnemyClass.h"
 //#import "BeamClass.h"
@@ -41,6 +43,9 @@
 
 CGRect rect_frame, rect_myMachine, rect_enemyBeam, rect_beam_launch;
 UIImageView *iv_frame, *iv_myMachine, *iv_enemyBeam, *iv_beam_launch, *iv_background1, *iv_background2;
+
+UIView *_loadingView;
+UIActivityIndicatorView *_indicator;
 
 
 //NSMutableArray *iv_arr_tokuten;
@@ -758,43 +763,6 @@ float count = 0;
     
     
     
-    //_/_/_/_/_/得点とゴールドを端末に記録させる_/_/_/_/_/_/_/_/_/_/
-    //前回最高得点を取得する
-    NSUserDefaults* score_defaults =
-    [NSUserDefaults standardUserDefaults];
-    //    [id_defaults removeObjectForKey:@"user_id"];//値を削除：テスト用
-    int max_score = [score_defaults integerForKey:@"max_score"];
-    NSLog(@"now score = %d, max_score = %d", [ScoreBoard getScore], max_score);
-    //今回取得したスコアが前回までの最高得点を上回れば更新
-    if([ScoreBoard getScore] > max_score){
-        //update
-        [score_defaults setInteger:[ScoreBoard getScore] forKey:@"max_score"];
-        NSLog(@"score update! => %d", [score_defaults integerForKey:@"max_score"]);
-        
-        //congrat!! view appear!effect!!
-        
-        
-        
-    }else{
-        NSLog(@"not updating so be going ...");
-    }
-    
-    //累積ゴールドを取得して累積計算
-    NSUserDefaults* gold_defaults = [NSUserDefaults standardUserDefaults];
-    int before_gold = [gold_defaults integerForKey:@"gold_score"];
-    int after_gold = before_gold + [GoldBoard getScore];
-    NSLog(@"now gold = %d, before_gold = %d, so after_gold = %d", [GoldBoard getScore], before_gold, after_gold);
-//    if([GoldBoard getScore] < before_gold){
-    [gold_defaults setInteger:after_gold forKey:@"gold_score"];
-    NSLog(@"score update! => %d", [score_defaults integerForKey:@"gold_score"]);
-//    }else{
-//        NSLog(@"be going ...");
-//    }
-    
-    //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-    
-    
-    
     //ダイアログで成績を表示(未)してからゲーム画面閉じる
 //    CreateComponentClass *createComponentClass = [[CreateComponentClass alloc]init];
     [self.view addSubview:[CreateComponentClass createView]];
@@ -813,9 +781,21 @@ float count = 0;
 }
 
 -(void)pushExit{
-    //終了ボタン押下時対応
+    //終了ボタン押下時対応=>サーバー接続してゲーム回数を更新
+    
+    // インジケーター表示
+    [self showActivityIndicator];
+    //サーバー通信
+    [self performSelector:@selector(sendRequestToServer) withObject:nil afterDelay:0.1];
+    
+    
+    [self exit];
+}
+-(void)exit{
     //    [super viewWillDisappear:NO];//storyboard遷移からの場合
     [self dismissViewControllerAnimated:NO completion:nil];//itemSelectVCのpresentViewControllerからの場合
+    
+    
 }
 
 -(void)onClickedStopButton{
@@ -842,6 +822,7 @@ float count = 0;
     
 
 }
+
 -(void)alertView:(UIAlertView*)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     
     switch (buttonIndex) {
@@ -900,4 +881,139 @@ float count = 0;
     isTouched = false;
 //    NSLog(@"touches count : %d (touchesCancelled:withEvent:)", [touches count]);
 }
+
+
+
+//_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+//_/_/_/_/_/_/_/_/終了時処理_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+//_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+//サーバーに登録するためにhttp通信
+-(void)sendRequestToServer{
+    DBAccessClass *dbac = [[DBAccessClass alloc]init];
+    AttrClass *attr = [[AttrClass alloc]init];
+    NSString *_id = [attr getIdFromDevice];
+    
+    
+    
+    
+    //_/_/_/_/_/端末情報更新開始：得点とゴールドを端末に記録させる=>時間がある時にAttrClassに代行！！_/_/_/_/_/_/_/_/_/_/
+    //前回最高得点を取得する
+    NSUserDefaults* score_defaults =
+    [NSUserDefaults standardUserDefaults];
+    //    [id_defaults removeObjectForKey:@"user_id"];//値を削除：テスト用
+    int max_score = [score_defaults integerForKey:@"max_score"];
+    NSLog(@"now score = %d, max_score = %d", [ScoreBoard getScore], max_score);
+    //今回取得したスコアが前回までの最高得点を上回れば更新
+    if([ScoreBoard getScore] > max_score){
+        //update
+        max_score = [ScoreBoard getScore];
+        [score_defaults setInteger:max_score forKey:@"max_score"];
+        NSLog(@"score update! => %d", [score_defaults integerForKey:@"max_score"]);
+        
+        //congrat!! view appear!effect!!
+        
+        
+        
+    }else{
+        NSLog(@"not updating so be going ...");
+    }
+    
+    //累積ゴールドを取得して累積計算
+    NSUserDefaults* gold_defaults = [NSUserDefaults standardUserDefaults];
+    int before_gold = [gold_defaults integerForKey:@"gold_score"];
+    int after_gold = before_gold + [GoldBoard getScore];
+    NSLog(@"now gold = %d, before_gold = %d, so after_gold = %d", [GoldBoard getScore], before_gold, after_gold);
+    //    if([GoldBoard getScore] < before_gold){
+    [gold_defaults setInteger:after_gold forKey:@"gold_score"];
+    NSLog(@"gold update! => %d ... this comment is annouced regardless updating!", [score_defaults integerForKey:@"gold_score"]);
+    //    }else{
+    //        NSLog(@"be going ...");
+    //    }
+    
+    
+    //exp&levelをupdate
+    int beforeExp = [[attr getValueFromDevice:@"exp"] intValue];
+    int beforeLevel = [[attr getValueFromDevice:@"level"] intValue];
+    [attr addExp:[ScoreBoard getScore]];//setValutToDevice@exp & setValueToDevice@levelを両方同時に実行
+    //    [attr setValueToDevice:@"exp" strValue:[NSString stringWithFormat:@"%d", afterExp]];
+    //    [attr setValueToDevice:@"level" strValue:[NSString stringWithFormat:@"%d", afterLevel]];
+    int afterExp = [[attr getValueFromDevice:@"exp"] intValue];
+    int afterLevel = [[attr getValueFromDevice:@"level"] intValue];
+    NSLog(@"ゲーム前経験値%d, 今回獲得スコア%d => ゲーム後経験値%d", beforeExp, [ScoreBoard getScore], afterExp);
+    NSLog(@"ゲーム前レベル%d　=> ゲーム後レベル%d", beforeLevel, afterLevel);
+
+    
+    //_/_/_/_/_/_/端末情報更新完了_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+    
+    
+    //_/_/_/_/サーバ情報更新：id	name	score	gold	login	gamecnt	level	exp_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+    
+    //score(最高得点)更新：既に比較されて端末情報max_scoreに格納されている。
+//  after_score = [[dbac getValueFromDB:_id column:@"score"] intValue];
+    [dbac updateValueToDB:_id column:@"score" newVal:[NSString stringWithFormat:@"%d", max_score]];
+    
+    //gold更新：既に累積されて端末情報gold_scoreに格納されている。
+    [dbac updateValueToDB:_id column:@"gold" newVal:[NSString stringWithFormat:@"%d", after_gold]];
+    
+    //login:更新せず
+    
+    //gameCntをupdate
+    int gameCnt = [[dbac getValueFromDB:_id column:@"gameCnt"] intValue];
+    gameCnt ++;
+    //        [dbac updateValueToDB:_id column:@"login" value:[NSString stringWithFormat:@"%d", login ]];
+    [dbac updateValueToDB:_id column:@"gameCnt" newVal:[NSString stringWithFormat:@"%d", gameCnt]];
+    NSLog(@"gameCnt = %@回目", [dbac getValueFromDB:_id column:@"gameCnt"]);
+    
+    //level
+    [dbac updateValueToDB:_id column:@"level" newVal:[NSString stringWithFormat:@"%d", afterLevel]];
+    
+    //exp
+    [dbac updateValueToDB:_id column:@"exp" newVal:[NSString stringWithFormat:@"%d", afterExp]];
+    
+    
+    //更新情報の確認id	name	score	gold	login	gamecnt	level	exp
+    NSLog(@"id = %@, name = %@, score = %@, gold = %@, login = %@, gameCnt = %@, level = %@, exp = %@",
+          [dbac getValueFromDB:_id column:@"id"],
+          [dbac getValueFromDB:_id column:@"name"],
+          [dbac getValueFromDB:_id column:@"score"],
+          [dbac getValueFromDB:_id column:@"gold"],
+          [dbac getValueFromDB:_id column:@"login"],
+          [dbac getValueFromDB:_id column:@"gamecnt"],
+          [dbac getValueFromDB:_id column:@"level"],
+          [dbac getValueFromDB:_id column:@"exp"]
+          );
+    
+    // インジケーター非表示(このメソッドを表示する際に表示済)
+    [self hideActivityIndicator];
+    
+}
+
+/*
+ * インジケーター表示
+ */
+- (void)showActivityIndicator
+{
+    // Activity Indicator 表示
+    _loadingView                 = [[UIView alloc] initWithFrame:self.navigationController.view.bounds];
+    _loadingView.backgroundColor = [UIColor blackColor];
+    _loadingView.alpha           = 0.5f;
+    _indicator                   = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    [_indicator setCenter:CGPointMake(_loadingView.bounds.size.width/2, _loadingView.bounds.size.height/2)];
+    [_loadingView addSubview:_indicator];
+    [self.navigationController.view addSubview:_loadingView];
+    [_indicator startAnimating];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+}
+
+/*
+ * インジケーター非表示
+ */
+- (void)hideActivityIndicator
+{
+    // Activity Indicator 非表示
+    [_indicator stopAnimating];
+    [_loadingView removeFromSuperview];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
 @end

@@ -23,7 +23,7 @@
 }
 -(Boolean)removeAllData;
 -(NSDictionary *)getAttrDict;
--(int)addExp:(int)addingVal;
+-(Boolean)addExp:(int)addingVal;
 -(Boolean)setValueToDevice:(NSString *)NAME strValue:(NSString *)VALUE;
 -(NSString *)getValueFromDevice:(NSString *)NAME;
 -(NSString *)getIdFromDevice;

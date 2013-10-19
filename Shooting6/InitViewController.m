@@ -70,6 +70,14 @@ UIActivityIndicatorView *_indicator;
     if([dbac setIdToDB:_id]){//dbに登録(既存idならばそのまま)
         NSLog(@"データベース登録or承認完了");
         
+        //ログイン回数をupdate
+        int login = [[dbac getValueFromDB:_id column:@"login"] intValue];
+        login ++;
+//        [dbac updateValueToDB:_id column:@"login" value:[NSString stringWithFormat:@"%d", login ]];
+        [dbac updateValueToDB:_id column:@"login" newVal:[NSString stringWithFormat:@"%d", login]];
+        NSLog(@"login = %@回目", [dbac getValueFromDB:_id column:@"login"]);
+        
+        
         // インジケーター非表示
         [self hideActivityIndicator];
 

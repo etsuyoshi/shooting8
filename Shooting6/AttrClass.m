@@ -96,7 +96,8 @@
     return true;
 }
 
--(int)addExp:(int)addingVal{
+-(Boolean)addExp:(int)addingVal{
+    //格納成功判定必要->格納失敗時はfalse
     NSLog(@"addExp");
     int beforeExp = [[self getValueFromDevice:@"exp"] intValue];
     int beforeLevel = [[self getValueFromDevice:@"level"] intValue];
@@ -119,8 +120,11 @@
          return afterExp;
     }
     [self setValueToDevice:@"exp" strValue:[NSString stringWithFormat:@"%d", afterExp]];
-    return afterExp;
+//    return afterExp;
+    return true;
 }
+
+
 
 -(Boolean)setValueToDevice:(NSString *)NAME strValue:(NSString *)VALUE{
     

@@ -164,11 +164,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Shooting6/GameClassViewController.m"
-         timestampString = "403780059.3727"
+         timestampString = "403847403.459447"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "743"
-         endingLineNumber = "743"
+         startingLineNumber = "748"
+         endingLineNumber = "748"
          landmarkName = "-exitProcess"
          landmarkType = "5">
       </FileBreakpoint>

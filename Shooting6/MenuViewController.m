@@ -471,7 +471,7 @@ UIButton *closeButton;//閉じるボタン
             [self presentViewController: ilvc animated:YES completion: nil];
             break;
         }
-        case 212:{//設定画面：BGM,効果音、操作感度、ボイス
+        case 212:{//設定画面：BGM,効果音、操作感度、ボイス、難易度
             UIView *viewSuper = [CreateComponentClass createViewNoFrame:self.view.bounds
                                                                   color:[UIColor clearColor]
                                                                     tag:9999
