@@ -30,16 +30,17 @@
 	// Do any additional setup after loading the view.
     
     //backgroundの設定
-    UIImageView *background = [[UIImageView alloc]initWithFrame:self.view.bounds];
+//    UIImageView *background = [[UIImageView alloc]initWithFrame:self.view.bounds];
+    UIImageView *background = [[UIImageView alloc]initWithFrame:CGRectMake(-100, -10, 580, 480)];
     background.image = [UIImage imageNamed:@"chara_test2.png"];
     background.alpha = 0.5f;
     [self.view sendSubviewToBack:background];
     [self.view addSubview:background];
     
     //cash　frame
-    int cashFrameWidth = 150;
+    int cashFrameWidth = 170;
     int cashFrameHeight = 50;
-    int cashFrameInitX = 165;
+    int cashFrameInitX = 145;
     int cashFrameInitY = 40;
     UIView *cashView = [CreateComponentClass createView:CGRectMake(cashFrameInitX,
                                                                    cashFrameInitY,
@@ -49,12 +50,22 @@
     
     //cash image
     UIImageView *cashIV = [[UIImageView alloc]initWithFrame:CGRectMake(cashFrameInitX + 10,
-                                                                       cashFrameInitY + 10, 15, 15)];
-    cashIV.image = [UIImage imageNamed:@"close.png"];
+                                                                       cashFrameInitY + 14, 23, 23)];
+    cashIV.image = [UIImage imageNamed:@"coin2.png"];
     [self.view addSubview:cashIV];
     
-    
-    
+    //cash numeric
+    CGRect rectGoldAmount = CGRectMake(cashFrameInitX + 50,
+                                       cashFrameInitY + 10,
+                                       150, 32);
+    UITextView *tvGoldAmount = [[UITextView alloc]initWithFrame:rectGoldAmount];
+    //@"AmericanTypewriter-Bold"
+    [tvGoldAmount setFont:[UIFont fontWithName:@"AmericanTypewriter-Bold" size:14]];
+    tvGoldAmount.text = [NSString stringWithFormat:@"%@", @"9876543210"];
+    tvGoldAmount.textColor = [UIColor whiteColor];
+    tvGoldAmount.backgroundColor = [UIColor clearColor];//gray?
+    tvGoldAmount.editable = NO;
+    [self.view addSubview:tvGoldAmount];
     
     //frame
     int itemFrameWidth = 300;
@@ -76,7 +87,7 @@
                                                                 itemFrameHeight)];
         [self.view addSubview:eachView];
         
-        //imageの貼付
+        //image(cash)の貼付
         UIImageView *iv = [[UIImageView alloc]initWithFrame:CGRectMake(imageFrameInitX,
                                                                    imageFrameInitY + i * (imageFrameHeight + imageFrameInterval),
                                                                    imageFrameWidth,
@@ -102,9 +113,10 @@
                                     itemFrameInitY + i * (itemFrameHeight + itemFrameInterval) + 10,
                                     imageFrameWidth,
                                     imageFrameHeight);
-        UIButton *btn = [CreateComponentClass createQBButton:0
+        UIButton *btn = [CreateComponentClass createQBButton:ButtonTypeWithImage
                                                         rect:btnRect
-                                                       image:nil
+                                                       image:@"bullet_level6.png"
+                                                       title:@"get"
                                                       target:self
                                                     selector:@"buyBtnPressed"];
         [self.view addSubview:btn];

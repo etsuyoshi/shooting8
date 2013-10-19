@@ -44,7 +44,7 @@ UIActivityIndicatorView *_indicator;
 	// Do any additional setup after loading the view, typically from a nib.
     
 //    CGRect rect_frame = [[UIScreen mainScreen] bounds];
-    CGRect rect_main = CGRectMake(-50,-20, 480, 480);
+    CGRect rect_main = CGRectMake(-100, -30, 580, 480);
     UIImageView *iv_frame = [[UIImageView alloc]initWithFrame:rect_main];
     iv_frame.image = [UIImage imageNamed:@"chara_test2.png"];
     
@@ -55,7 +55,7 @@ UIActivityIndicatorView *_indicator;
     // インジケーター表示
     [self showActivityIndicator];
     //サーバー通信
-    [self performSelector:@selector(sendRequestToServer) withObject:nil afterDelay:3.1];
+    [self performSelector:@selector(sendRequestToServer) withObject:nil afterDelay:0.1];
 }
 
 

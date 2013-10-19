@@ -36,7 +36,7 @@
 #import "ScoreBoardClass.h"
 #import "GoldBoardClass.h"
 #import <QuartzCore/QuartzCore.h>
-#define TIMEOVER_SECOND 2
+#define TIMEOVER_SECOND 10
 
 
 CGRect rect_frame, rect_myMachine, rect_enemyBeam, rect_beam_launch;
@@ -122,7 +122,7 @@ float count = 0;
     max_enemy_in_frame = 20;
     
     
-    //タッチ用パネル(タップで自機移動、フリックでビーム発射するドリブン用パネル)
+    //タッチ用パネル(タップ＆フリックで自機移動、タップしている間はビーム発射)
     rect_frame = [[UIScreen mainScreen] bounds];
     NSLog(@"%d", (int)[iv_frame center].x);
     x_frame = rect_frame.size.width;
@@ -399,6 +399,7 @@ float count = 0;
             
             EnemyClass *_enemy = (EnemyClass *)[EnemyArray objectAtIndex:i];
             
+            //自機と敵機の衝突判定
             if(
                [MyMachine getX] >= [_enemy getX] - [_enemy getSize] * 0.6 &&
                [MyMachine getX] <= [_enemy getX] + [_enemy getSize] * 0.6 &&
@@ -456,6 +457,8 @@ float count = 0;
                     int _xBeam = [_beam getX];
                     int _yBeam = [_beam getY];
                     int _sBeam = [_beam getSize];
+                    
+                    //敵機とビームの衝突判定
                     if(
                        _xBeam >= [_enemy getX] - [_enemy getSize] * 0.3 &&
                        _xBeam <= [_enemy getX] + [_enemy getSize] * 1.3 &&
@@ -760,33 +763,33 @@ float count = 0;
     NSUserDefaults* score_defaults =
     [NSUserDefaults standardUserDefaults];
     //    [id_defaults removeObjectForKey:@"user_id"];//値を削除：テスト用
-    int score_int = [score_defaults integerForKey:@"max_score"];
-    NSLog(@"now, score = %d", score_int);
+    int max_score = [score_defaults integerForKey:@"max_score"];
+    NSLog(@"now score = %d, max_score = %d", [ScoreBoard getScore], max_score);
     //今回取得したスコアが前回までの最高得点を上回れば更新
-    if([ScoreBoard getScore] < score_int){
+    if([ScoreBoard getScore] > max_score){
         //update
-        [score_defaults setInteger:score_int forKey:@"max_score"];
+        [score_defaults setInteger:[ScoreBoard getScore] forKey:@"max_score"];
         NSLog(@"score update! => %d", [score_defaults integerForKey:@"max_score"]);
         
-        //congrat!! view appear!
+        //congrat!! view appear!effect!!
         
         
         
     }else{
-        NSLog(@"be going ...");
+        NSLog(@"not updating so be going ...");
     }
     
-    //累積ゴールドを取得する
-    NSUserDefaults* gold_defaults =
-    [NSUserDefaults standardUserDefaults];
-    int gold_int = [gold_defaults integerForKey:@"gold_score"];
-    NSLog(@"now, gold = %d", gold_int);
-    if([GoldBoard getScore] < gold_int){
-        [gold_defaults setInteger:gold_int forKey:@"gold_score"];
-        NSLog(@"score update! => %d", [score_defaults integerForKey:@"max_score"]);
-    }else{
-        NSLog(@"be going ...");
-    }
+    //累積ゴールドを取得して累積計算
+    NSUserDefaults* gold_defaults = [NSUserDefaults standardUserDefaults];
+    int before_gold = [gold_defaults integerForKey:@"gold_score"];
+    int after_gold = before_gold + [GoldBoard getScore];
+    NSLog(@"now gold = %d, before_gold = %d, so after_gold = %d", [GoldBoard getScore], before_gold, after_gold);
+//    if([GoldBoard getScore] < before_gold){
+    [gold_defaults setInteger:after_gold forKey:@"gold_score"];
+    NSLog(@"score update! => %d", [score_defaults integerForKey:@"gold_score"]);
+//    }else{
+//        NSLog(@"be going ...");
+//    }
     
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     
@@ -797,15 +800,10 @@ float count = 0;
     [self.view addSubview:[CreateComponentClass createView]];
     
     //ボタン配置
-    UIButton *exitBtn = [CreateComponentClass createButton:self
-                                                  selector:@"pushExit"];
-    
-    [self.view addSubview:exitBtn];
-    
-    
-    UIButton *qbBtn = [CreateComponentClass createQBButton:0
-                                                      rect:CGRectMake(100, 200, 100, 40)
-                                                     image:nil
+    UIButton *qbBtn = [CreateComponentClass createQBButton:ButtonTypeWithImage
+                                                      rect:CGRectMake(100, 200, 100, 60)
+                                                     image:@"blue_item_yuri_big2.png"
+                                                     title:@"exit"
                                                     target:self
                                                   selector:@"pushExit"];
     [self.view addSubview:qbBtn];
