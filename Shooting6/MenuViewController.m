@@ -58,14 +58,22 @@ UIButton *closeButton;//閉じるボタン
 
 @end
 
+
 //コンポーネント動的配置：http://d.hatena.ne.jp/mohayonao/20100719/1279524706
 @implementation MenuViewController
+
+@synthesize audioPlayer;
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        
+        //back ground music
+//        audioPlayerCapture = [self getAVAudioPlayer:@"mySoundEffects.caf" ];
+//        [audioPlayerCapture prepareToPlay];
     }
     return self;
 }
@@ -73,7 +81,6 @@ UIButton *closeButton;//閉じるボタン
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
     
     //タイトル配列
     titleArray = [NSArray arrayWithObjects:
@@ -147,6 +154,16 @@ UIButton *closeButton;//閉じるボタン
 	// Do any additional setup after loading the view.
 }
 -(void)viewDidAppear:(BOOL)animated{
+    
+    //BGM START
+    NSLog(@"the naked king mp3");
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"TheNakedKing" ofType:@"mp3"];
+    NSURL *url = [NSURL fileURLWithPath:path];
+    audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
+    audioPlayer.numberOfLoops = -1;
+    [audioPlayer play];
+    
+    
 
 //    NSLog(@"init select view controller start!!");
     int x_frame_center = (int)[[UIScreen mainScreen] bounds].size.width/2;
@@ -404,6 +421,14 @@ UIButton *closeButton;//閉じるボタン
     switch([sender tag]){
         case 0:{
             NSLog(@"start games");
+            
+            //BGM STOP
+            if( !audioPlayer.playing ){
+                [audioPlayer play];
+            } else {
+                [audioPlayer pause];
+            }
+            
             GameClassViewController *gameView = [[GameClassViewController alloc] init];
             [self presentViewController: gameView animated:YES completion: nil];
             //参考戻る時(時間経過等ゲーム終了時で)：[self dismissModalViewControllerAnimated:YES];=>deprecated
@@ -573,6 +598,11 @@ UIButton *closeButton;//閉じるボタン
         case 2120://TAPPED_BGM
         {
             NSLog(@"tapped image");
+            if( !audioPlayer.playing ){
+                [audioPlayer play];
+            } else {
+                [audioPlayer pause];
+            }
             break;
         }
         case 2121://TAPPED_BGM
@@ -640,31 +670,8 @@ UIButton *closeButton;//閉じるボタン
     return iv;
 }
 
-/*
--(UIView *)createView{
-    
-    UIView *view = [[UIView alloc]init];
-    
-    //            view.frame = self.view.bounds;//画面全体
-    view.frame = CGRectMake(10, 50, 300, 400);
-    view.backgroundColor = [UIColor blackColor];
-    view.alpha = 0.5f;
-    //            [self.view addSubview:view];
-    
-    //丸角にする
-    [[view layer] setCornerRadius:10.0];
-    [view setClipsToBounds:YES];
-    
-    //UIViewに枠線を追加する
-    [[view layer] setBorderColor:[[UIColor lightGrayColor] CGColor]];
-    [[view layer] setBorderWidth:1.0];
-    
-    [self.view bringSubviewToFront:view];
-//    [self.view addSubview:view];
-    return view;
-    
 
-}
- */
+
+
 
 @end

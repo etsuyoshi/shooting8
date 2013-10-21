@@ -7,9 +7,20 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
+#import <AudioToolbox/AudioServices.h>
 
-@interface GameClassViewController : UIViewController
-{
-    
+
+@interface GameClassViewController : UIViewController{
+    CFURLRef soundURL;
+    SystemSoundID soundID;
 }
+//bgm
+@property (nonatomic, retain) AVAudioPlayer *audioPlayer;
+
+
+//se
+@property(readwrite) CFURLRef soundURL;
+@property(readonly) SystemSoundID soundID;
+
 @end

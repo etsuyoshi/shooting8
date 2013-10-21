@@ -89,7 +89,12 @@ float count = 0;
 
 @end
 
+
+
 @implementation GameClassViewController
+
+@synthesize audioPlayer;
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -105,6 +110,16 @@ float count = 0;
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    
+    //BGM START
+    NSLog(@"the naked king mp3");
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"flight01" ofType:@"mp3"];
+    NSURL *url = [NSURL fileURLWithPath:path];
+    audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
+    audioPlayer.numberOfLoops = -1;
+    [audioPlayer play];
+
     
     //UI編集：ナビゲーションボタンの追加＝一時停止
     
@@ -502,6 +517,17 @@ float count = 0;
                         if(![[EnemyArray objectAtIndex:i] getIsAlive]){
                             
                             
+                            //効果音=>別クラスに格納してstatic method化して簡潔に！
+                            CFBundleRef mainBundle;
+                            mainBundle = CFBundleGetMainBundle ();
+                            soundURL  = CFBundleCopyResourceURL (mainBundle,CFSTR ("flinging"),CFSTR ("mp3"),NULL);
+                            AudioServicesCreateSystemSoundID (soundURL, &soundID);
+                            CFRelease (soundURL);
+                            AudioServicesPlaySystemSound (soundID);
+                            
+                            
+                            
+                            
 //                            NSLog(@"パーティクル = %@", [(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle]);
                             //爆発パーティクル表示
                             [[(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle] setUserInteractionEnabled: NO];//インタラクション拒否
@@ -793,6 +819,14 @@ float count = 0;
 }
 -(void)exit{
     //    [super viewWillDisappear:NO];//storyboard遷移からの場合
+    
+    //BGM stop
+    if( !audioPlayer.playing ){
+        [audioPlayer play];
+    } else {
+        [audioPlayer stop];
+    }
+    
     [self dismissViewControllerAnimated:NO completion:nil];//itemSelectVCのpresentViewControllerからの場合
     
     
