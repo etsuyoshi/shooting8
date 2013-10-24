@@ -25,6 +25,7 @@
  ・自機の移動はpanGesture:済
  */
 
+#import "BGMClass.h"
 #import "GameClassViewController.h"
 #import "DBAccessClass.h"
 #import "AttrClass.h"
@@ -38,7 +39,7 @@
 #import "ScoreBoardClass.h"
 #import "GoldBoardClass.h"
 #import <QuartzCore/QuartzCore.h>
-#define TIMEOVER_SECOND 10
+#define TIMEOVER_SECOND 100
 
 
 CGRect rect_frame, rect_myMachine, rect_enemyBeam, rect_beam_launch;
@@ -83,6 +84,7 @@ int x_pg, y_pg, width_pg, height_pg;
 
 
 NSTimer *tm;
+BGMClass *bgmClass;
 float count = 0;
 
 @interface GameClassViewController ()
@@ -91,9 +93,11 @@ float count = 0;
 
 
 
+
 @implementation GameClassViewController
 
-@synthesize audioPlayer;
+@synthesize soundURL;
+@synthesize soundID;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -112,13 +116,8 @@ float count = 0;
 	// Do any additional setup after loading the view.
     
     
-    //BGM START
-    NSLog(@"the naked king mp3");
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"flight01" ofType:@"mp3"];
-    NSURL *url = [NSURL fileURLWithPath:path];
-    audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
-    audioPlayer.numberOfLoops = -1;
-    [audioPlayer play];
+    //BGM START=0.1second-delay
+    [self performSelector:@selector(playBGM) withObject:nil afterDelay:0.1];
 
     
     //UI編集：ナビゲーションボタンの追加＝一時停止
@@ -202,6 +201,9 @@ float count = 0;
     GoldBoard = [[GoldBoardClass alloc]init:0 x_init:0 y_init:50];
     [self displayScore:GoldBoard];
     
+        
+
+    
     
     size_machine = 100;
     
@@ -239,6 +241,15 @@ float count = 0;
     iv_pg_cross = [[UIImageView alloc]initWithFrame:CGRectMake(x_pg, y_pg, width_pg, height_pg)];
     iv_pg_cross.image = [UIImage imageNamed:@"cross.png"];
     [self.view addSubview:iv_pg_cross];
+    
+    
+    //一時停止ボタン
+    int size_pause = 30;
+    CGRect rect_pause = CGRectMake(rect_frame.size.width / 2 - size_pause / 2,0 , size_pause, size_pause);
+//    UIImageView *iv_pause = [[UIImageView alloc]initWithFrame:CGRectMake(rect_frame.size.width / 2 - size_pause / 2,0 , size_pause, size_pause)];
+    UIImageView *iv_pause = [CreateComponentClass createImageView:rect_pause image:@"close.png" tag:0 target:self selector:@"onClickedStopButton"];
+    [iv_pause bringSubviewToFront:self.view];
+    [self.view addSubview:iv_pause];
 
     
     //以下実行後、0.1秒間隔でtimerメソッドが呼び出されるが、それと並行してこのメソッド(viewDidLoad)も実行される(マルチスレッドのような感じ)
@@ -248,7 +259,6 @@ float count = 0;
                                         userInfo:nil
                                          repeats:YES];
 }
-
 
 - (void)ordinaryAnimationStart{
     //消去、生成、更新、表示
@@ -458,14 +468,10 @@ float count = 0;
                     
                     
                 }
-
-                
-                
-                
-                
-                
             }
             
+            
+            //敵機とビームの衝突判定
 //            for(int j = 0; j < [BeamArray count] ;j++){//発射した全てのビームに対して
             for(int j = 0 ; j < [MyMachine getBeamCount];j++){
                 BeamClass *_beam = [MyMachine getBeam:j];
@@ -493,6 +499,10 @@ float count = 0;
                         
                         //            bl_enemyAlive = false;
                         int damage = [_beam getPower];
+                        
+                        //ダメージ負荷時に切り替える
+                        [[EnemyArray objectAtIndex:i] setIsDamaged:true];
+                        
                         [(EnemyClass *)[EnemyArray objectAtIndex:i] setDamage:damage location:CGPointMake(_xBeam + _sBeam/2, _yBeam + _sBeam/2)];
                         
                         //上記setDamageでdieメソッドも包含実行
@@ -592,6 +602,13 @@ float count = 0;
 //          (int)(temp/10));
 
 }
+
+//BGM曲をかける
+-(void)playBGM{
+    bgmClass = [[BGMClass alloc]init];
+    [bgmClass play:@"flight01"];
+}
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -821,14 +838,10 @@ float count = 0;
     //    [super viewWillDisappear:NO];//storyboard遷移からの場合
     
     //BGM stop
-    if( !audioPlayer.playing ){
-        [audioPlayer play];
-    } else {
-        [audioPlayer stop];
-    }
+    [bgmClass stop];
     
+    //ウィンドウ閉じる
     [self dismissViewControllerAnimated:NO completion:nil];//itemSelectVCのpresentViewControllerからの場合
-    
     
 }
 

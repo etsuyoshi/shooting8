@@ -6,6 +6,7 @@
 //  Copyright (c) 2013年 endo.tuyo. All rights reserved.
 //
 
+#import "BGMClass.h"
 #import "MenuViewController.h"
 #import "GameClassViewController.h"
 #import "ItemListViewController.h"
@@ -52,6 +53,7 @@ NSMutableArray *titleArray;
 
 UIView *subView;
 UIButton *closeButton;//閉じるボタン
+BGMClass *bgmClass;
 //CreateComponentClass *createComponentClass;
 
 @interface MenuViewController ()
@@ -62,7 +64,6 @@ UIButton *closeButton;//閉じるボタン
 //コンポーネント動的配置：http://d.hatena.ne.jp/mohayonao/20100719/1279524706
 @implementation MenuViewController
 
-@synthesize audioPlayer;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -155,15 +156,8 @@ UIButton *closeButton;//閉じるボタン
 }
 -(void)viewDidAppear:(BOOL)animated{
     
-    //BGM START
-    NSLog(@"the naked king mp3");
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"TheNakedKing" ofType:@"mp3"];
-    NSURL *url = [NSURL fileURLWithPath:path];
-    audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
-    audioPlayer.numberOfLoops = -1;
-    [audioPlayer play];
-    
-    
+    //時間を遅らせてBGM
+    [self performSelector:@selector(playBGM) withObject:nil afterDelay:0.3];
 
 //    NSLog(@"init select view controller start!!");
     int x_frame_center = (int)[[UIScreen mainScreen] bounds].size.width/2;
@@ -423,10 +417,15 @@ UIButton *closeButton;//閉じるボタン
             NSLog(@"start games");
             
             //BGM STOP
-            if( !audioPlayer.playing ){
-                [audioPlayer play];
-            } else {
-                [audioPlayer pause];
+//            if( !audioPlayer.playing ){
+//                [audioPlayer play];
+//            } else {
+//                [audioPlayer pause];
+//            }
+            
+//            NSLog(@"isplaying = %d", BGMClass.getIsPlaying);
+            if(bgmClass.getIsPlaying){
+                [bgmClass stop];
             }
             
             GameClassViewController *gameView = [[GameClassViewController alloc] init];
@@ -598,10 +597,15 @@ UIButton *closeButton;//閉じるボタン
         case 2120://TAPPED_BGM
         {
             NSLog(@"tapped image");
-            if( !audioPlayer.playing ){
-                [audioPlayer play];
-            } else {
-                [audioPlayer pause];
+//            if( !audioPlayer.playing ){
+//                [audioPlayer play];
+//            } else {
+//                [audioPlayer pause];
+//            }
+            if(![bgmClass getIsPlaying]){
+                [bgmClass play:@"TheNakedKing"];
+            }else{
+                [bgmClass pause];
             }
             break;
         }
@@ -636,6 +640,12 @@ UIButton *closeButton;//閉じるボタン
     NSLog(@"close superview");
     [[[sender superview] superview ]removeFromSuperview];
     
+}
+
+//BGM曲をかける
+-(void)playBGM{
+    bgmClass = [[BGMClass alloc]init];
+    [bgmClass play:@"TheNakedKing"];
 }
 
 //-(UIButton*)createButtonWithImage:(NSString*)imageFile tag:(int)tag frame:(CGRect)frame

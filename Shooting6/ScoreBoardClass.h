@@ -10,17 +10,12 @@
 
 @interface ScoreBoardClass : NSObject{
     int score;
-    int eachDigitWidth;
-    int eachDigitHeight;
-    int rightMargin;
-    int maxKetasu;
-    int xStart, yStart;
-    NSMutableArray *strEnglishNum;
-    NSMutableArray *score_array;
+    int xStart;//開始位置x
+    int yStart;//開始位置y
 }
 
 -(id)init:(int)type x_init:(int)x_init y_init:(int)y_init;
--(NSMutableArray *)getImageViewArray;
+-(NSMutableArray *)getDigitalArray;
 -(void)setScore:(int)_score;
 -(int)getScore;
 @end
