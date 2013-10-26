@@ -43,10 +43,10 @@
         particle.velocityRange = 10;//速度の標準偏差
         particle.emissionLongitude = -M_PI_2;//流れる方向(正：時計回り)
         particle.emissionRange = -1 * M_PI_2;//流れる方向の標準偏差
-        particle.scale = 0.15f;//大きさ
-        particle.scaleSpeed = 0.5f;
-        particle.scaleRange = 1.0f;
-        particle.spin = 1.0f;
+        particle.scale = 0.15f;//最大サイズ
+        particle.scaleSpeed = 0.5f;//最大サイズになるまでのスピード
+        particle.scaleRange = 1.0f;//最大サイズのレンジ
+        particle.spin = 1.0f;//回転角度
         
         
         

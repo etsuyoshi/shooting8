@@ -43,6 +43,11 @@ typedef NS_ENUM(NSInteger, ButtonType) {
                          tag:(int)tag
                       target:(id)target
                     selector:(NSString *)selName;
++(UIView *)createViewWithFrame:(CGRect)rect
+                         color:(UIColor *)color
+                           tag:(int)tag
+                        target:(id)target
+                      selector:(NSString *)selName;
 
 //タッチイベントを付けたimageview:http://php6.jp/iphone/2011/11/11/uilabel%E3%82%84uiimageview%E3%81%8C%E5%BF%9C%E7%AD%94%E3%81%97%E3%81%AA%E3%81%84/
 +(UIImageView *)createImageView:(CGRect)rect

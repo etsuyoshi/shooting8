@@ -126,11 +126,11 @@ float count = 0;
                                                                           style:UIBarButtonItemStyleBordered
                                                                          target:self
 //                                                                         action:@selector(alertView:clickedButtonAtIndex:)];
-                               action:@selector(onClickedStopButton)];
+                                                                         action:@selector(onClickedStopButton)];
     UIBarButtonItem* right_button_setting = [[UIBarButtonItem alloc]
-                                          initWithTitle:@"set"
-                                          style:UIBarButtonItemStyleBordered
-                                          target:self
+                                             initWithTitle:@"set"
+                                             style:UIBarButtonItemStyleBordered
+                                             target:self
                                              action:@selector(onClickedSettingButton)];
     
     isGameMode = true;
@@ -192,18 +192,14 @@ float count = 0;
     ItemArray = [[NSMutableArray alloc] init];
     
     //スコアボードの初期化
-    ScoreBoard = [[ScoreBoardClass alloc]init:0 x_init:0 y_init:0];
+    ScoreBoard = [[ScoreBoardClass alloc]init:0 x_init:0 y_init:0 ketasu:10];
     
     //スコアボードの表示(初期状態ではゼロ)
     [self displayScore:ScoreBoard];
     
     //ゴールドの初期化と表示
-    GoldBoard = [[GoldBoardClass alloc]init:0 x_init:0 y_init:50];
+    GoldBoard = [[GoldBoardClass alloc]init:0 x_init:0 y_init:50 ketasu:10 type:@"gold"];
     [self displayScore:GoldBoard];
-    
-        
-
-    
     
     size_machine = 100;
     
@@ -606,7 +602,7 @@ float count = 0;
 //BGM曲をかける
 -(void)playBGM{
     bgmClass = [[BGMClass alloc]init];
-    [bgmClass play:@"flight01"];
+    [bgmClass play:@"hisho_hmix"];
 }
 
 
@@ -892,11 +888,19 @@ float count = 0;
 -(void)displayScore:(ScoreBoardClass *)_boardClass{
     //スコアボードの表示
     
-    NSArray *_ivArray = [_boardClass getImageViewArray];
-    for(int i = 0; i < [_ivArray count]; i++){
-        [self.view addSubview:[_ivArray objectAtIndex:i]];
+    //デジタル表示用
+    /*
+    for(int i = 0; i < [[_boardClass getDigitalArray] count]; i++){
+        //removeはなくても新しいbackgroundframeの上に表示されるので見た目上は必要ない
+        //が、ないとメモリがどんどん増えていくと思う。
+        [(UIImageView*)[[_boardClass getDigitalArray] objectAtIndex:i] removeFromSuperview];
+        [self.view addSubview:[[_boardClass getDigitalArray] objectAtIndex:i]];
     }
-        
+    */
+    
+    //テキストビュー用
+    [[_boardClass getTextView] removeFromSuperview];
+    [self.view addSubview:[_boardClass getTextView]];
 }
 
 //以下参考：http://www.atmarkit.co.jp/fsmart/articles/ios_sensor05/02.html

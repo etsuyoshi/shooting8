@@ -12,9 +12,18 @@
     int score;
     int xStart;//開始位置x
     int yStart;//開始位置y
+    int ketasu;//桁数
+    
+    //デジタル表記用
+    NSMutableArray *scoreDigitalArray;
+    NSMutableArray *numberImageViewArray;
+    
+    //テキストビュー表記用
+    UITextView *tv_score;
 }
 
--(id)init:(int)type x_init:(int)x_init y_init:(int)y_init;
+-(id)init:(int)type x_init:(int)x_init y_init:(int)y_init ketasu:(int)ketasu;
+-(UITextView *)getTextView;
 -(NSMutableArray *)getDigitalArray;
 -(void)setScore:(int)_score;
 -(int)getScore;

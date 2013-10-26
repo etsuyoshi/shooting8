@@ -7,12 +7,36 @@
 //
 
 #import "AppDelegate.h"
+#import <AppSocially/AppSocially.h>
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    
+    [AppSocially setAPIKey:@"7774ac78f4afd9934a1483eb5485e2d5"];//38abee1be738a828fecc1a56a79d4592"];
+    
+//    #warning Replace with YOUR APP's AppSociallyAPIKey and FacebookAppID
+    [AppSocially setFacebookAppID:@"117100645022644"];
+    
+    
+    
+    // appearance
+    NSDictionary *attributes = @{UITextAttributeTextColor: [UIColor grayColor],
+                                 UITextAttributeTextShadowOffset: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 0.0f)],
+                                 UITextAttributeFont: [UIFont fontWithName:@"Futura-Medium" size:20.0f]};
+    
+    UIImage *barColorImage = [UIImage imageNamed:@"BarColor.png"];
+    [[UINavigationBar appearance] setBackgroundImage:barColorImage
+                                       forBarMetrics:UIBarMetricsDefault];
+    [[UINavigationBar appearance] setTitleTextAttributes:attributes];
+    
+    NSString *version = [[UIDevice currentDevice] systemVersion];
+    if (version.floatValue < 7.0) {
+        [[UIBarButtonItem appearance] setTintColor:[UIColor colorWithWhite:0.9 alpha:1.0]];
+    }
+    
     return YES;
 }
 							

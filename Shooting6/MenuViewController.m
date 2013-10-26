@@ -11,6 +11,7 @@
 #import "GameClassViewController.h"
 #import "ItemListViewController.h"
 #import "CreateComponentClass.h"
+#import "InviteFriendsViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
 //#define COMPONENT_00 0
@@ -84,7 +85,7 @@ BGMClass *bgmClass;
     [super viewDidLoad];
     
     //タイトル配列
-    titleArray = [NSArray arrayWithObjects:
+    titleArray = [NSMutableArray arrayWithObjects:
                   [NSArray arrayWithObjects:
                    @"wpn",
                    @"drgn",
@@ -100,7 +101,7 @@ BGMClass *bgmClass;
                   nil];
 //    imageFile = [[NSMutableArray alloc]init];
 //    _imageFile = [NSArray arrayWithObjects:@"red.png", @"blue_item_yuri_big.png", nil];
-    imageFileArray = [NSArray arrayWithObjects:
+    imageFileArray = [NSMutableArray arrayWithObjects:
                       [NSArray arrayWithObjects:
                        @"blue_item_yuri_big2.png",
                        @"blue_item_yuri_big2.png",
@@ -144,7 +145,7 @@ BGMClass *bgmClass;
                       nil];
 //    NSLog(@"imageFileArray initialization complete");
     
-    tagArray = [NSArray arrayWithObjects:
+    tagArray = [NSMutableArray arrayWithObjects:
                 [NSArray arrayWithObjects:@"200", @"201", @"202", @"203", nil],
                 [NSArray arrayWithObjects:@"210", @"211", @"212", @"213", nil],
                 [NSArray arrayWithObjects:@"220", @"221", @"222", @"223", nil],
@@ -307,10 +308,16 @@ BGMClass *bgmClass;
     
     
     //ランキング表示部分
-    UIView *v_ranking = [CreateComponentClass createView:CGRectMake(x_frame_center - W_RANKING_COMPONENT / 2,
-                                                                    Y_MOST_UPPER_COMPONENT + H_MOST_UPPER_COMPONENT + MARGIN_UPPER_TO_RANKING,
-                                                                    W_RANKING_COMPONENT,
-                                                                    H_RANKING_COMPONENT)];
+    CGRect rect_ranking = CGRectMake(x_frame_center - W_RANKING_COMPONENT / 2,
+                                     Y_MOST_UPPER_COMPONENT + H_MOST_UPPER_COMPONENT + MARGIN_UPPER_TO_RANKING,
+                                     W_RANKING_COMPONENT,
+                                     H_RANKING_COMPONENT);
+//    UIView *v_ranking = [CreateComponentClass createView:rect_ranking];
+    UIView *v_ranking = [CreateComponentClass createViewWithFrame:rect_ranking
+                                                            color:[UIColor colorWithRed:0 green:0 blue:0 alpha:ALPHA_COMPONENT]
+                                                              tag:100//行数は０、１、２の１番目
+                                                           target:self
+                                                         selector:@"imageTapped:"];
     [self.view addSubview:v_ranking];
     
 //    UIImageView *iv_ranking = [self createImageView:@"black_128.png"
@@ -594,6 +601,12 @@ BGMClass *bgmClass;
         {
             break;
         }
+        case 100:{
+            NSLog(@"invite");
+            InviteFriendsViewController *inviteView = [[InviteFriendsViewController alloc] init];
+            [self presentViewController:inviteView animated:YES completion:nil];
+            break;
+        }
         case 2120://TAPPED_BGM
         {
             NSLog(@"tapped image");
@@ -645,7 +658,7 @@ BGMClass *bgmClass;
 //BGM曲をかける
 -(void)playBGM{
     bgmClass = [[BGMClass alloc]init];
-    [bgmClass play:@"TheNakedKing"];
+    [bgmClass play:@"bgm_menu_683"];
 }
 
 //-(UIButton*)createButtonWithImage:(NSString*)imageFile tag:(int)tag frame:(CGRect)frame

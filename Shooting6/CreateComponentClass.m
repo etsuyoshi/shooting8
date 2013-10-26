@@ -112,6 +112,28 @@
                                                                    action:NSSelectorFromString(selName)]];
     return v;
 }
+//manufact3:tapイベントを付ける(フレームあり)
++(UIView *)createViewWithFrame:(CGRect)rect
+                       color:(UIColor *)color
+                         tag:(int)tag
+                      target:(id)target
+                    selector:(NSString *)selName{
+    
+    float cornerRadius = 10.0f;
+    UIColor *borderColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5f];
+    float borderWidth = 2.0f;
+    
+    UIView *v = [self createView:rect
+                           color:color
+                    cornerRaidus:cornerRadius
+                     borderColor:borderColor
+                     borderWidth:borderWidth];
+    v.tag = tag;
+    v.userInteractionEnabled = YES;
+    [v addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:target
+                                                                   action:NSSelectorFromString(selName)]];
+    return v;
+}
 
 
 
