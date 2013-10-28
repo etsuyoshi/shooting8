@@ -247,7 +247,7 @@ float count = 0;
     
     //一時停止ボタン
     int size_pause = 70;
-    CGRect rect_pause = CGRectMake(rect_frame.size.width / 2 - size_pause / 2,50 , size_pause, size_pause);
+    CGRect rect_pause = CGRectMake(rect_frame.size.width / 2 - size_pause / 2,30 , size_pause, size_pause);
 //    UIImageView *iv_pause = [[UIImageView alloc]initWithFrame:CGRectMake(rect_frame.size.width / 2 - size_pause / 2,0 , size_pause, size_pause)];
     UIImageView *iv_pause = [CreateComponentClass createImageView:rect_pause image:@"close.png" tag:0 target:self selector:@"onClickedStopButton"];
     [iv_pause bringSubviewToFront:self.view];
@@ -937,21 +937,56 @@ float count = 0;
     //終了報告イメージ？ダイアログ？表示
     //データ：attrclassで処理
     
-    
-    
     //ゲームオーバー表示
-    int go_width = 250;
-    int go_height = 100;
-    CGRect rect_gameover = CGRectMake(rect_frame.size.width/2 - go_width/2, 60, go_width, go_height);
-    [self.view addSubview:[CreateComponentClass createView:rect_gameover]];
-    [self.view addSubview:[CreateComponentClass createImageView:rect_gameover
+    //ScoreBoard
+    //GoldBoard
+    //敵機撃破率
+    
+    
+    int go_component_width = 250;
+    //ゲームオーバー表示
+//    int go_width = 250;
+    int go_height = 90;
+    int go_y = 60;
+    CGRect rect_gameover = CGRectMake(rect_frame.size.width/2 - go_component_width/2,
+                                      go_y,
+                                      go_component_width,
+                                      go_height);
+    UIView *view_go =[CreateComponentClass createView:rect_gameover];
+    [self.view addSubview:view_go];
+    
+    
+    [view_go addSubview:[CreateComponentClass createImageView:rect_gameover
                                                           image:@"gameover.png"]];
     
+    //ScoreBoard
+    int score_y = go_y + go_height + 5;
+    CGRect rect_score = CGRectMake(rect_frame.size.width/2 - go_component_width/2,
+                                   score_y,
+                                   go_component_width,
+                                   go_height);
+    [view_go addSubview:[CreateComponentClass createImageView:rect_score image:@"close"]];
     
+    
+    //GoldBoard
+    int gold_y = score_y + go_height + 5;
+    CGRect rect_gold = CGRectMake(rect_frame.size.width/2 - go_component_width/2,
+                                   gold_y,
+                                   go_component_width,
+                                   go_height);
+    [view_go addSubview:[CreateComponentClass createImageView:rect_gold image:@"close"]];
+    
+    //撃破率
+    int gekiha_y = gold_y + go_height + 5;
+    CGRect rect_gekiha = CGRectMake(rect_frame.size.width/2 - go_component_width/2,
+                                  gekiha_y,
+                                  go_component_width,
+                                  go_height);
+    [view_go addSubview:[CreateComponentClass createImageView:rect_gekiha image:@"close"]];
     
     //ダイアログで成績を表示(未)してからゲーム画面閉じる
 //    CreateComponentClass *createComponentClass = [[CreateComponentClass alloc]init];
-    [self.view addSubview:[CreateComponentClass createView]];
+    [view_go addSubview:[CreateComponentClass createView]];
     
     //ボタン配置
     UIButton *qbBtn = [CreateComponentClass createQBButton:ButtonTypeWithImage
@@ -960,7 +995,7 @@ float count = 0;
                                                      title:@"exit"
                                                     target:self
                                                   selector:@"pushExit"];
-    [self.view addSubview:qbBtn];
+    [view_go addSubview:qbBtn];
     
     return ;
     
