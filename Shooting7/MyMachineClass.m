@@ -65,12 +65,14 @@ int unique_id;
 -(void)setDamage:(int)damage location:(CGPoint)location{
     damageParticle = [[DamageParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, damage, damage)];
     
-    if(defensePower > 0){
+    if(defensePower >= 0){
         if(hitPoint > 0){
             hitPoint -= damage;
             if(hitPoint < 0){
                 [self die:location];
             }
+        }else{
+            [self die:location];
         }
     }else{
         defensePower --;

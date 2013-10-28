@@ -10,15 +10,14 @@
 
 @interface ItemClass : NSObject{
 
+    int x_loc;
+    int y_loc;
 
-int x_loc;
-int y_loc;
-
-int width;
-int height;
-Boolean isAlive;
-UIImageView *iv;
-CGRect rect;
+    int width;
+    int height;
+    Boolean isAlive;
+    UIImageView *iv;
+    CGRect rect;
 
 }
 

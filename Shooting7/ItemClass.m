@@ -18,20 +18,20 @@
     height = h;
     isAlive = true;
     //    iv.image = [UIImage imageNamed:@"beam.png"];
-    switch(arc4random() % 1){
+    switch(arc4random() % 4){
         case 0://青：攻撃力上昇
 //            rect = CGRectMake(x_loc, y_loc, w, h);
-            rect = CGRectMake(x_loc, y_loc, w*1/2, h*1/2);//コインは解像度が低いのでサイズを小さくして表示する
+            rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-//            iv.image = [UIImage imageNamed:@"blue_item_yuri_big2.png"];
-            iv.image = [UIImage imageNamed:@"coin001_32.png"];
+            iv.image = [UIImage imageNamed:@"blue_item_yuri_big2.png"];
+//            iv.image = [UIImage imageNamed:@"coin001_32.png"];
             break;
         case 1://黄：画面内敵全滅
 //            rect = CGRectMake(x_loc, y_loc, w, h);
-            rect = CGRectMake(x_loc, y_loc, w*3/5, h*3/5);//コインは解像度が低いのでサイズを小さくして表示する
+            rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
 //            iv.image = [UIImage imageNamed:@"yellow_item_thunder2.png"];
-            iv.image = [UIImage imageNamed:@"coin003_64.png"];
+            iv.image = [UIImage imageNamed:@"yellow_item_thunder.png"];
             break;
         case 2://赤：回復
             rect = CGRectMake(x_loc, y_loc, w, h);
@@ -39,9 +39,9 @@
             iv.image = [UIImage imageNamed:@"red.png"];
             break;
         case 3://コイン
-            rect = CGRectMake(x_loc, y_loc, w*3/5, h*3/5);//コインは解像度が低いのでサイズを小さくして表示する
+            rect = CGRectMake(x_loc, y_loc, w*1/2, h*1/2);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"coin002_64.png"];
+            iv.image = [UIImage imageNamed:@"coin001_32.png"];
             break;
     
     }

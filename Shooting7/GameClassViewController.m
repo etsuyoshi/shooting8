@@ -449,7 +449,7 @@ float count = 0;
                 //ダメージの設定
                 [MyMachine setDamage:10 location:CGPointMake([MyMachine getX] + [MyMachine getSize]/2,[MyMachine getY] + [MyMachine getSize]/2)];
                 //ヒットポイントのセット
-                [powerGauge setValue:[MyMachine getHitPoint]];//仮で90とする
+                [powerGauge setValue:[MyMachine getHitPoint]];
                 //パワーゲージの減少
                 [self.view addSubview:[powerGauge getImageView]];
                 
@@ -563,10 +563,18 @@ float count = 0;
                             if(true){//arc4random() % 2 == 0){
                                 NSLog(@"アイテム出現");
                                 ItemClass *_item = [[ItemClass alloc] init:_xBeam y_init:_yBeam width:50 height:50];
-                                [ItemArray addObject:_item];
+
+//                                [ItemArray addObject:_item];
+                                [ItemArray insertObject:_item atIndex:0];
+                                if([ItemArray count] > 50){
+                                    [ItemArray removeLastObject];
+                                }
+                                [self.view bringSubviewToFront:[[ItemArray objectAtIndex:0] getImageView]];
+                                [self.view addSubview:[[ItemArray objectAtIndex:0] getImageView]];
                                 
-                                [self.view bringSubviewToFront: [[ItemArray objectAtIndex:([ItemArray count]-1)] getImageView]];//最前面に
-                                [self.view addSubview:[[ItemArray objectAtIndex:([ItemArray count]-1)] getImageView]];
+                                //重なった時に被らないように最前面に
+//                                [self.view bringSubviewToFront: [[ItemArray objectAtIndex:([ItemArray count]-1)] getImageView]];
+//                                [self.view addSubview:[[ItemArray objectAtIndex:([ItemArray count]-1)] getImageView]];
                                 
                                 
                             }else{
@@ -684,8 +692,8 @@ float count = 0;
         if(count >= TIMEOVER_SECOND || ![MyMachine getIsAlive]){
             NSLog(@"gameover");
             //経過したらタイマー終了
-            [tm invalidate];
-            [self exitProcess];
+            [self performSelector:@selector(exitProcess) withObject:nil afterDelay:0.8];//自機爆破後、即座に終了させると違和感あるため少しdelay
+//            [self exitProcess];
         }
         
     }else{
@@ -811,28 +819,68 @@ float count = 0;
     [super viewWillDisappear:animated];
 }
 
--(void) yieldEnemy{
-    //敵発生
-//    NSLog(@"count = %d", [EnemyArray count]);
-//    NSLog(@"%d", arc4random());
-//    if(count == 0 || arc4random() % 4 == 0){
-//    if(count == 0.5){
-    if((int)(count * 10) % 5 ==0 && arc4random() % 2 == 0){
-    
-//        NSLog(@"生成");
-        int x = arc4random() % 250;
 
+/**敵発生
+ *count(0.1sec)に応じて発生頻度を大きくする
+ * 0- 5sec:2secに一回
+ * 6-10sec:1secに一回
+ *11-15sec:0.5secに一回
+ *16-20sec:0.25secに一回
+ *21-25sec:0.125secに一回=ほぼ毎回
+ */
+-(void) yieldEnemy{
+    Boolean isYield = false;
+    if(count < 5){
+        if(arc4random() % 20 == 0){//20分の1
+            isYield = true;
+        }
+    }else if(count < 20){
+        if(arc4random() % 10 == 0){//10分の1
+            isYield = true;
+        }
+    }else if(count < 30){
+        if(arc4random() % 5 == 0){//5分の1
+            isYield = true;
+        }
+    }else if(count < 40){
+        if(arc4random() % 3 == 0){//2.5分の1=3分の1
+            isYield = true;
+        }
+    }else if(count < 50){
+        if(arc4random() % 2 == 0){//2分の1
+            isYield = true;
+        }
+    }else{
+        if(true){
+            isYield = true;
+        }
+    }
+    
+    if(isYield){
+        int x = arc4random() % ((int)self.view.bounds.size.width - OBJECT_SIZE);
+        
         EnemyClass *enemy = [[EnemyClass alloc]init:x size:OBJECT_SIZE];
         
         [EnemyArray insertObject:enemy atIndex:0];
         if([EnemyArray count] > 30) {
             [EnemyArray removeLastObject];
         }
-//        [EnemyArray addObject:enemy];//既に初期化済なので追加のみ
-//        NSLog(@"敵機 新規生成, %d, %d", [enemy getY], (int)(count * 10));
     }
 
-
+//    if((int)(count * 10) % 5 ==0 && arc4random() % 2 == 0){
+//    
+////        NSLog(@"生成");
+//        int x = arc4random() % ((int)self.view.bounds.size.width - OBJECT_SIZE);
+//
+//        EnemyClass *enemy = [[EnemyClass alloc]init:x size:OBJECT_SIZE];
+//        
+//        [EnemyArray insertObject:enemy atIndex:0];
+//        if([EnemyArray count] > 30) {
+//            [EnemyArray removeLastObject];
+//        }
+////        [EnemyArray addObject:enemy];//既に初期化済なので追加のみ
+////        NSLog(@"敵機 新規生成, %d, %d", [enemy getY], (int)(count * 10));
+//    }
 }
 
 //yieldBeamメソッドはMyMachine内に実装
@@ -932,6 +980,9 @@ float count = 0;
 
 
 -(void)exitProcess{
+    
+    //タイマー終了(死んだ時に周囲の敵やイフェクトが動いているようにするかどうか)
+    [tm invalidate];
 
     //ゲーム終了時に呼び出されるメソッド
     //終了報告イメージ？ダイアログ？表示
@@ -970,11 +1021,25 @@ float count = 0;
     
     //GoldBoard
     int gold_y = score_y + go_height + 5;
-    CGRect rect_gold = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
-                                   gold_y,
-                                   go_component_width,
-                                   go_height);
-    [view_go addSubview:[CreateComponentClass createImageView:rect_gold image:@"close"]];
+//    CGRect rect_gold = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
+//                                   gold_y,
+//                                   go_component_width,
+//                                   go_height);
+//    [view_go addSubview:[CreateComponentClass createImageView:rect_gold image:@"close"]];
+    
+    // プログレスバー作成例文
+    UIProgressView *pv = [[UIProgressView alloc]
+                           initWithProgressViewStyle:UIProgressViewStyleBar];
+    pv.frame = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
+                          gold_y,
+                          go_component_width,
+                          10);
+    
+    [view_go addSubview:pv];
+//    pv.progress = 0.2;
+//    [pv setProgress:0.9 animated:YES];//iOS5以降のみ有効?=>なぜか適用されない
+//
+//    [view_go addSubview:pv];
     
     //撃破率
     int gekiha_y = gold_y + go_height + 5;
@@ -988,14 +1053,32 @@ float count = 0;
 //    CreateComponentClass *createComponentClass = [[CreateComponentClass alloc]init];
 
     
-    //ボタン配置
+    //ボタン配置=>下から算出
+    CGRect rect_btn = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
+                                    go_height,
+                                    go_component_width,
+                                    view_go.bounds.size.height - go_height - 10);
     UIButton *qbBtn = [CreateComponentClass createQBButton:ButtonTypeWithImage
-                                                      rect:CGRectMake(100, 200, 100, 60)
+                                                      rect:rect_btn
                                                      image:@"blue_item_yuri_big2.png"
                                                      title:@"exit"
                                                     target:self
                                                   selector:@"pushExit"];
     [view_go addSubview:qbBtn];
+    
+    
+    
+    //リアルタイムに動的に表示
+    int pvMax = 100;
+    for (int pvValue = 1; pvValue < pvMax; pvValue++ ) {
+        // Other stuff in background
+        dispatch_async(dispatch_get_main_queue(), ^{
+            pv.progress = ((float)pvValue/(float)pvMax);
+            
+            
+            //
+        });
+    }
     
     return ;
     
@@ -1058,7 +1141,6 @@ float count = 0;
         case 1:
             //２番目のボタンが押されたときの処理を記述する
             NSLog(@"2");
-            [tm invalidate];
             [self exitProcess];
             break;
     }
