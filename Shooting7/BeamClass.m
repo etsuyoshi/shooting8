@@ -17,7 +17,7 @@
     width = w;
     height = h;
     isAlive = true;
-    rect = CGRectMake(x_loc, y_loc, w, h);
+    rect = CGRectMake(x_loc - w/2, y_loc - h/2, w, h);
     iv = [[UIImageView alloc]initWithFrame:rect];
 //    iv.image = [UIImage imageNamed:@"beam.png"];
     iv.image = [UIImage imageNamed:@"bullet_level1.png"];
@@ -38,7 +38,7 @@
     //    NSLog(@"更新前 y = %d", y_loc);
     y_loc -= height;
     x_loc += 0;//mySize/10 * (int)pow(-1, arc4random()%2) % 200;//単位時間当たりに左右3個体分の移動距離を進む
-    iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc, y_loc, width, height)];
+    iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc - width/2, y_loc - height/2, width, height)];
 //    iv.image = [UIImage imageNamed:@"beam.png"];
     iv.image = [UIImage imageNamed:@"bullet_level1.png"];
     

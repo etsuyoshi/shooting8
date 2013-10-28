@@ -39,7 +39,7 @@
 #import "ScoreBoardClass.h"
 #import "GoldBoardClass.h"
 #import <QuartzCore/QuartzCore.h>
-#define TIMEOVER_SECOND 30
+#define TIMEOVER_SECOND 100
 
 
 CGRect rect_frame, rect_myMachine, rect_enemyBeam, rect_beam_launch;
@@ -401,10 +401,10 @@ float count = 0;
             int _yItem = [_item getY];
                         
             if(
-               _xItem >= [MyMachine getX] &&
-               _xItem <= [MyMachine getX] + [MyMachine getSize] &&
-               _yItem >= [MyMachine getY] &&
-               _yItem <= [MyMachine getY] + [MyMachine getSize]){
+               _xItem >= [MyMachine getX] - [MyMachine getSize] / 2 &&
+               _xItem <= [MyMachine getX] + [MyMachine getSize] / 2 &&
+               _yItem >= [MyMachine getY] - [MyMachine getSize] / 2&&
+               _yItem <= [MyMachine getY] + [MyMachine getSize] / 2){
                 
                 [[[ItemArray objectAtIndex:itemCount] getImageView] removeFromSuperview];
                 [[ItemArray objectAtIndex:itemCount] die];
@@ -420,7 +420,7 @@ float count = 0;
                 
                 
                 
-                //ゴールドを加算
+                //ゴールドを加算if item == gold
                 [GoldBoard setScore:[GoldBoard getScore] + 1];
                 [self displayScore:GoldBoard];
             }
@@ -474,8 +474,6 @@ float count = 0;
                     [[MyMachine getExplodeParticle] setIsEmitting:YES];//消去するには数秒後にNOに
                     [self.view bringSubviewToFront: [MyMachine getExplodeParticle]];//最前面に
                     [self.view addSubview: [MyMachine getExplodeParticle]];//表示する
-                    
-                    
                 }
             }
             
