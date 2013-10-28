@@ -944,24 +944,24 @@ float count = 0;
     
     
     int go_component_width = 250;
+    
+    
+    UIView *view_go = [CreateComponentClass createView];
+    [self.view addSubview:view_go];
+    
     //ゲームオーバー表示
 //    int go_width = 250;
     int go_height = 90;
-    int go_y = 60;
-    CGRect rect_gameover = CGRectMake(rect_frame.size.width/2 - go_component_width/2,
+    int go_y = 10;//view_go上での相対位置
+    CGRect rect_gameover = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
                                       go_y,
                                       go_component_width,
                                       go_height);
-    UIView *view_go =[CreateComponentClass createView:rect_gameover];
-    [self.view addSubview:view_go];
-    
-    
     [view_go addSubview:[CreateComponentClass createImageView:rect_gameover
-                                                          image:@"gameover.png"]];
-    
+                                                        image:@"gameover.png"]];
     //ScoreBoard
     int score_y = go_y + go_height + 5;
-    CGRect rect_score = CGRectMake(rect_frame.size.width/2 - go_component_width/2,
+    CGRect rect_score = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
                                    score_y,
                                    go_component_width,
                                    go_height);
@@ -970,7 +970,7 @@ float count = 0;
     
     //GoldBoard
     int gold_y = score_y + go_height + 5;
-    CGRect rect_gold = CGRectMake(rect_frame.size.width/2 - go_component_width/2,
+    CGRect rect_gold = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
                                    gold_y,
                                    go_component_width,
                                    go_height);
@@ -978,7 +978,7 @@ float count = 0;
     
     //撃破率
     int gekiha_y = gold_y + go_height + 5;
-    CGRect rect_gekiha = CGRectMake(rect_frame.size.width/2 - go_component_width/2,
+    CGRect rect_gekiha = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
                                   gekiha_y,
                                   go_component_width,
                                   go_height);
@@ -986,7 +986,7 @@ float count = 0;
     
     //ダイアログで成績を表示(未)してからゲーム画面閉じる
 //    CreateComponentClass *createComponentClass = [[CreateComponentClass alloc]init];
-    [view_go addSubview:[CreateComponentClass createView]];
+
     
     //ボタン配置
     UIButton *qbBtn = [CreateComponentClass createQBButton:ButtonTypeWithImage
