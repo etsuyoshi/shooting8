@@ -11,6 +11,10 @@
 		34043A5A17FA0FE50000E338 /* DWFParticleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 34043A5917FA0FE50000E338 /* DWFParticleView.m */; };
 		34043A5C17FA103C0000E338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34043A5B17FA103C0000E338 /* QuartzCore.framework */; };
 		34043A5E17FA132B0000E338 /* Particles_fire.png in Resources */ = {isa = PBXBuildFile; fileRef = 34043A5D17FA132B0000E338 /* Particles_fire.png */; };
+		340A4640181E412200D9B005 /* AnimalBow.png in Resources */ = {isa = PBXBuildFile; fileRef = 340A463C181E412200D9B005 /* AnimalBow.png */; };
+		340A4641181E412200D9B005 /* ClothBow.png in Resources */ = {isa = PBXBuildFile; fileRef = 340A463D181E412200D9B005 /* ClothBow.png */; };
+		340A4642181E412200D9B005 /* RockBow.png in Resources */ = {isa = PBXBuildFile; fileRef = 340A463E181E412200D9B005 /* RockBow.png */; };
+		340A4643181E412200D9B005 /* SpaceBow.png in Resources */ = {isa = PBXBuildFile; fileRef = 340A463F181E412200D9B005 /* SpaceBow.png */; };
 		340C7613180D37E500169658 /* CreateComponentClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 340C7612180D37E500169658 /* CreateComponentClass.m */; };
 		3411FB7217FED1DF001D1491 /* powerGauge_pt0.png in Resources */ = {isa = PBXBuildFile; fileRef = 3411FB6217FED1DF001D1491 /* powerGauge_pt0.png */; };
 		3411FB7317FED1DF001D1491 /* powerGauge_pt1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3411FB6317FED1DF001D1491 /* powerGauge_pt1.png */; };
@@ -172,6 +176,10 @@
 		34043A5917FA0FE50000E338 /* DWFParticleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DWFParticleView.m; sourceTree = "<group>"; };
 		34043A5B17FA103C0000E338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		34043A5D17FA132B0000E338 /* Particles_fire.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Particles_fire.png; path = "../../../一般材料/UI/shooting/Particles_fire.png"; sourceTree = "<group>"; };
+		340A463C181E412200D9B005 /* AnimalBow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AnimalBow.png; sourceTree = "<group>"; };
+		340A463D181E412200D9B005 /* ClothBow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ClothBow.png; sourceTree = "<group>"; };
+		340A463E181E412200D9B005 /* RockBow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RockBow.png; sourceTree = "<group>"; };
+		340A463F181E412200D9B005 /* SpaceBow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SpaceBow.png; sourceTree = "<group>"; };
 		340C7611180D37E500169658 /* CreateComponentClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateComponentClass.h; sourceTree = "<group>"; };
 		340C7612180D37E500169658 /* CreateComponentClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateComponentClass.m; sourceTree = "<group>"; };
 		3411FB6217FED1DF001D1491 /* powerGauge_pt0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = powerGauge_pt0.png; sourceTree = "<group>"; };
@@ -544,6 +552,10 @@
 		34A1ED38181CCDC10007471C /* weapon */ = {
 			isa = PBXGroup;
 			children = (
+				340A463C181E412200D9B005 /* AnimalBow.png */,
+				340A463D181E412200D9B005 /* ClothBow.png */,
+				340A463E181E412200D9B005 /* RockBow.png */,
+				340A463F181E412200D9B005 /* SpaceBow.png */,
 				34A1ED39181CCDF20007471C /* BugBow.png */,
 				34A1ED3A181CCDF20007471C /* FireBow.png */,
 				34A1ED3B181CCDF20007471C /* GrassBow.png */,
@@ -748,6 +760,7 @@
 				34043A5E17FA132B0000E338 /* Particles_fire.png in Resources */,
 				34FA999417FBBEE500317D83 /* bullet_default.png in Resources */,
 				34FA999517FBBEE500317D83 /* bullet_level5.png in Resources */,
+				340A4640181E412200D9B005 /* AnimalBow.png in Resources */,
 				34FA999617FBBEE500317D83 /* bullet_level4.png in Resources */,
 				34FA999717FBBEE500317D83 /* bullet_level3.png in Resources */,
 				34FA999817FBBEE500317D83 /* bullet_level2.png in Resources */,
@@ -758,6 +771,7 @@
 				3419C41517FD27E200980E71 /* explode3.png in Resources */,
 				3419C41717FD2B3300980E71 /* explode5.png in Resources */,
 				3467B71D17FD53AF004EEE94 /* item.png in Resources */,
+				340A4642181E412200D9B005 /* RockBow.png in Resources */,
 				34A1ED42181CCDF20007471C /* WaterBow.png in Resources */,
 				348D634C17FD963100A3049B /* powerGauge2.png in Resources */,
 				348D635017FE11EF00A3049B /* circle_7w_128.png in Resources */,
@@ -799,6 +813,7 @@
 				34A087481803F194005458EF /* coin2.png in Resources */,
 				34A0874A180419CE005458EF /* white_128.png in Resources */,
 				3413B9A01804FF6400D450FF /* black_128.png in Resources */,
+				340A4641181E412200D9B005 /* ClothBow.png in Resources */,
 				348AD7F3180ACD52007226EC /* back_desert.png in Resources */,
 				348AD7F4180ACD52007226EC /* back_forest.png in Resources */,
 				34A1ED3F181CCDF20007471C /* FireBow.png in Resources */,
@@ -830,6 +845,7 @@
 				344BD6211815943400387201 /* mob_tanu_01.png in Resources */,
 				347D277318169B3700498F68 /* small_eight.png in Resources */,
 				347D277418169B3700498F68 /* small_five.png in Resources */,
+				340A4643181E412200D9B005 /* SpaceBow.png in Resources */,
 				347D277518169B3700498F68 /* small_four.png in Resources */,
 				347D277618169B3700498F68 /* small_nine.png in Resources */,
 				347D277718169B3700498F68 /* small_one.png in Resources */,

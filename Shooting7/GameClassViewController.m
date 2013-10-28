@@ -40,6 +40,7 @@
 #import "GoldBoardClass.h"
 #import <QuartzCore/QuartzCore.h>
 #define TIMEOVER_SECOND 100
+#define OBJECT_SIZE 70//自機と敵機のサイズ
 
 
 CGRect rect_frame, rect_myMachine, rect_enemyBeam, rect_beam_launch;
@@ -188,7 +189,7 @@ float count = 0;
     EnemyArray = [[NSMutableArray alloc]init];
     
     //自機定義
-    MyMachine = [[MyMachineClass alloc] init:x_frame/2 size:70];
+    MyMachine = [[MyMachineClass alloc] init:x_frame/2 size:OBJECT_SIZE];
     
     //自機が発射したビームを格納する配列初期化=>MyMachineクラス内に実装
 //    BeamArray = [[NSMutableArray alloc] init];
@@ -318,7 +319,6 @@ float count = 0;
             NSLog(@"set emitting no");
             [[MyMachine getExplodeParticle] setIsEmitting:NO];//消去するには数秒後にNOに
         }
-        
     }
     
     //敵機進行or爆発後のカウント
@@ -386,7 +386,7 @@ float count = 0;
 //    }
     for(int i = 0 ; i < [MyMachine getBeamCount]; i++){
         if([[MyMachine getBeam:i]getIsAlive]){
-            //ビューにメインイメージを貼り付ける
+            //ビューに自機イメージを貼り付ける
             [self.view addSubview:[[MyMachine getBeam:i] getImageView]];
         }
     }
@@ -480,8 +480,9 @@ float count = 0;
             
             //敵機とビームの衝突判定
 //            for(int j = 0; j < [BeamArray count] ;j++){//発射した全てのビームに対して
+            BeamClass *_beam;
             for(int j = 0 ; j < [MyMachine getBeamCount];j++){
-                BeamClass *_beam = [MyMachine getBeam:j];
+                _beam = [MyMachine getBeam:j];
                 //                    NSLog(@"ビーム衝突判定:%d", j);
                 if([_beam getIsAlive]){
                     //                        NSLog(@"ビーム発射確認完了");
@@ -821,8 +822,13 @@ float count = 0;
 //        NSLog(@"生成");
         int x = arc4random() % 250;
 
-        EnemyClass *enemy = [[EnemyClass alloc]init:x size:70];
-        [EnemyArray addObject:enemy];//既に初期化済なので追加のみ
+        EnemyClass *enemy = [[EnemyClass alloc]init:x size:OBJECT_SIZE];
+        
+        [EnemyArray insertObject:enemy atIndex:0];
+        if([EnemyArray count] > 30) {
+            [EnemyArray removeLastObject];
+        }
+//        [EnemyArray addObject:enemy];//既に初期化済なので追加のみ
 //        NSLog(@"敵機 新規生成, %d, %d", [enemy getY], (int)(count * 10));
     }
 

@@ -185,7 +185,15 @@ int unique_id;
 
 -(void)yieldBeam:(int)beam_type init_x:(int)x init_y:(int)y{
     BeamClass *beam = [[BeamClass alloc] init:x y_init:y width:50 height:50];
-    [beamArray addObject:beam];
+    //ビーム配列は先入先出(FIFO)
+    [beamArray insertObject:beam atIndex:0];
+    if([beamArray count] < 50){
+//        [beamArray addObject:beam];
+    }else{
+//        最後のビームを削除
+        [beamArray removeLastObject];
+//        [beamArray addObject:beam];
+    }
 }
 -(BeamClass *)getBeam:(int)i{
     return (BeamClass *)[beamArray objectAtIndex:i];
