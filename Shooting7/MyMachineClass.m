@@ -15,7 +15,7 @@ int unique_id;
     unique_id++;
     y_loc = 300;
     x_loc = x_init;
-    hitPoint = 100;
+    hitPoint = 10;
     offensePower = 1;
     defensePower = 0;
     mySize = size;

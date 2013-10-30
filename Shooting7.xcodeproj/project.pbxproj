@@ -135,6 +135,7 @@
 		34C09EDE18009D0300E4A4D8 /* blue_item_yuri_big.png in Resources */ = {isa = PBXBuildFile; fileRef = 34C09EDD18009D0300E4A4D8 /* blue_item_yuri_big.png */; };
 		34C16CCF181C2D9000650A40 /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34C16CCE181C2D9000650A40 /* TestViewController.m */; };
 		34C16CD1181C4E9400650A40 /* sabaki_hmix.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34C16CD0181C4E9400650A40 /* sabaki_hmix.mp3 */; };
+		34D30EC2181EDB25006D05F0 /* WingBow.png in Resources */ = {isa = PBXBuildFile; fileRef = 34D30EC1181EDB25006D05F0 /* WingBow.png */; };
 		34E216C1181BE80400B939E6 /* flinging.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34E216C0181BE80400B939E6 /* flinging.mp3 */; };
 		34E216C6181BF62F00B939E6 /* bgm_game_687.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34E216C5181BF62F00B939E6 /* bgm_game_687.mp3 */; };
 		34E216C8181BF64F00B939E6 /* mahotoshi_hmix.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34E216C7181BF64F00B939E6 /* mahotoshi_hmix.mp3 */; };
@@ -320,6 +321,7 @@
 		34C16CCD181C2D9000650A40 /* TestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
 		34C16CCE181C2D9000650A40 /* TestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 		34C16CD0181C4E9400650A40 /* sabaki_hmix.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = sabaki_hmix.mp3; sourceTree = "<group>"; };
+		34D30EC1181EDB25006D05F0 /* WingBow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WingBow.png; sourceTree = "<group>"; };
 		34E216C0181BE80400B939E6 /* flinging.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = flinging.mp3; sourceTree = "<group>"; };
 		34E216C5181BF62F00B939E6 /* bgm_game_687.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bgm_game_687.mp3; sourceTree = "<group>"; };
 		34E216C7181BF64F00B939E6 /* mahotoshi_hmix.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mahotoshi_hmix.mp3; sourceTree = "<group>"; };
@@ -475,6 +477,9 @@
 		342057D817F2B34C0084E99D /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				34A2B1BB181F9DEC00CB97F2 /* bullet */,
+				34A2B1BA181F9DDD00CB97F2 /* gameEffect */,
+				34A2B1B9181F9DB500CB97F2 /* player */,
 				34E216C3181BE93A00B939E6 /* background */,
 				34E216C2181BE91900B939E6 /* mob */,
 				34F53370181BBB5700FB9470 /* music */,
@@ -488,12 +493,6 @@
 				34C09EDD18009D0300E4A4D8 /* blue_item_yuri_big.png */,
 				34A087411803EBBD005458EF /* blue_item_yuri_big2.png */,
 				34FA998E17FBBEE500317D83 /* bullet_default.png */,
-				34FA999317FBBEE500317D83 /* bullet_level1.png */,
-				34FA999217FBBEE500317D83 /* bullet_level2.png */,
-				34FA999117FBBEE500317D83 /* bullet_level3.png */,
-				34FA999017FBBEE500317D83 /* bullet_level4.png */,
-				34FA998F17FBBEE500317D83 /* bullet_level5.png */,
-				34FA999A17FBC36300317D83 /* bullet_level6.png */,
 				34A0873F18034F80005458EF /* chara_test.png */,
 				34A087431803EC79005458EF /* chara_test2.png */,
 				348D635317FE13DF00A3049B /* circle_2w_128.png */,
@@ -507,20 +506,12 @@
 				342057E717F2B34C0084E99D /* Default-568h@2x.png */,
 				342057E317F2B34C0084E99D /* Default.png */,
 				342057E517F2B34C0084E99D /* Default@2x.png */,
-				3419C41317FD27E200980E71 /* explode3.png */,
-				3419C41217FD27E200980E71 /* explode4.png */,
-				3419C41617FD2B3300980E71 /* explode5.png */,
 				342C039F17F4604E0023C11F /* gameover.png */,
 				342057DA17F2B34C0084E99D /* InfoPlist.strings */,
 				3467B71C17FD53AF004EEE94 /* item.png */,
 				342057DD17F2B34C0084E99D /* main.m */,
 				3411FB8517FEF392001D1491 /* mechanical_design_3.png */,
 				342C039D17F4604E0023C11F /* nothing32.png */,
-				34043A5D17FA132B0000E338 /* Particles_fire.png */,
-				34FA1A32180BDAA80011E1CA /* player.png */,
-				34FA1A33180BDAA80011E1CA /* player2.png */,
-				34FA1A36180BE08B0011E1CA /* player3.png */,
-				34FA1A37180BE08B0011E1CA /* player4.png */,
 				34A087451803F017005458EF /* red.png */,
 				348D635F17FE1A9D00A3049B /* ribrary.png */,
 				342057D917F2B34C0084E99D /* Shooting7-Info.plist */,
@@ -552,6 +543,7 @@
 		34A1ED38181CCDC10007471C /* weapon */ = {
 			isa = PBXGroup;
 			children = (
+				34D30EC1181EDB25006D05F0 /* WingBow.png */,
 				340A463C181E412200D9B005 /* AnimalBow.png */,
 				340A463D181E412200D9B005 /* ClothBow.png */,
 				340A463E181E412200D9B005 /* RockBow.png */,
@@ -591,6 +583,41 @@
 				349825A218144F750043B0C0 /* AudioToolbox.framework */,
 			);
 			name = sound;
+			sourceTree = "<group>";
+		};
+		34A2B1B9181F9DB500CB97F2 /* player */ = {
+			isa = PBXGroup;
+			children = (
+				34FA1A32180BDAA80011E1CA /* player.png */,
+				34FA1A33180BDAA80011E1CA /* player2.png */,
+				34FA1A36180BE08B0011E1CA /* player3.png */,
+				34FA1A37180BE08B0011E1CA /* player4.png */,
+			);
+			name = player;
+			sourceTree = "<group>";
+		};
+		34A2B1BA181F9DDD00CB97F2 /* gameEffect */ = {
+			isa = PBXGroup;
+			children = (
+				3419C41317FD27E200980E71 /* explode3.png */,
+				3419C41217FD27E200980E71 /* explode4.png */,
+				3419C41617FD2B3300980E71 /* explode5.png */,
+				34043A5D17FA132B0000E338 /* Particles_fire.png */,
+			);
+			name = gameEffect;
+			sourceTree = "<group>";
+		};
+		34A2B1BB181F9DEC00CB97F2 /* bullet */ = {
+			isa = PBXGroup;
+			children = (
+				34FA999317FBBEE500317D83 /* bullet_level1.png */,
+				34FA999217FBBEE500317D83 /* bullet_level2.png */,
+				34FA999117FBBEE500317D83 /* bullet_level3.png */,
+				34FA999017FBBEE500317D83 /* bullet_level4.png */,
+				34FA998F17FBBEE500317D83 /* bullet_level5.png */,
+				34FA999A17FBC36300317D83 /* bullet_level6.png */,
+			);
+			name = bullet;
 			sourceTree = "<group>";
 		};
 		34BD6DAD18193135006BC523 /* AppSociallySDK */ = {
@@ -753,6 +780,7 @@
 				342057DC17F2B34C0084E99D /* InfoPlist.strings in Resources */,
 				342057E417F2B34C0084E99D /* Default.png in Resources */,
 				342057E617F2B34C0084E99D /* Default@2x.png in Resources */,
+				34D30EC2181EDB25006D05F0 /* WingBow.png in Resources */,
 				342057E817F2B34C0084E99D /* Default-568h@2x.png in Resources */,
 				342057EB17F2B34C0084E99D /* MainStoryboard.storyboard in Resources */,
 				342C03AB17F4604E0023C11F /* nothing32.png in Resources */,

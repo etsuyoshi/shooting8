@@ -295,10 +295,10 @@
                                             tag:9999//closeScrollに渡しているので不要
                                          target:target
                                        selector:selector1 ];//NSSelectorFromString(selector1)];//@"closeView:"];
-    
     //            UIView *superView = [[UIView alloc]initWithFrame:self.view.bounds];
     
-    CGRect uv_rect = CGRectMake(0, 50,
+    CGRect uv_rect = CGRectMake(rect.origin.x,
+                                rect.origin.y,
                                 rect.size.width,
                                 rect.size.height - 80);
     
@@ -310,6 +310,7 @@
                                                                   uv_rect.origin.y,
                                                                   imageMarginHorizon + amountOfImage * (imageWidth + imageMarginHorizon),
                                                                   uv_rect.size.height)];
+    [uvOnScroll setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.0f]];
     sv.contentSize = uvOnScroll.bounds.size;
     //uvにタップリスナーを付けて、画像以外がタップされたら閉じる(selfを渡してremovefromsuperview?)=>できない
     //xボタンを付けるuiviewを付けるしかないか。。
@@ -326,6 +327,9 @@
         //                                                                             image:@"close.png"
         //                                                                            target:self
         //                                                                          selector:@"imageTapped"];
+        UIView *frameView = [self createView:imageRect];//imageのframe
+        [frameView setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.8f]];
+        [uvOnScroll addSubview:frameView];
         UIImageView *imageView = [self createImageView:imageRect
                                                  image:[imageArray objectAtIndex:numImage]
                                                    tag:numImage

@@ -469,19 +469,23 @@ BGMClass *bgmClass;
         }
         case 201:{//ドラゴン選択(フリックで選択)
             
-            NSArray *imageArray = [NSArray arrayWithObjects:@"close.png",
-                                  @"close.png",
-                                  @"close.png",
-                                  @"close.png",
-                                  @"close.png",
-                                  @"close.png",
-                                  @"close.png",
-                                  @"close.png",
-                                  @"close.png",
-                                  @"close.png",
+            NSArray *imageArray = [NSArray arrayWithObjects:@"RockBow.png",
+                                  @"FireBow.png",
+                                  @"WaterBow.png",
+                                  @"IceBow.png",
+                                  @"BugBow.png",
+                                  @"AnimalBow.png",
+                                  @"GrassBow.png",
+                                  @"ClothBow.png",
+                                  @"SpaceBow.png",
+                                  @"WingBow.png",
                                   nil];
             //画面中央部にイメージファイル、その周りに半透明ビュー、更にその周囲に透明ビュー(イメージ以外をタップすると消える)
-            UIView *superView = [CreateComponentClass createSlideShow:self.view.bounds
+            //購入した武器の分だけ右を見れる
+            UIView *superView = [CreateComponentClass createSlideShow:CGRectMake(0,
+                                                                                 50,
+                                                                                 self.view.bounds.size.width,
+                                                                                 self.view.bounds.size.height)
                                                             imageFile:imageArray
                                                                target:self
                                                             selector1:@"closeView:"

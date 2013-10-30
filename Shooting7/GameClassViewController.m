@@ -54,7 +54,7 @@ int world_no;
 
 //NSMutableArray *iv_arr_tokuten;
 int y_background1, y_background2;
-const int explosionCycle = 3;//爆発時間
+const int explosionCycle = 10;//爆発時間
 int max_enemy_in_frame;
 int x_frame, y_frame;
 //int x_myMachine, x_enemyMachine, x_beam;
@@ -74,6 +74,9 @@ NSMutableArray *EnemyArray;
 NSMutableArray *ItemArray;
 ScoreBoardClass *ScoreBoard;
 GoldBoardClass *GoldBoard;
+
+int enemyCount;//発生した敵の数
+int enemyDown;//倒した敵の数
 
 //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 //パワーゲージ背景：ビジュアルこだわりポイント
@@ -176,6 +179,10 @@ float count = 0;
     
     //backgroundの描画：絵を二枚用意して一枚目を表示して時間経過と共に進行方向(逆)にスクロールさせ、１枚目の終端を描画し始めたら２枚目の最初を描画させる
     iv_background1 = [[UIImageView alloc]initWithFrame:rect_frame];
+    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(rect_frame.origin.x,
+                                                                  -rect_frame.size.height,
+                                                                  rect_frame.size.width,
+                                                                  rect_frame.size.height)];
     iv_background1.image = [UIImage imageNamed:@"cosmos_star4.png"];
     [self.view addSubview:iv_background1];//初期状態ではまず１枚目を描画させる
     y_background1 = 0;
@@ -250,8 +257,8 @@ float count = 0;
     CGRect rect_pause = CGRectMake(rect_frame.size.width / 2 - size_pause / 2,30 , size_pause, size_pause);
 //    UIImageView *iv_pause = [[UIImageView alloc]initWithFrame:CGRectMake(rect_frame.size.width / 2 - size_pause / 2,0 , size_pause, size_pause)];
     UIImageView *iv_pause = [CreateComponentClass createImageView:rect_pause image:@"close.png" tag:0 target:self selector:@"onClickedStopButton"];
-    [iv_pause bringSubviewToFront:self.view];
-    [self.view addSubview:iv_pause];
+    [iv_frame bringSubviewToFront:iv_pause];//iv_frameの上にボタン配置
+    [iv_frame addSubview:iv_pause];
 
     
     //以下実行後、0.1秒間隔でtimerメソッドが呼び出されるが、それと並行してこのメソッド(viewDidLoad)も実行される(マルチスレッドのような感じ)
@@ -264,8 +271,7 @@ float count = 0;
 
 - (void)ordinaryAnimationStart{
     //ユーザーインターフェース
-    [iv_frame bringSubviewToFront:self.view];
-    
+    [self.view bringSubviewToFront:iv_frame];
     
     //消去、生成、更新、表示
     
@@ -314,10 +320,19 @@ float count = 0;
         //ダメージパーティクルの消去
         [[MyMachine getDamageParticle] setIsEmitting:NO];
         
+        //ダメージを受けたときのイフェクト(画面を揺らす)
+        
+        
+        
+        
         //爆発から所定時間が経過しているか判定＝＞爆発パーティクルの消去
         if([MyMachine getDeadTime] >= explosionCycle){
-            NSLog(@"set emitting no");
+            NSLog(@"mymachine : set emitting no");
             [[MyMachine getExplodeParticle] setIsEmitting:NO];//消去するには数秒後にNOに
+            
+            isGameMode = false;
+            [self exitProcess];///////////////////////
+            return;
         }
     }
     
@@ -538,7 +553,6 @@ float count = 0;
                         //敵を倒したら
                         if(![[EnemyArray objectAtIndex:i] getIsAlive]){
                             
-                            
                             //効果音=>別クラスに格納してstatic method化して簡潔に！
                             CFBundleRef mainBundle;
                             mainBundle = CFBundleGetMainBundle ();
@@ -557,6 +571,8 @@ float count = 0;
                             //得点の加算
                             [ScoreBoard setScore:[ScoreBoard getScore] + 5];//+1でよい？！
                             [self displayScore:ScoreBoard];
+                            
+                            enemyDown++;
                             
                             
                             //アイテム出現
@@ -621,7 +637,7 @@ float count = 0;
     
     
     //ユーザーインターフェース
-    [iv_frame bringSubviewToFront:self.view];
+    [self.view bringSubviewToFront:iv_frame];
 
 }
 
@@ -671,36 +687,31 @@ float count = 0;
     // Dispose of any resources that can be recreated.
 }
 
-//- (void) handlePanGesture:(UIPanGestureRecognizer*) sender {
-//    UIPanGestureRecognizer* pan = (UIPanGestureRecognizer*) sender;
-//    CGPoint location = [pan translationInView:self.view];
-//    NSLog(@"pan x=%f, y=%f", location.x, location.y);
-//}
-
+/**
+ *tmインスタンスによって一定時間呼び出されるメソッド
+ *一定間隔呼び出しは[tm invalidate];によって停止される
+ */
 - (void)time:(NSTimer*)timer{
     if(isGameMode){
         [self drawBackground];
-        
-        count += 0.1;
-        
-        
-        //ここにあったdoNextをこのメソッドの敵機生成前に移行
-//        NSLog(@"count");
         [self ordinaryAnimationStart];
         
         //一定時間経過するとゲームオーバー
-        if(count >= TIMEOVER_SECOND || ![MyMachine getIsAlive]){
-            NSLog(@"gameover");
+//        if(count >= TIMEOVER_SECOND || ![MyMachine getIsAlive]){
+//            NSLog(@"gameover");
             //経過したらタイマー終了
-            [self performSelector:@selector(exitProcess) withObject:nil afterDelay:0.8];//自機爆破後、即座に終了させると違和感あるため少しdelay
-//            [self exitProcess];
+//            [self performSelector:@selector(exitProcess) withObject:nil afterDelay:0.1];//自機爆破後、即座に終了させると違和感あるため少しdelay
+//            [self exitProcess];//delayさせるとその間にprogressが進んでしまうので即座に表示
+//        }
+        count += 0.1;
+        
+        if(count >= TIMEOVER_SECOND){
+            isGameMode = false;
         }
         
     }else{
         
-        //一時停止ボタンが押された：isGameMode=false
-        
-        
+        //[tm invalid]をしないでisGameMode=falseとなった時 ＝ 一時停止ボタンが押された時もしくはプレイヤー撃破時
         //停止中画面に移行(一時停止用UIImageViewの表示)
         
     }
@@ -857,6 +868,7 @@ float count = 0;
     }
     
     if(isYield){
+        enemyCount ++;
         int x = arc4random() % ((int)self.view.bounds.size.width - OBJECT_SIZE);
         
         EnemyClass *enemy = [[EnemyClass alloc]init:x size:OBJECT_SIZE];
@@ -898,21 +910,31 @@ float count = 0;
     //frameの大きさと背景の現在描画位置を決定
     //点数オブジェクトで描画
 //    NSLog(@"drawbackground : 1 = %d, 2 = %d", y_background1, y_background2);
-    y_background1 += 5;
-    y_background2 += 5;//スクロール速度
+//    y_background1 += 5;
+//    y_background2 += 5;//スクロール速度
     
     
-    if(y_background1 > rect_frame.size.height){
-        y_background1 = -rect_frame.size.height;
-    }else if(y_background2 > rect_frame.size.height){
-        y_background2 = -rect_frame.size.height;
+//    if(y_background1 > rect_frame.size.height){
+//        y_background1 = -rect_frame.size.height;
+//    }else if(y_background2 > rect_frame.size.height){
+//        y_background2 = -rect_frame.size.height;
+//    }
+    
+    
+//    [iv_background1 removeFromSuperview];
+//    [iv_background2 removeFromSuperview];
+//    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, y_background1,rect_frame.size.width,rect_frame.size.height + 5)];
+//    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0, y_background2,rect_frame.size.width,rect_frame.size.height + 5)];
+    
+    iv_background1.center = CGPointMake(iv_background1.center.x, iv_background1.center.y + 5);
+    iv_background2.center = CGPointMake(iv_background2.center.x, iv_background2.center.y + 5);
+    if(iv_background1.center.y > (float)rect_frame.size.height * 1.5f){
+        iv_background1.center = CGPointMake(iv_background1.center.x, iv_background1.center.y * -0.5f);
+    }else if(iv_background2.center.y > rect_frame.size.height){
+        iv_background2.center = CGPointMake(iv_background2.center.x, iv_background2.center.y * -0.5f);
+        
     }
     
-    
-    [iv_background1 removeFromSuperview];
-    [iv_background2 removeFromSuperview];
-    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, y_background1,rect_frame.size.width,rect_frame.size.height + 5)];
-    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0, y_background2,rect_frame.size.width,rect_frame.size.height + 5)];
     
     switch(world_no){
         case 0:{
@@ -968,11 +990,11 @@ float count = 0;
 
     
     
-    [self.view addSubview:iv_background1];
-    [self.view addSubview:iv_background2];
+//    [self.view addSubview:iv_background1];
+//    [self.view addSubview:iv_background2];
     
     [self.view sendSubviewToBack:iv_background1];//最背面に表示
-    [self.view sendSubviewToBack:iv_background2];
+//    [self.view sendSubviewToBack:iv_background2];
     
 //    x_frame = rect_frame.size.width;
 //    y_frame = rect_frame.size.height;
@@ -983,7 +1005,16 @@ float count = 0;
     
     //タイマー終了(死んだ時に周囲の敵やイフェクトが動いているようにするかどうか)
     [tm invalidate];
-
+    
+    //
+    UIView *superView = [CreateComponentClass createViewNoFrame:self.view.bounds
+                                                          color:[UIColor clearColor]
+                                                            tag:0
+                                                         target:nil
+                                                       selector:nil];
+    [self.view addSubview:superView];
+    
+    
     //ゲーム終了時に呼び出されるメソッド
     //終了報告イメージ？ダイアログ？表示
     //データ：attrclassで処理
@@ -996,13 +1027,22 @@ float count = 0;
     
     int go_component_width = 250;
     
-    
+    //全体のフレーム
     UIView *view_go = [CreateComponentClass createView];
     [self.view addSubview:view_go];
+    [self.view bringSubviewToFront:view_go];
+    
+    //gameover_display:go_y=10
+    //tv_score
+    //pv_score
+    //tv_gold
+    //pv_gold
+    //tv_complete
+    //pv_complete
     
     //ゲームオーバー表示
 //    int go_width = 250;
-    int go_height = 90;
+    int go_height = 50;
     int go_y = 10;//view_go上での相対位置
     CGRect rect_gameover = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
                                       go_y,
@@ -1010,44 +1050,70 @@ float count = 0;
                                       go_height);
     [view_go addSubview:[CreateComponentClass createImageView:rect_gameover
                                                         image:@"gameover.png"]];
+    
+    
+    
     //ScoreBoard
     int score_y = go_y + go_height + 5;
     CGRect rect_score = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
                                    score_y,
                                    go_component_width,
                                    go_height);
-    [view_go addSubview:[CreateComponentClass createImageView:rect_score image:@"close"]];
+//    [view_go addSubview:[CreateComponentClass createImageView:rect_score image:@"close"]];
+    UITextView *tv_score = [CreateComponentClass createTextView:rect_score text:@"score : 0"];
+    [tv_score setBackgroundColor:[UIColor clearColor]];
+    [view_go addSubview:tv_score];
     
+    UIProgressView *pv_score = [[UIProgressView alloc]
+                               initWithProgressViewStyle:UIProgressViewStyleBar];
+    pv_score.frame = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
+                               score_y + go_height,
+                               go_component_width,
+                               10);
+    pv_score.progressTintColor = [UIColor greenColor];
+    [view_go addSubview:pv_score];
     
     //GoldBoard
     int gold_y = score_y + go_height + 5;
-//    CGRect rect_gold = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
-//                                   gold_y,
-//                                   go_component_width,
-//                                   go_height);
+    CGRect rect_gold = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
+                                   gold_y,
+                                   go_component_width,
+                                   go_height);
 //    [view_go addSubview:[CreateComponentClass createImageView:rect_gold image:@"close"]];
+    UITextView *tv_gold = [CreateComponentClass createTextView:rect_gold text:@"gold : 0"];
+    [tv_gold setBackgroundColor:[UIColor clearColor]];
+    [view_go addSubview:tv_gold];
     
-    // プログレスバー作成例文
-    UIProgressView *pv = [[UIProgressView alloc]
-                           initWithProgressViewStyle:UIProgressViewStyleBar];
-    pv.frame = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
-                          gold_y,
-                          go_component_width,
-                          10);
+    //goldのprogressviewは不要
+//    UIProgressView *pv_gold = [[UIProgressView alloc]
+//                           initWithProgressViewStyle:UIProgressViewStyleBar];
+//    pv_gold.progressTintColor = [UIColor redColor];
+//    pv_gold.frame = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
+//                          gold_y + go_height,
+//                          go_component_width,
+//                          10);
+//    [view_go addSubview:pv_gold];
     
-    [view_go addSubview:pv];
-//    pv.progress = 0.2;
-//    [pv setProgress:0.9 animated:YES];//iOS5以降のみ有効?=>なぜか適用されない
-//
-//    [view_go addSubview:pv];
     
     //撃破率
-    int gekiha_y = gold_y + go_height + 5;
-    CGRect rect_gekiha = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
-                                  gekiha_y,
+    int complete_y = gold_y + go_height + 5;
+    CGRect rect_complete = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
+                                  complete_y,
                                   go_component_width,
                                   go_height);
-    [view_go addSubview:[CreateComponentClass createImageView:rect_gekiha image:@"close"]];
+//    [view_go addSubview:[CreateComponentClass createImageView:rect_complete image:@"close"]];
+    UITextView *tv_complete = [CreateComponentClass createTextView:rect_complete text:@"complete : 0"];
+    [tv_complete setBackgroundColor:[UIColor clearColor]];
+    [view_go addSubview:tv_complete];
+    UIProgressView *pv_complete = [[UIProgressView alloc]
+                               initWithProgressViewStyle:UIProgressViewStyleBar];
+    pv_complete.progressTintColor = [UIColor blueColor];
+    pv_complete.frame = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
+                               complete_y + go_height,
+                               go_component_width,
+                               10);
+    
+    [view_go addSubview:pv_complete];
     
     //ダイアログで成績を表示(未)してからゲーム画面閉じる
 //    CreateComponentClass *createComponentClass = [[CreateComponentClass alloc]init];
@@ -1055,9 +1121,9 @@ float count = 0;
     
     //ボタン配置=>下から算出
     CGRect rect_btn = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
-                                    go_height,
+                                    view_go.bounds.size.height - go_height - 10,
                                     go_component_width,
-                                    view_go.bounds.size.height - go_height - 10);
+                                    go_height);
     UIButton *qbBtn = [CreateComponentClass createQBButton:ButtonTypeWithImage
                                                       rect:rect_btn
                                                      image:@"blue_item_yuri_big2.png"
@@ -1069,16 +1135,81 @@ float count = 0;
     
     
     //リアルタイムに動的に表示
-    int pvMax = 100;
-    for (int pvValue = 1; pvValue < pvMax; pvValue++ ) {
-        // Other stuff in background
-        dispatch_async(dispatch_get_main_queue(), ^{
-            pv.progress = ((float)pvValue/(float)pvMax);
+//    int pvMax = 10000;
+    
+    //マルチスレッド
+    dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_queue_t mainQueue = dispatch_get_main_queue();
+    
+    //score:expに獲得したスコアを表示(pvはmaxは次のレベルに必要な値)
+    //gold: pvは過去の最高値を横軸最大値とした軸
+    //complete:100%を横軸最大値
+    //三つとも最大値に達したら初期化してゼロからスタート
+    //加えるべき値を別途定義してそれぞれ(pv_score等)に加えていく
+    //上限まで達したら再度ゼロにして足していく
+    
+    dispatch_async(globalQueue, ^{
+        AttrClass *attr = [[AttrClass alloc]init];
+        int level = [[attr getValueFromDevice:@"level"] intValue];
+        int exp = [[attr getValueFromDevice:@"exp"] intValue];
+        int expTilNextLevel = [attr getMaxExpAtTheLevel:level];
+        
+        
+        float unit = (float)expTilNextLevel / 100.0f;//progressViewの100分割ユニット＝最初のレベルで固定
+        int loopCount = (float)(exp + [ScoreBoard getScore])/unit;
+//        int loopCount = (float)(exp + 1000)/unit;//テスト用
+        int cntInit = (float)exp / unit;
+        int pvScoreValue = cntInit;
+        //スコア表示
+        for(int cnt = cntInit; cnt < loopCount ;cnt++){//expTilNextLevelを100分割した時に獲得したスコアがそのユニットの何倍か
+            //時間のかかる処理
+            for(int i = 0; i < 50; i++){
+                NSLog(@"level = %d, cnt = %d, unit = %f, cu = %f, MaxExpAtLevel = %d, pvScoreValue = %d", level, cnt, unit ,cnt*unit, [attr getMaxExpAtTheLevel:level],pvScoreValue);
+            }
             
             
-            //
-        });
-    }
+            //メインスレッドで途中結果表示
+            dispatch_async(mainQueue, ^{
+                
+                tv_score.text = [NSString stringWithFormat:@"%d",(int)(cnt * unit)];
+                pv_score.progress = (float)pvScoreValue / 100.0f;
+            });
+            
+            if(pvScoreValue <= 100){
+//            if(cnt * unit < [attr getMaxExpAtTheLevel:level]){
+                pvScoreValue ++;
+                
+            }else{
+                level++;
+                expTilNextLevel = [attr getMaxExpAtTheLevel:level];
+                pvScoreValue = 0;
+            }
+        }
+        
+//        int addComplete = 0;//敵を倒した割合
+        for(int cnt = 0;cnt < 100;cnt++){
+            //時間のかかる処理
+            for(int i = 0; i < 50; i++){
+                NSLog(@"cnt = %d, enemyCount = %d, enemyDown = %d", cnt, enemyCount, enemyDown);
+            }
+            
+            
+            //メインスレッドで途中結果表示
+            dispatch_async(mainQueue, ^{
+                
+                tv_complete.text = [NSString stringWithFormat:@"complete : %d%%", cnt];
+                pv_complete.progress = (float)cnt / 100.0f;
+            });
+            if(enemyCount == 0){
+                break;
+            }else if(cnt >= (float)enemyDown / (float)enemyCount * 100.0f){
+                break;
+            }
+        }
+    });
+    
+    
+    
     
     return ;
     

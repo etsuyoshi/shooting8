@@ -46,6 +46,10 @@
     
     return self;
 }
+
+-(int)getMaxExpAtTheLevel:(int)level{
+    return [[MaxExpArray objectAtIndex:level] intValue];
+}
 /**
  *デバイス側にname,score,gold,login,gameCnt,level,expをNSString型として保存
  *returnAttrDictではそれらを読み込ませたattrDict(Dictionary)を作成

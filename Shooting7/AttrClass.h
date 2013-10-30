@@ -21,6 +21,7 @@
 //    int level;
 //    int exp;
 }
+-(int)getMaxExpAtTheLevel:(int)level;
 -(Boolean)removeAllData;
 -(NSDictionary *)getAttrDict;
 -(Boolean)addExp:(int)addingVal;
