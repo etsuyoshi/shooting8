@@ -114,12 +114,28 @@ float count = 0;
     }
     return self;
 }
-
-
+//ステータスバー非表示の一環
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
+    
+    // ステータスバーを非表示にする:plistでも可
+    if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)])
+    {
+        //ios7用
+        [self prefersStatusBarHidden];
+        [self performSelector:@selector(setNeedsStatusBarAppearanceUpdate)];
+    }
+    else
+    {
+        // iOS 6=>iOS 7ではきかない
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+    }
+
 	// Do any additional setup after loading the view.
     
     //ステージ選択
@@ -180,14 +196,11 @@ float count = 0;
     //backgroundの描画：絵を二枚用意して一枚目を表示して時間経過と共に進行方向(逆)にスクロールさせ、１枚目の終端を描画し始めたら２枚目の最初を描画させる
     iv_background1 = [[UIImageView alloc]initWithFrame:rect_frame];
     iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(rect_frame.origin.x,
-                                                                  -rect_frame.size.height,
+                                                                  -rect_frame.size.height - 10,
                                                                   rect_frame.size.width,
-                                                                  rect_frame.size.height)];
+                                                                  rect_frame.size.height + 10)];
     [self.view addSubview:iv_background1];//初期状態ではまず１枚目を描画させる
     [self.view addSubview:iv_background2];
-    y_background1 = 0;
-    y_background2 = -rect_frame.size.height;
-
     
     length_beam = 20;
     thick_beam = 5;
@@ -854,8 +867,6 @@ float count = 0;
     }else if(count < 150){
         velocity = 30;
     }
-//    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, y_background1,rect_frame.size.width,rect_frame.size.height + 5)];
-//    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0, y_background2,rect_frame.size.width,rect_frame.size.height + 5)];
     
     iv_background1.center = CGPointMake(iv_background1.center.x, iv_background1.center.y + velocity);
     iv_background2.center = CGPointMake(iv_background2.center.x, iv_background2.center.y + velocity);
@@ -910,25 +921,6 @@ float count = 0;
             break;
         }
     }
-
-    
-    
-    
-    
-    
-//    iv_background1.alpha = 0.9;//透過率
-//    iv_background2.alpha = 0.9;//透過率
-
-    
-    
-//    [self.view addSubview:iv_background1];
-//    [self.view addSubview:iv_background2];
-    
-    [self.view sendSubviewToBack:iv_background1];//最背面に表示
-//    [self.view sendSubviewToBack:iv_background2];
-    
-//    x_frame = rect_frame.size.width;
-//    y_frame = rect_frame.size.height;
 }
 
 

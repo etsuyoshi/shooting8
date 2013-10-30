@@ -30,10 +30,30 @@
 UIView *_loadingView;
 UIActivityIndicatorView *_indicator;
 
+//ステータスバー非表示の一環
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    
+    // ステータスバーを非表示にする:plistでも可
+    if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)])
+    {
+        //ios7用
+        [self prefersStatusBarHidden];
+        [self performSelector:@selector(setNeedsStatusBarAppearanceUpdate)];
+    }
+    else
+    {
+        // iOS 6=>iOS 7ではきかない
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+    }
+    
+
     
     //フォントテストー＞本番時削除
 #ifdef FONTTEST
