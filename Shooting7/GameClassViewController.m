@@ -183,8 +183,8 @@ float count = 0;
                                                                   -rect_frame.size.height,
                                                                   rect_frame.size.width,
                                                                   rect_frame.size.height)];
-    iv_background1.image = [UIImage imageNamed:@"cosmos_star4.png"];
     [self.view addSubview:iv_background1];//初期状態ではまず１枚目を描画させる
+    [self.view addSubview:iv_background2];
     y_background1 = 0;
     y_background2 = -rect_frame.size.height;
 
@@ -755,70 +755,6 @@ float count = 0;
     
 }
 
-
-- (void)onFlickedFrame1:(UIPanGestureRecognizer*)gr {
-//    isTouched = true;
-//    NSLog(@"onFlickedFrame");
-    //参考：http://ultra-prism.jp/2012/12/01/uigesturerecognizer-touch-handling-sample/2/
-//    http://www.yoheim.net/blog.php?q=20120620
-    //フリックで移動した距離を取得する
-    CGPoint point = [gr translationInView:[MyMachine getImageView]];
-    
-    //anticipate
-    //指の動きが速いと画面上で認識した位置と実際の指の位置が異なる可能性がある
-    //変化量([MyMachine getX] - point.x)が大きいときは変化量に応じた距離を計算(推測)する。
-    //ガウシアン関数にして、移動量が大きい場合に追加移動距離も大きくする
-    //速度はpoint(タッチした時からのトータル累積)で計るのではなく、前時刻の移動距離を記憶させる(その場合はタッチし始めを別途処理する必要がある。
-    
-
-//    CGPoint anticipatedPoint = CGPointMake(
-//                                           [MyMachine getX] + point.x
-//                                            + ((float)(point.x>10.0f)?15:0),
-//                                           [MyMachine getY] + point.y
-//                                            + ((float)(point.y>10.0f)?15:0));
-////                                            + (int)(point.y*0.1) * 1.5);
-////    [NSNumber numberWithInt:isEmitting?100:0]
-//    NSLog(@"x = %f, point.x = %f", anticipatedPoint.x, point.x);
-//    NSLog(@"y = %f, point.y = %f", anticipatedPoint.y, point.y);
-//    [MyMachine setX:anticipatedPoint.x];
-//    [MyMachine setY:anticipatedPoint.y];
-    
-    
-    
-    
-    CGPoint movedPoint = CGPointMake([MyMachine getX] + point.x, [MyMachine getY] + point.y);
-    
-    [MyMachine setX:movedPoint.x];
-    [MyMachine setY:movedPoint.y];
-    [gr setTranslation:CGPointZero inView:[MyMachine getImageView]];//ここでself.viewを指定するのではなく、myMachineをセットする
-    
-    
-    //以下を参考にパンジェスチャーをリアルタイムに認識しながら、MyMachineをbringToFrontするように描画する方法
-    //    https://www.google.co.jp/search?q=uipangesturerecognizer+%E3%81%9A%E3%82%8C%E3%82%8B&oq=uipangesturerecognizer+%E3%81%9A%E3%82%8C%E3%82%8B&aqs=chrome..69i57.12622j0j7&sourceid=chrome&espv=210&es_sm=119&ie=UTF-8#es_sm=119&espv=210&q=uipangesturerecognizer+%E3%80%80%E7%B5%B6%E5%AF%BE%E4%BD%8D%E7%BD%AE%E3%82%92%E5%8F%96%E5%BE%97%E3%81%99%E3%82%8B
-    //参考http://www.nekotricolor.com/blog/2012/08/10/414/
-    //タップしたときの座標が画面全体の絶対的な座標でなく、画像内の相対的な座標になります。
-//    CGPoint location = [gr translationInView:[MyMachine getImageView]];
-//    CGPoint movedPoint = CGPointMake([MyMachine getImageView].center.x +location.x,
-//                                     [MyMachine getImageView].center.y + location.y);
-//    [MyMachine getImageView].center = movedPoint;
-//    [MyMachine setLocation:movedPoint];
-//    //    [MyMachine setX:anticipatedPoint.x];
-//    //    [MyMachine setY:anticipatedPoint.y];
-//    [gr setTranslation:CGPointZero inView:[MyMachine getImageView]];
-    
-    // 指が移動したとき、上下方向にビューをスライドさせる
-    if (gr.state == UIGestureRecognizerStateChanged) {//移動中
-        isTouched = true;
-//        NSLog(@"x = %d, y = %d", (int)[gr translationInView:self.view].x, (int)[gr translationInView:self.view].y);
-    }
-    // 指が離されたとき、ビューを元に位置に戻して、ラベルの文字列を変更する
-    else if (gr.state == UIGestureRecognizerStateEnded) {//指を離した時
-        isTouched = false;
-    }
-}
-
-
-
 -(void) viewWillDisappear:(BOOL)animated {
     //navigationバーの戻るボタン押下時の呼び出しメソッド
     if ([self.navigationController.viewControllers indexOfObject:self]==NSNotFound) {
@@ -909,29 +845,24 @@ float count = 0;
 -(void)drawBackground{
     //frameの大きさと背景の現在描画位置を決定
     //点数オブジェクトで描画
-//    NSLog(@"drawbackground : 1 = %d, 2 = %d", y_background1, y_background2);
-//    y_background1 += 5;
-//    y_background2 += 5;//スクロール速度
     
-    
-//    if(y_background1 > rect_frame.size.height){
-//        y_background1 = -rect_frame.size.height;
-//    }else if(y_background2 > rect_frame.size.height){
-//        y_background2 = -rect_frame.size.height;
-//    }
-    
-    
-//    [iv_background1 removeFromSuperview];
-//    [iv_background2 removeFromSuperview];
+    int velocity = 5;
+    if(count < 50){
+        velocity = 10;
+    }else if(count < 100){
+        velocity = 20;
+    }else if(count < 150){
+        velocity = 30;
+    }
 //    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, y_background1,rect_frame.size.width,rect_frame.size.height + 5)];
 //    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0, y_background2,rect_frame.size.width,rect_frame.size.height + 5)];
     
-    iv_background1.center = CGPointMake(iv_background1.center.x, iv_background1.center.y + 5);
-    iv_background2.center = CGPointMake(iv_background2.center.x, iv_background2.center.y + 5);
+    iv_background1.center = CGPointMake(iv_background1.center.x, iv_background1.center.y + velocity);
+    iv_background2.center = CGPointMake(iv_background2.center.x, iv_background2.center.y + velocity);
     if(iv_background1.center.y > (float)rect_frame.size.height * 1.5f){
-        iv_background1.center = CGPointMake(iv_background1.center.x, iv_background1.center.y * -0.5f);
-    }else if(iv_background2.center.y > rect_frame.size.height){
-        iv_background2.center = CGPointMake(iv_background2.center.x, iv_background2.center.y * -0.5f);
+        iv_background1.center = CGPointMake(iv_background1.center.x, rect_frame.size.height * -0.5f - 10);
+    }else if(iv_background2.center.y > (float)rect_frame.size.height * 1.5f){
+        iv_background2.center = CGPointMake(iv_background2.center.x, rect_frame.size.height * -0.5f - 10);
         
     }
     
@@ -1171,7 +1102,7 @@ float count = 0;
             //メインスレッドで途中結果表示
             dispatch_async(mainQueue, ^{
                 
-                tv_score.text = [NSString stringWithFormat:@"%d",(int)(cnt * unit)];
+                tv_score.text = [NSString stringWithFormat:@"EXP : %d",(int)(cnt * unit)];
                 pv_score.progress = (float)pvScoreValue / 100.0f;
             });
             
@@ -1189,7 +1120,7 @@ float count = 0;
 //        int addComplete = 0;//敵を倒した割合
         for(int cnt = 0;cnt < 100;cnt++){
             //時間のかかる処理
-            for(int i = 0; i < 50; i++){
+            for(int i = 0; i < 10; i++){
                 NSLog(@"cnt = %d, enemyCount = %d, enemyDown = %d", cnt, enemyCount, enemyDown);
             }
             
