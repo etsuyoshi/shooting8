@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DWFParticleView.h"
+#import "ExplodeParticleView.h"
 #import "DamageParticleView.h"
 #import "BeamClass.h"
 
@@ -27,7 +27,7 @@
     UIImageView *iv;
     CGRect rect;
     NSMutableArray *beamArray;
-    DWFParticleView *explodeParticle;
+    ExplodeParticleView *explodeParticle;
     DamageParticleView *damageParticle;
 }
 
@@ -51,7 +51,7 @@
 -(int) getX;
 -(int) getY;
 -(UIImageView *)getImageView;
--(DWFParticleView *)getExplodeParticle;
+-(ExplodeParticleView *)getExplodeParticle;
 -(DamageParticleView *)getDamageParticle;
 
 

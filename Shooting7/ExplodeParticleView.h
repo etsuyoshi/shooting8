@@ -1,5 +1,5 @@
 //
-//  DWFParticleView.h
+//  ExplodeParticleView.h
 //  Shooting3
 //
 //  Created by 遠藤 豪 on 13/10/01.
@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 
-@interface DWFParticleView : UIView{
+@interface ExplodeParticleView : UIView{
 //    CAEmitterLayer *fireEmitter;
     CAEmitterLayer *particleEmitter;
     Boolean isFinished;

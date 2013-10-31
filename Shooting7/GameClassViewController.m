@@ -33,7 +33,7 @@
 #import "EnemyClass.h"
 //#import "BeamClass.h"
 #import "ItemClass.h"
-#import "DWFParticleView.h"
+#import "ExplodeParticleView.h"
 #import "PowerGaugeClass.h"
 #import "MyMachineClass.h"
 #import "ScoreBoardClass.h"
@@ -91,7 +91,7 @@ int x_pg, y_pg, width_pg, height_pg;
 
 NSTimer *tm;
 BGMClass *bgmClass;
-float count = 0;
+float count = 0;//timer
 
 @interface GameClassViewController ()
 
@@ -605,6 +605,17 @@ float count = 0;
 //                                [self.view bringSubviewToFront: [[ItemArray objectAtIndex:([ItemArray count]-1)] getImageView]];
 //                                [self.view addSubview:[[ItemArray objectAtIndex:([ItemArray count]-1)] getImageView]];
                                 
+                                //発生時のキラキラ
+                                /**
+                                 *形も複数用意し、色も七色にする。
+                                 *発生時は沢山表示
+                                 * 動線上には一定間隔（ランダム）で表示
+                                 *プレイヤー取得時にも沢山表示
+                                 */
+                                [[[ItemArray objectAtIndex:i] getKiraParticle] setUserInteractionEnabled: NO];//インタラクション拒否
+                                [[[ItemArray objectAtIndex:i] getKiraParticle] setIsEmitting:YES];//消去するには数秒後にNOに
+                                [self.view bringSubviewToFront: [[ItemArray objectAtIndex:i] getKiraParticle]];//最前面に
+                                [self.view addSubview: [[ItemArray objectAtIndex:i] getKiraParticle]];//表示する
                                 
                             }else{
                                 NSLog(@"アイテムなし");
@@ -827,21 +838,6 @@ float count = 0;
             [EnemyArray removeLastObject];
         }
     }
-
-//    if((int)(count * 10) % 5 ==0 && arc4random() % 2 == 0){
-//    
-////        NSLog(@"生成");
-//        int x = arc4random() % ((int)self.view.bounds.size.width - OBJECT_SIZE);
-//
-//        EnemyClass *enemy = [[EnemyClass alloc]init:x size:OBJECT_SIZE];
-//        
-//        [EnemyArray insertObject:enemy atIndex:0];
-//        if([EnemyArray count] > 30) {
-//            [EnemyArray removeLastObject];
-//        }
-////        [EnemyArray addObject:enemy];//既に初期化済なので追加のみ
-////        NSLog(@"敵機 新規生成, %d, %d", [enemy getY], (int)(count * 10));
-//    }
 }
 
 //yieldBeamメソッドはMyMachine内に実装
@@ -1094,7 +1090,7 @@ float count = 0;
             //メインスレッドで途中結果表示
             dispatch_async(mainQueue, ^{
                 
-                tv_score.text = [NSString stringWithFormat:@"EXP : %d",(int)(cnt * unit)];
+                tv_score.text = [NSString stringWithFormat:@"EXP : %d     level : %d",(int)(cnt * unit), level];
                 pv_score.progress = (float)pvScoreValue / 100.0f;
             });
             
@@ -1120,8 +1116,10 @@ float count = 0;
             //メインスレッドで途中結果表示
             dispatch_async(mainQueue, ^{
                 
-                tv_complete.text = [NSString stringWithFormat:@"complete : %d%%", cnt];
+                tv_complete.text = [NSString stringWithFormat:@"complete : %d%%", cnt + 1];
                 pv_complete.progress = (float)cnt / 100.0f;
+                
+                
             });
             if(enemyCount == 0){
                 break;
@@ -1129,8 +1127,32 @@ float count = 0;
                 break;
             }
         }
+        
+        
+        if(enemyCount == enemyDown){
+            tv_complete.text = [NSString stringWithFormat:@"complete : 100%%"];
+        }
+        
+        
+        
+        //gold
+        for(int cnt = cntInit; cnt < [GoldBoard getScore] ;cnt++){//expTilNextLevelを100分割した時に獲得したスコアがそのユニットの何倍か
+            //時間のかかる処理
+            for(int i = 0; i < 50; i++){
+                NSLog(@"gold : cnt = %d", cnt);
+            }
+            
+            
+            //メインスレッドで途中結果表示
+            dispatch_async(mainQueue, ^{
+                
+                tv_gold.text = [NSString stringWithFormat:@"GOLD : %d", cnt];
+            });
+        }
+        
+        
+        
     });
-    
     
     
     

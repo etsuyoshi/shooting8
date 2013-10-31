@@ -81,7 +81,7 @@ int unique_id;
 
 -(void) die:(CGPoint) location{
     //爆発用パーティクルの初期化
-    explodeParticle = [[DWFParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, bomb_size, bomb_size)];
+    explodeParticle = [[ExplodeParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, bomb_size, bomb_size)];
     isAlive = false;
     dead_time ++;
 }
@@ -174,7 +174,7 @@ int unique_id;
     return iv;
 }
 
--(DWFParticleView *)getExplodeParticle{
+-(ExplodeParticleView *)getExplodeParticle{
     //dieしていれば爆発用particleは初期化されているはず=>描画用クラスで描画(self.view addSubview:particle);
     [explodeParticle setType:0];//自機用パーティクル設定
     

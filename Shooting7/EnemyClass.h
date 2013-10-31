@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DWFParticleView.h"
+#import "ExplodeParticleView.h"
 #import "DamageParticleView.h"
 
 @interface EnemyClass : NSObject{
@@ -24,7 +24,7 @@
     Boolean isDamaged;
     UIImageView *iv;
     CGRect rect;
-    DWFParticleView *explodeParticle;
+    ExplodeParticleView *explodeParticle;
     DamageParticleView *damageParticle;
 }
 
@@ -51,6 +51,6 @@
 -(int) getX;
 -(int) getY;
 -(UIImageView *)getImageView;
--(DWFParticleView *)getExplodeParticle;
+-(ExplodeParticleView *)getExplodeParticle;
 -(DamageParticleView *)getDamageParticle;
 @end

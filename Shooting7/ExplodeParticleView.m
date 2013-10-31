@@ -1,15 +1,15 @@
 //
-//  DWFParticleView.m
+//  ExplodeParticleView.m
 //  Shooting3
 //
 //  Created by 遠藤 豪 on 13/10/01.
 //  Copyright (c) 2013年 endo.tuyo. All rights reserved.
 //
 
-#import "DWFParticleView.h"
+#import "ExplodeParticleView.h"
 #import "QuartzCore/QuartzCore.h"
 
-@implementation DWFParticleView
+@implementation ExplodeParticleView
 
 -(id)initWithFrame:(CGRect)frame
 {
@@ -19,7 +19,7 @@
         // Initialization code
         
 #ifdef DEBUG
-        NSLog(@"DWFParticleView start");
+        NSLog(@"ExplodeParticleView start");
 #endif
         particleEmitter = (CAEmitterLayer *) self.layer;
         particleEmitter.emitterPosition = CGPointMake(0, 0);//CGPointMake(frame.origin.x, frame.origin.y);//CGPointMake(0, 0);
@@ -46,9 +46,9 @@
         
         
     }
-//    NSLog(@"%@", self);//<DWFParticleView: 0x92458e0; frame = (160 160; 150 150); layer = <CAEmitterLayer: 0x9243e50>>
+//    NSLog(@"%@", self);//<ExplodeParticleView: 0x92458e0; frame = (160 160; 150 150); layer = <CAEmitterLayer: 0x9243e50>>
 #ifdef DEBUG
-    NSLog(@"DWFParticleView end");
+    NSLog(@"ExplodeParticleView end");
 #endif
 
     return self;
@@ -140,7 +140,7 @@
 
 -(Boolean)getIsFinished{
 #ifdef DEBUG
-    NSLog(@"getIsFinished @ dwfparticle");
+    NSLog(@"getIsFinished @ Explodeparticle");
 #endif
     return isFinished;
 }

@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3400396F17F408070093E07E /* EnemyClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 3400396E17F408070093E07E /* EnemyClass.m */; };
-		34043A5A17FA0FE50000E338 /* DWFParticleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 34043A5917FA0FE50000E338 /* DWFParticleView.m */; };
+		34043A5A17FA0FE50000E338 /* ExplodeParticleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 34043A5917FA0FE50000E338 /* ExplodeParticleView.m */; };
 		34043A5C17FA103C0000E338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34043A5B17FA103C0000E338 /* QuartzCore.framework */; };
 		34043A5E17FA132B0000E338 /* Particles_fire.png in Resources */ = {isa = PBXBuildFile; fileRef = 34043A5D17FA132B0000E338 /* Particles_fire.png */; };
 		340A4640181E412200D9B005 /* AnimalBow.png in Resources */ = {isa = PBXBuildFile; fileRef = 340A463C181E412200D9B005 /* AnimalBow.png */; };
@@ -140,6 +140,9 @@
 		34E216C6181BF62F00B939E6 /* bgm_game_687.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34E216C5181BF62F00B939E6 /* bgm_game_687.mp3 */; };
 		34E216C8181BF64F00B939E6 /* mahotoshi_hmix.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34E216C7181BF64F00B939E6 /* mahotoshi_hmix.mp3 */; };
 		34E216CA181BF74300B939E6 /* kinpaku_hmix.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34E216C9181BF74300B939E6 /* kinpaku_hmix.mp3 */; };
+		34F30067182161A30082DCBC /* kira.png in Resources */ = {isa = PBXBuildFile; fileRef = 34F30065182161A30082DCBC /* kira.png */; };
+		34F30068182161A30082DCBC /* kira2.png in Resources */ = {isa = PBXBuildFile; fileRef = 34F30066182161A30082DCBC /* kira2.png */; };
+		34F3006F182162660082DCBC /* KiraParticleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 34F3006E182162660082DCBC /* KiraParticleView.m */; };
 		34F53372181BBB7700FB9470 /* hisho_hmix.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34F53371181BBB7700FB9470 /* hisho_hmix.mp3 */; };
 		34F53374181BBBD700FB9470 /* ones_hmix.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34F53373181BBBD700FB9470 /* ones_hmix.mp3 */; };
 		34F53376181BBEDC00FB9470 /* bgm_menu_683.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34F53375181BBEDC00FB9470 /* bgm_menu_683.mp3 */; };
@@ -173,8 +176,8 @@
 /* Begin PBXFileReference section */
 		3400396D17F408070093E07E /* EnemyClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnemyClass.h; sourceTree = "<group>"; };
 		3400396E17F408070093E07E /* EnemyClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EnemyClass.m; sourceTree = "<group>"; };
-		34043A5817FA0FE50000E338 /* DWFParticleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DWFParticleView.h; sourceTree = "<group>"; };
-		34043A5917FA0FE50000E338 /* DWFParticleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DWFParticleView.m; sourceTree = "<group>"; };
+		34043A5817FA0FE50000E338 /* ExplodeParticleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExplodeParticleView.h; sourceTree = "<group>"; };
+		34043A5917FA0FE50000E338 /* ExplodeParticleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExplodeParticleView.m; sourceTree = "<group>"; };
 		34043A5B17FA103C0000E338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		34043A5D17FA132B0000E338 /* Particles_fire.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Particles_fire.png; path = "../../../一般材料/UI/shooting/Particles_fire.png"; sourceTree = "<group>"; };
 		340A463C181E412200D9B005 /* AnimalBow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AnimalBow.png; sourceTree = "<group>"; };
@@ -326,6 +329,10 @@
 		34E216C5181BF62F00B939E6 /* bgm_game_687.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bgm_game_687.mp3; sourceTree = "<group>"; };
 		34E216C7181BF64F00B939E6 /* mahotoshi_hmix.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mahotoshi_hmix.mp3; sourceTree = "<group>"; };
 		34E216C9181BF74300B939E6 /* kinpaku_hmix.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = kinpaku_hmix.mp3; sourceTree = "<group>"; };
+		34F30065182161A30082DCBC /* kira.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = kira.png; sourceTree = "<group>"; };
+		34F30066182161A30082DCBC /* kira2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = kira2.png; sourceTree = "<group>"; };
+		34F3006D182162660082DCBC /* KiraParticleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KiraParticleView.h; sourceTree = "<group>"; };
+		34F3006E182162660082DCBC /* KiraParticleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KiraParticleView.m; sourceTree = "<group>"; };
 		34F53371181BBB7700FB9470 /* hisho_hmix.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = hisho_hmix.mp3; sourceTree = "<group>"; };
 		34F53373181BBBD700FB9470 /* ones_hmix.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ones_hmix.mp3; sourceTree = "<group>"; };
 		34F53375181BBEDC00FB9470 /* bgm_menu_683.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bgm_menu_683.mp3; sourceTree = "<group>"; };
@@ -423,51 +430,22 @@
 		342057D717F2B34C0084E99D /* Shooting7 */ = {
 			isa = PBXGroup;
 			children = (
-				34BD6DCA18194683006BC523 /* InviteFriendsViewController.h */,
-				34BD6DCB18194683006BC523 /* InviteFriendsViewController.m */,
+				34F3007418218CBE0082DCBC /* Component */,
+				34F3007318218C350082DCBC /* ViewController */,
+				34F3007218218C2E0082DCBC /* Particle */,
+				34F3007118218C290082DCBC /* GameObject */,
+				34F3007018218C250082DCBC /* Board */,
 				347D276618167FA000498F68 /* BGMClass.h */,
 				347D276718167FA000498F68 /* BGMClass.m */,
 				342057E017F2B34C0084E99D /* AppDelegate.h */,
 				342057E117F2B34C0084E99D /* AppDelegate.m */,
 				342057E917F2B34C0084E99D /* MainStoryboard.storyboard */,
-				342057EC17F2B34C0084E99D /* InitViewController.h */,
-				342057ED17F2B34C0084E99D /* InitViewController.m */,
 				34FA1A2F180BC2460011E1CA /* AttrClass.h */,
 				34FA1A30180BC2460011E1CA /* AttrClass.m */,
 				348AD7EB180A9159007226EC /* DBAccessClass.h */,
 				348AD7EC180A9159007226EC /* DBAccessClass.m */,
-				344928B018025E6100315F2D /* MenuViewController.h */,
-				344928B118025E6100315F2D /* MenuViewController.m */,
-				34A6A1A1180EF48F006F26D6 /* ItemListViewController.h */,
-				34A6A1A2180EF48F006F26D6 /* ItemListViewController.m */,
-				3436369A180FDA8B005A5C01 /* FontTestViewController.h */,
-				3436369B180FDA8B005A5C01 /* FontTestViewController.m */,
-				3467B72017FD5980004EEE94 /* PowerGaugeClass.h */,
-				3467B72117FD5980004EEE94 /* PowerGaugeClass.m */,
-				3411FB8217FEE301001D1491 /* MyMachineClass.h */,
-				3411FB8317FEE301001D1491 /* MyMachineClass.m */,
 				34C16CCD181C2D9000650A40 /* TestViewController.h */,
 				34C16CCE181C2D9000650A40 /* TestViewController.m */,
-				343F802917FF947100224839 /* ScoreBoardClass.h */,
-				343F802A17FF947100224839 /* ScoreBoardClass.m */,
-				34C09ECC1800497900E4A4D8 /* GoldBoardClass.h */,
-				34C09ECD1800497900E4A4D8 /* GoldBoardClass.m */,
-				3400396D17F408070093E07E /* EnemyClass.h */,
-				3400396E17F408070093E07E /* EnemyClass.m */,
-				34FA999C17FBCEEF00317D83 /* ItemClass.h */,
-				34FA999D17FBCEEF00317D83 /* ItemClass.m */,
-				342401FF17F6E8A100E06902 /* BeamClass.h */,
-				3424020017F6E8A100E06902 /* BeamClass.m */,
-				342ECBC317FC5AF900123886 /* DamageParticleView.h */,
-				342ECBC417FC5AF900123886 /* DamageParticleView.m */,
-				34043A5817FA0FE50000E338 /* DWFParticleView.h */,
-				34043A5917FA0FE50000E338 /* DWFParticleView.m */,
-				342057F817F2B8810084E99D /* GameClassViewController.h */,
-				342057F917F2B8810084E99D /* GameClassViewController.m */,
-				3476D05D180DE6B800839BD8 /* QBFlatButton.h */,
-				3476D05C180DE6B800839BD8 /* QBFlatButton.m */,
-				340C7611180D37E500169658 /* CreateComponentClass.h */,
-				340C7612180D37E500169658 /* CreateComponentClass.m */,
 				342057D817F2B34C0084E99D /* Supporting Files */,
 			);
 			name = Shooting7;
@@ -599,6 +577,8 @@
 		34A2B1BA181F9DDD00CB97F2 /* gameEffect */ = {
 			isa = PBXGroup;
 			children = (
+				34F30065182161A30082DCBC /* kira.png */,
+				34F30066182161A30082DCBC /* kira2.png */,
 				3419C41317FD27E200980E71 /* explode3.png */,
 				3419C41217FD27E200980E71 /* explode4.png */,
 				3419C41617FD2B3300980E71 /* explode5.png */,
@@ -690,6 +670,77 @@
 				3411FB6B17FED1DF001D1491 /* powerGauge_pt9.png */,
 			);
 			name = powerGauge;
+			sourceTree = "<group>";
+		};
+		34F3007018218C250082DCBC /* Board */ = {
+			isa = PBXGroup;
+			children = (
+				343F802917FF947100224839 /* ScoreBoardClass.h */,
+				343F802A17FF947100224839 /* ScoreBoardClass.m */,
+				34C09ECC1800497900E4A4D8 /* GoldBoardClass.h */,
+				34C09ECD1800497900E4A4D8 /* GoldBoardClass.m */,
+			);
+			name = Board;
+			sourceTree = "<group>";
+		};
+		34F3007118218C290082DCBC /* GameObject */ = {
+			isa = PBXGroup;
+			children = (
+				3467B72017FD5980004EEE94 /* PowerGaugeClass.h */,
+				3467B72117FD5980004EEE94 /* PowerGaugeClass.m */,
+				3411FB8217FEE301001D1491 /* MyMachineClass.h */,
+				3411FB8317FEE301001D1491 /* MyMachineClass.m */,
+				3400396D17F408070093E07E /* EnemyClass.h */,
+				3400396E17F408070093E07E /* EnemyClass.m */,
+				34FA999C17FBCEEF00317D83 /* ItemClass.h */,
+				34FA999D17FBCEEF00317D83 /* ItemClass.m */,
+				342401FF17F6E8A100E06902 /* BeamClass.h */,
+				3424020017F6E8A100E06902 /* BeamClass.m */,
+			);
+			name = GameObject;
+			sourceTree = "<group>";
+		};
+		34F3007218218C2E0082DCBC /* Particle */ = {
+			isa = PBXGroup;
+			children = (
+				342ECBC317FC5AF900123886 /* DamageParticleView.h */,
+				342ECBC417FC5AF900123886 /* DamageParticleView.m */,
+				34043A5817FA0FE50000E338 /* ExplodeParticleView.h */,
+				34043A5917FA0FE50000E338 /* ExplodeParticleView.m */,
+				34F3006D182162660082DCBC /* KiraParticleView.h */,
+				34F3006E182162660082DCBC /* KiraParticleView.m */,
+			);
+			name = Particle;
+			sourceTree = "<group>";
+		};
+		34F3007318218C350082DCBC /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				342057F817F2B8810084E99D /* GameClassViewController.h */,
+				342057F917F2B8810084E99D /* GameClassViewController.m */,
+				34BD6DCA18194683006BC523 /* InviteFriendsViewController.h */,
+				34BD6DCB18194683006BC523 /* InviteFriendsViewController.m */,
+				342057EC17F2B34C0084E99D /* InitViewController.h */,
+				342057ED17F2B34C0084E99D /* InitViewController.m */,
+				344928B018025E6100315F2D /* MenuViewController.h */,
+				344928B118025E6100315F2D /* MenuViewController.m */,
+				34A6A1A1180EF48F006F26D6 /* ItemListViewController.h */,
+				34A6A1A2180EF48F006F26D6 /* ItemListViewController.m */,
+				3436369A180FDA8B005A5C01 /* FontTestViewController.h */,
+				3436369B180FDA8B005A5C01 /* FontTestViewController.m */,
+			);
+			name = ViewController;
+			sourceTree = "<group>";
+		};
+		34F3007418218CBE0082DCBC /* Component */ = {
+			isa = PBXGroup;
+			children = (
+				3476D05D180DE6B800839BD8 /* QBFlatButton.h */,
+				3476D05C180DE6B800839BD8 /* QBFlatButton.m */,
+				340C7611180D37E500169658 /* CreateComponentClass.h */,
+				340C7612180D37E500169658 /* CreateComponentClass.m */,
+			);
+			name = Component;
 			sourceTree = "<group>";
 		};
 		34F53370181BBB5700FB9470 /* music */ = {
@@ -826,6 +877,7 @@
 				3411FB8017FED1DF001D1491 /* powerGauge_pt14.png in Resources */,
 				3411FB8117FED1DF001D1491 /* powerGauge_pt15.png in Resources */,
 				3411FB8617FEF392001D1491 /* mechanical_design_3.png in Resources */,
+				34F30068182161A30082DCBC /* kira2.png in Resources */,
 				34F53374181BBBD700FB9470 /* ones_hmix.mp3 in Resources */,
 				34C16CD1181C4E9400650A40 /* sabaki_hmix.mp3 in Resources */,
 				3411FB8A17FF2D06001D1491 /* cosmos_star4_repair.png in Resources */,
@@ -836,6 +888,7 @@
 				34A0874018034F80005458EF /* chara_test.png in Resources */,
 				34A087421803EBBD005458EF /* blue_item_yuri_big2.png in Resources */,
 				34A087441803EC79005458EF /* chara_test2.png in Resources */,
+				34F30067182161A30082DCBC /* kira.png in Resources */,
 				34E216C6181BF62F00B939E6 /* bgm_game_687.mp3 in Resources */,
 				34A087461803F017005458EF /* red.png in Resources */,
 				34A087481803F194005458EF /* coin2.png in Resources */,
@@ -922,11 +975,12 @@
 				342057FA17F2B8810084E99D /* GameClassViewController.m in Sources */,
 				3400396F17F408070093E07E /* EnemyClass.m in Sources */,
 				3424020117F6E8A100E06902 /* BeamClass.m in Sources */,
-				34043A5A17FA0FE50000E338 /* DWFParticleView.m in Sources */,
+				34043A5A17FA0FE50000E338 /* ExplodeParticleView.m in Sources */,
 				34FA999E17FBCEF000317D83 /* ItemClass.m in Sources */,
 				342ECBC517FC5AF900123886 /* DamageParticleView.m in Sources */,
 				3467B72217FD5981004EEE94 /* PowerGaugeClass.m in Sources */,
 				3411FB8417FEE301001D1491 /* MyMachineClass.m in Sources */,
+				34F3006F182162660082DCBC /* KiraParticleView.m in Sources */,
 				343F802B17FF947100224839 /* ScoreBoardClass.m in Sources */,
 				34C09ECE1800497900E4A4D8 /* GoldBoardClass.m in Sources */,
 				344928B218025E6100315F2D /* MenuViewController.m in Sources */,
