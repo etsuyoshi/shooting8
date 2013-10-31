@@ -25,15 +25,13 @@
  ・自機の移動はpanGesture:済
  */
 
-#import "BGMClass.h"
 #import "GameClassViewController.h"
+#import "BGMClass.h"
 #import "DBAccessClass.h"
 #import "AttrClass.h"
 #import "CreateComponentClass.h"
 #import "EnemyClass.h"
-//#import "BeamClass.h"
 #import "ItemClass.h"
-#import "ExplodeParticleView.h"
 #import "PowerGaugeClass.h"
 #import "MyMachineClass.h"
 #import "ScoreBoardClass.h"
@@ -72,6 +70,7 @@ MyMachineClass *MyMachine;
 NSMutableArray *EnemyArray;
 //NSMutableArray *BeamArray;
 NSMutableArray *ItemArray;
+NSMutableArray *KiraArray;
 ScoreBoardClass *ScoreBoard;
 GoldBoardClass *GoldBoard;
 
@@ -217,6 +216,9 @@ float count = 0;//timer
     //敵機を破壊した際のアイテム
     ItemArray = [[NSMutableArray alloc] init];
     
+    //アイテム生成時、移動時、消滅時のパーティクル格納用配列
+    KiraArray = [[NSMutableArray alloc]init];
+    
     //スコアボードの初期化
     ScoreBoard = [[ScoreBoardClass alloc]init:0 x_init:0 y_init:0 ketasu:10];
     
@@ -321,7 +323,7 @@ float count = 0;//timer
     
     
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-    //_/_/_/_/進行_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+    //_/_/_/_/進行:各オブジェクトのdoNext_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     
     
@@ -380,12 +382,29 @@ float count = 0;//timer
 //            [(BeamClass *)[BeamArray objectAtIndex:i ] doNext];
 //        }
 //    }
-    
+    //自機の進行
     for(int i = 0; i < [MyMachine getBeamCount];i++){
         if([[MyMachine getBeam:i] getIsAlive]){
             [[MyMachine getBeam:i] doNext];
         }
     }
+    
+    //アイテムの進行=[アイテム自体の移動 & 生成したパーティクルの時間経過:寿命判定は別途]
+    for(int i = 0 ; i< [ItemArray count]; i ++){
+        if([[ItemArray objectAtIndex:i] getIsAlive]){
+            if([(ItemClass *)[ItemArray objectAtIndex:i] doNext]){//移動とパーティクル発生判定：同時実行
+                //動線上パーティクルの格納
+                [KiraArray insertObject:[((ItemClass*)[ItemArray objectAtIndex:i]) getMovingParticle:0] atIndex:0];
+            };
+        }
+    }
+    
+//    //パーティクルの進行
+//    for(int i = 0; i < [KiraArray count]; i++){
+//        if([[KiraArray objectAtIndex: i] getIsAlive]){
+//            [[KiraArray objectAtIndex:i] doNext];//lifeti
+//        }
+//    }
 
 
 //    NSLog(@"敵機配列");
@@ -446,6 +465,7 @@ float count = 0;//timer
                  _/_/_/_/_/_/_/_/_/_/_/_/
                  */
                 
+                //アイテム消滅時のパーティクル表示
                 
                 
                 //ゴールドを加算if item == gold
@@ -612,10 +632,17 @@ float count = 0;//timer
                                  * 動線上には一定間隔（ランダム）で表示
                                  *プレイヤー取得時にも沢山表示
                                  */
-                                [[[ItemArray objectAtIndex:i] getKiraParticle] setUserInteractionEnabled: NO];//インタラクション拒否
-                                [[[ItemArray objectAtIndex:i] getKiraParticle] setIsEmitting:YES];//消去するには数秒後にNOに
-                                [self.view bringSubviewToFront: [[ItemArray objectAtIndex:i] getKiraParticle]];//最前面に
-                                [self.view addSubview: [[ItemArray objectAtIndex:i] getKiraParticle]];//表示する
+                                
+                                //donextで寿命判定をして消滅させるので、配列化して別の所で消滅させる。
+                                NSLog(@"before occuring0");
+                                [KiraArray insertObject:[[ItemArray objectAtIndex:0] getOccurredParticle] atIndex:0];
+                                NSLog(@"before occuring1");
+                                [[KiraArray objectAtIndex:0] setUserInteractionEnabled: NO];//インタラクション拒否
+                                NSLog(@"before occuring2");
+                                [[KiraArray objectAtIndex:0] setIsEmitting:YES];//消去するには数秒後にNOに
+                                [self.view bringSubviewToFront: [KiraArray objectAtIndex:0]];//最前面に
+                                NSLog(@"before occuring3");
+                                [self.view addSubview: [KiraArray objectAtIndex:0]];//表示する
                                 
                             }else{
                                 NSLog(@"アイテムなし");

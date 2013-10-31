@@ -20,9 +20,13 @@
     width = w;
     height = h;
     isAlive = true;
-    //動線上に表示するパーティクルの初期化
-    kiraParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)];
-    //    iv.image = [UIImage imageNamed:@"beam.png"];
+    
+    //アイテム生成時のパーティクルの初期化
+    occurredParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)];
+    [occurredParticle setLifeSpan:10];
+    
+    //アイテム動線上にランダムに発生するパーティクル格納配列：doNext内で要素生成＆格納
+    kiraMovingArray = [[NSMutableArray alloc]init];
     
 //    http://stackoverflow.com/questions/9395914/switch-with-typedef-enum-type-from-string
     type = arc4random() % 5;//[NSNumber numberWithInt:arc4random()];
@@ -131,8 +135,12 @@
     return isAlive;
 }
 
--(void)doNext{
+/**
+ *アイテム移動中にパーティクルが発生したらtrueを返す
+ */
+-(Boolean)doNext{
     
+    Boolean isOccurringParticle = false;
     //移動
     y_loc++;
     
@@ -141,7 +149,33 @@
     
     
     //動線上にキラキラ表示
-    kiraParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)];
+    
+    //既存movingParticleの寿命進行
+    for(int i = 0 ; i < [kiraMovingArray count]; i++){
+        if([(KiraParticleView *)[kiraMovingArray objectAtIndex:i] getIsAlive]){
+            [(KiraParticleView *)[kiraMovingArray objectAtIndex:i] doNext];
+        }else{
+            [(KiraParticleView *)[kiraMovingArray objectAtIndex:i] setIsEmitting:NO];
+        }
+    }
+    //新規キラキラ発生
+    if(arc4random() % 3 ==0){
+        KiraParticleView *movingParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)];
+        [movingParticle setIsEmitting:3];
+        [kiraMovingArray insertObject:movingParticle atIndex:0];//FIFO
+        
+    }
+    
+    //発生時パーティクルの寿命進行&削除判定
+    if([occurredParticle getIsAlive]){
+        [occurredParticle doNext];
+    }else{
+        [occurredParticle setIsEmitting:NO];
+    }
+    
+    
+    return isOccurringParticle;
+    
     
 }
 
@@ -183,9 +217,24 @@
     return iv;
 }
 
--(KiraParticleView *)getKiraParticle{
+-(KiraParticleView *)getMovingParticle:(int)kiraNo{//アイテムが動いている時のパーティクル
+    if(kiraNo < [kiraMovingArray count]){
+        return [kiraMovingArray objectAtIndex:kiraNo];
+    }
+    return nil;
+}
+
+-(KiraParticleView *)getOccurredParticle{//アイテム発生時のパーティクル
     
-    return kiraParticle;
+    return occurredParticle;
+}
+
+-(KiraParticleView *)getKilledParticle:(CGPoint)point{//アイテムが消滅した時のパーティクル
+    //アイテム消滅時(プレイヤーによる取得時)のパーティクルの初期化
+    killedParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(point.x, point.y, 10, 10)];
+    [killedParticle setLifeSpan:10];
+    
+    return killedParticle;
 }
 
 

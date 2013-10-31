@@ -9,113 +9,165 @@
 #import "KiraParticleView.h"
 #import "QuartzCore/QuartzCore.h"
 
+
+int birthRate = 5;
 @implementation KiraParticleView
 
--(id)initWithFrame:(CGRect)frame
+- (id)initWithFrame:(CGRect)frame
+//          birthRate:(int)birthRate
+//           lifetime:(float)lifetime
+//       lifetimeRage:(float)lifetimeRange
+//              color:(UIColor*)color
+//           contents:(NSString*)contents
+//               name:(NSString*)name
+//           velocity:(int)velocity
 {
-    
     self = [super initWithFrame:frame];
-    isFinished = false;
+    
+    //CAEmitterLayer自体の生存パラメータ(particle自体のものではない)
+    lifeTime = 0;//生存時間
+    isAlive = true;//生存判定
+    lifeSpan = 10;//寿命=>コントローラー側のカウント
     if (self) {
         // Initialization code
-        //http://enharmonichq.com/tutorial-particle-systems-in-core-animation-with-caemitterlayer/
-        particleEmitter = (CAEmitterLayer *) self.layer;
-        particleEmitter.emitterPosition = CGPointMake(0, 0);//CGPointMake(frame.origin.x, frame.origin.y);//CGPointMake(0, 0);
-        particleEmitter.emitterSize = CGSizeMake(3,3);//frame.size.width, frame.size.height);
+        //        定義：CAEmitterLayer *particleEmitter;@global変数
+        //origin
+        particleEmitter = (CAEmitterLayer *) self.layer;//frame位置が認識され表示位置が確定される
+        particleEmitter.emitterPosition = CGPointMake(0,0);//frame.origin.x, frame.origin.y);//CGPointMake(0, 0);
+        particleEmitter.emitterSize = CGSizeMake(10, 10);//frame.size.width, frame.size.height
         particleEmitter.renderMode = kCAEmitterLayerAdditive;
         
+        
+        //github
+        //        CAEmitterLayer *emitterLayer = [CAEmitterLayer layer];
+        //        particleEmitter.name = @"snowLayer";
+        particleEmitter.emitterPosition = CGPointMake(CGRectGetMidX([self bounds]), 10);
+        particleEmitter.emitterZPosition = -43;
+        particleEmitter.emitterSize = CGSizeMake([self bounds].size.width, 10.00);
+        particleEmitter.emitterDepth = 0.00;
+        particleEmitter.emitterShape = kCAEmitterLayerCircle;
+        particleEmitter.emitterMode = kCAEmitterLayerSurface;
+        particleEmitter.renderMode = kCAEmitterLayerBackToFront;
+        particleEmitter.seed = arc4random();
+        
+        
+        //github
         CAEmitterCell *particle = [CAEmitterCell emitterCell];
-        particle.birthRate = 100;//火や水に見せるためには数百が必要
-        particle.lifetime = 0.5;//表示時間(秒)
-        particle.lifetimeRange = 0;
-        particle.color = [[UIColor colorWithRed: 1.0f green: 1.0f blue:1.0f alpha: 0.5f] CGColor];//透明白色
-        //        particle.contents = (id) [[UIImage imageNamed: @"star.png"] CGImage];
-        int pattern = arc4random() % 2;
+        //origin
+        //        particle.birthRate = 200;
+        //        particle.lifetime = 2.0;
+        //        particle.lifetimeRange = 1.5;
+        //        particle.color = [[UIColor colorWithRed: 0.2 green: 0.4 blue: 0.8 alpha: 0.1] CGColor];
+        //        particle.contents = (id) [[UIImage imageNamed: @"kira.png"] CGImage];
+        //        particle.name = @"particle";
+        //        particle.velocity = 150;
+        //        particle.velocityRange = 100;
+        //        particle.emissionRange = M_PI_2;
+        //        particle.emissionLongitude = 0.025 * 180 / M_PI;
+        //        particle.scale = 0.3f;
+        //        particle.scaleRange = 0;
+        //        particle.scaleSpeed = 0;
+        //        particle.spin = 0.5;
+        
+        particle.name = @"snow";
+        particle.enabled = YES;
+        
+        int pattern = arc4random() % 5;
         if(pattern == 0){
-            particle.contents = (id) [[UIImage imageNamed: @"kira.png"] CGImage];
+            particle.contents = (id)[[UIImage imageNamed:@"kira"] CGImage];
         }else if(pattern == 1){
-            particle.contents = (id) [[UIImage imageNamed: @"kira2.png"] CGImage];
+            particle.contents = (id)[[UIImage imageNamed:@"kira2"] CGImage];
+        }else if(pattern >= 2){
+            particle.contents = (id)[[UIImage imageNamed:@"snow"] CGImage];
         }
-        particle.name = @"damage";
-        particle.velocity = 0;//流れる平均速度(dot)
-        particle.velocityRange = 10;//速度の標準偏差
-//        particle.emissionLongitude = -M_PI_2;//流れる方向(正：時計回り)
-//        particle.emissionRange = -1 * M_PI_2;//流れる方向の標準偏差→流れないようにするには？
-        particle.scale = 0.15f;//最大サイズ
-        particle.scaleSpeed = 0.5f;//最大サイズになるまでのスピード
-        particle.scaleRange = 1.0f;//最大サイズのレンジ
-        particle.spin = 1.0f;//回転角度
+        particle.contentsRect = CGRectMake(0.00, 0.00, 1.00, 1.00);
         
+        particle.magnificationFilter = kCAFilterTrilinear;
+        particle.minificationFilter = kCAFilterLinear;
+        particle.minificationFilterBias = 0.00;
         
+        particle.scale = 0.72;
+        particle.scaleRange = 0.14;
+        particle.scaleSpeed = -0.25;
+        
+        particle.color = [[UIColor colorWithRed:0.77 green:0.55 blue:0.60 alpha:0.55] CGColor];
+        //        particle.redRange = 0.09;
+        //        particle.greenRange = 0.08;
+        //        particle.blueRange = 0.07;
+        //        particle.alphaRange = 0.08;
+        particle.redRange = 0.9;
+        particle.greenRange = 0.8;
+        particle.blueRange = 0.7;
+        particle.alphaRange = 0.8;
+        
+        //色を残す場合
+        particle.redSpeed = 0.2;
+        particle.greenSpeed = 0.4;
+        particle.blueSpeed = 0.4;
+        particle.alphaSpeed = 0.5;
+        //すぐに白くする場合
+        //        particle.redSpeed = 0.92;//赤増加速度
+        //        particle.greenSpeed = 0.84;
+        //        particle.blueSpeed = 0.74;
+        //        particle.alphaSpeed = 0.55;
+        
+        particle.lifetime = 10.0f;
+        particle.lifetimeRange = 10.5f;//2.37;
+        particle.birthRate = birthRate;
+        particle.velocity = -20.00;
+        particle.velocityRange = 20.00;
+        particle.xAcceleration = 1.00;
+        particle.yAcceleration = -10.00;
+        particle.zAcceleration = 12.00;
+        
+        // these values are in radians, in the UI they are in degrees
+        particle.spin = 0.384;
+        particle.spinRange = 0.925;
+        particle.emissionLatitude = 1.745;
+        particle.emissionLongitude = 1.745;
+        particle.emissionRange = 3.491;
         
         particleEmitter.emitterCells = [NSArray arrayWithObject: particle];
     }
-    //    NSLog(@"%@", self);//<DWFParticleView: 0x92458e0; frame = (160 160; 150 150); layer = <CAEmitterLayer: 0x9243e50>>
     return self;
-    
 }
 
+-(void)doNext{
+    lifeTime++;
+    if(lifeTime >= lifeSpan){
+        isAlive = false;
+    }
+}
+-(int)getLifeTime{
+    return lifeTime;
+}
+-(Boolean)getIsAlive{
+    return isAlive;
+}
+-(void)setLifeSpan:(int)_lifeSpan{
+    lifeSpan = _lifeSpan;
+}
 
-+ (Class) layerClass //3
+/*
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect
+ {
+ // Drawing code
+ }
+ */
+
++ (Class)layerClass
 {
-    //configure the UIView to have emitter layer
     return [CAEmitterLayer class];
 }
 
 
-
 -(void)setIsEmitting:(BOOL)isEmitting
 {
-    //turn on/off the emitting of particles:引数がyesならばbirthRateを200に、noならば0(消去)
     //    [particleEmitter setValue:[NSNumber numberWithInt:isEmitting?200:0]
-    //               forKeyPath:@"emitterCells.fire.birthRate"];
-    if(isEmitting){
-        isFinished = false;
-    }else{
-        isFinished = true;
-    }
-    
-    
-    [particleEmitter setValue:[NSNumber numberWithInt:isEmitting?100:0]
-                   forKeyPath:@"emitterCells.damage.birthRate"];
-    
-    //    [particleEmitter setValue:[NSNumber numberWithInt:isEmitting?30:0] forKeyPath:@"emitterCells.particle.birthRate"];
+    //                   forKeyPath:@"emitterCells.particle.birthRate"];
+    [particleEmitter setValue:[NSNumber numberWithInt:isEmitting?birthRate:0]
+                   forKeyPath:@"emitterCells.snow.birthRate"];
 }
-
--(Boolean)getIsFinished{
-    return isFinished;
-}
--(void)setType:(int)_type{
-#ifdef DEBUG
-    NSLog(@"setType start");
-#endif
-    type = _type;
-    
-    switch(type){
-        case 0://自機は赤で前向き
-            //            NSLog(@"explode at type = %d", type);
-            [particleEmitter setValue:(id)[[UIColor colorWithRed: 0.5 green: 0.1 blue: 0.1 alpha: 0.1] CGColor]
-                           forKeyPath:@"emitterCells.fire.color"];
-            [particleEmitter setValue:[NSNumber numberWithDouble:-M_PI_2]
-                           forKeyPath:@"emitterCells.fire.emissionLongitude"];
-            break;
-        case 1://敵機は青で後ろ向き
-            //            NSLog(@"explode at type = %d", type);
-            [particleEmitter setValue:(id)[[UIColor colorWithRed: 0.1 green: 0.1 blue: 0.5 alpha: 0.1] CGColor]
-                           forKeyPath:@"emitterCells.fire.color"];
-            [particleEmitter setValue:[NSNumber numberWithDouble:M_PI_2]
-                           forKeyPath:@"emitterCells.fire.emissionLongitude"];
-            
-            break;
-    }
-    
-    
-    
-    
-    
-    NSLog(@"setType exit");
-    
-}
-
-
 @end

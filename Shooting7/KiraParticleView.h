@@ -10,13 +10,14 @@
 #import <QuartzCore/QuartzCore.h>
 
 @interface KiraParticleView : UIView{
-    //    CAEmitterLayer *fireEmitter;
     CAEmitterLayer *particleEmitter;
-    Boolean isFinished;
-    int type;
+    int lifeTime;
+    Boolean isAlive;
+    int lifeSpan;
 }
-
 -(void)setIsEmitting:(BOOL)isEmitting;
--(Boolean)getIsFinished;
--(void)setType:(int)type;
+-(void)doNext;
+-(int)getLifeTime;
+-(Boolean)getIsAlive;
+-(void)setLifeSpan:(int)_lifeSpan;
 @end

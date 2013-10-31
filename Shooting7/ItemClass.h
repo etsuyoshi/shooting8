@@ -36,7 +36,10 @@ typedef NS_ENUM(NSInteger, ItemType) {
     Boolean isAlive;
     UIImageView *iv;
     CGRect rect;
-    KiraParticleView *kiraParticle;
+    KiraParticleView *occurredParticle;
+    KiraParticleView *killedParticle;
+//    KiraParticleView *movingParticle;
+    NSMutableArray *kiraMovingArray;//FIFO=>取り出す時に分かりやすいようにfromコントローラ
 
 }
 
@@ -47,7 +50,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 
 -(Boolean)getIsAlive;
 
--(void)doNext;
+-(Boolean)doNext;//particle発生時にtrueを返す
 
 -(void)die;
 -(void)setLocation:(CGPoint)loc;
@@ -58,6 +61,9 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(int) getX;
 -(int) getY;
 -(UIImageView *)getImageView;
--(KiraParticleView *)getKiraParticle;
+-(KiraParticleView *)getMovingParticle:(int)kiraNo;
+-(KiraParticleView *)getOccurredParticle;
+-(KiraParticleView *)getKilledParticle:(CGPoint)point;
+
 
 @end
