@@ -393,18 +393,19 @@ float count = 0;//timer
     for(int i = 0 ; i< [ItemArray count]; i ++){
         if([[ItemArray objectAtIndex:i] getIsAlive]){
             if([(ItemClass *)[ItemArray objectAtIndex:i] doNext]){//移動とパーティクル発生判定：同時実行
-                //動線上パーティクルの格納
+                //動線上パーティクルの格納と表示
                 [KiraArray insertObject:[((ItemClass*)[ItemArray objectAtIndex:i]) getMovingParticle:0] atIndex:0];
+                [self.view addSubview:[KiraArray objectAtIndex:0]];
             };
         }
     }
     
-//    //パーティクルの進行
-//    for(int i = 0; i < [KiraArray count]; i++){
-//        if([[KiraArray objectAtIndex: i] getIsAlive]){
-//            [[KiraArray objectAtIndex:i] doNext];//lifeti
-//        }
-//    }
+    //パーティクルの寿命判定(進行は既に実施済):各パーティクルはそれぞれ独自の寿命を保持し、doNext@ItemClassによって寿命進行済
+    for(int i = 0; i < [KiraArray count]; i++){
+        if(![[KiraArray objectAtIndex: i] getIsAlive]){
+            [[KiraArray objectAtIndex:i] setIsEmitting:NO];
+        }
+    }
 
 
 //    NSLog(@"敵機配列");
