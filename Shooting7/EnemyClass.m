@@ -77,7 +77,7 @@ int unique_id;
     explodeParticle = [[ExplodeParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, bomb_size, bomb_size)];
     isAlive = false;
     dead_time ++;
-    NSLog(@"die exit");
+//    NSLog(@"die exit");
 }
 
 

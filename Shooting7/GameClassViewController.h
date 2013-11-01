@@ -14,6 +14,9 @@
 @interface GameClassViewController : UIViewController{
     CFURLRef soundURL;
     SystemSoundID soundID;
+    int enemyCount;//発生した敵の数
+    int enemyDown;//倒した敵の数
+
 }
 //bgm
 @property (nonatomic, retain) AVAudioPlayer *audioPlayer;

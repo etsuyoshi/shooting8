@@ -74,8 +74,6 @@ NSMutableArray *KiraArray;
 ScoreBoardClass *ScoreBoard;
 GoldBoardClass *GoldBoard;
 
-int enemyCount;//発生した敵の数
-int enemyDown;//倒した敵の数
 
 //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 //パワーゲージ背景：ビジュアルこだわりポイント
@@ -288,6 +286,11 @@ float count = 0;//timer
     //ユーザーインターフェース
     [self.view bringSubviewToFront:iv_frame];
     
+    //メモリ確認
+    NSLog(@"enemy = %d", [EnemyArray count]);
+    NSLog(@"particle = %d", [KiraArray count]);
+    
+    
     //消去、生成、更新、表示
     
     
@@ -371,7 +374,7 @@ float count = 0;//timer
                 //爆発パーティクルの消去
 //                NSLog(@"パーティクル消去 at %d", i);
                 [[(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle] setIsEmitting:NO];//消去するには数秒後にNOに
-
+                [EnemyArray removeObjectAtIndex:i];
             }
         }
     }
@@ -404,6 +407,19 @@ float count = 0;//timer
     for(int i = 0; i < [KiraArray count]; i++){
         if(![[KiraArray objectAtIndex: i] getIsAlive]){
             [[KiraArray objectAtIndex:i] setIsEmitting:NO];
+            [[KiraArray objectAtIndex:i] removeFromSuperview];
+            [KiraArray removeObjectAtIndex:i];
+        }else{
+            //パーティクルの数が多すぎる場合は寿命経過しなくても一部消去して一部進める
+            if([KiraArray count] > 30){
+                if(arc4random() % 5 == 0){
+                    [[KiraArray objectAtIndex:i] setIsEmitting:NO];
+                    [[KiraArray objectAtIndex:i] removeFromSuperview];
+                    [KiraArray removeObjectAtIndex:i];
+                }
+            }else{
+                [(KiraParticleView*)[KiraArray objectAtIndex:i] doNext];
+            }
         }
     }
 
@@ -550,7 +566,7 @@ float count = 0;//timer
                         
                         
                         
-                        NSLog(@"hit!!");
+//                        NSLog(@"hit!!");
 //                        NSLog(@"beam location[x = %d, y = %d], enemy location[x = %d, y = %d]",
 //                              _xBeam, _yBeam, [_enemy getX], [_enemy getY]);
                         
@@ -611,11 +627,12 @@ float count = 0;//timer
                             
                             //アイテム出現
                             if(true){//arc4random() % 2 == 0){
-                                NSLog(@"アイテム出現");
+//                                NSLog(@"アイテム出現");
                                 ItemClass *_item = [[ItemClass alloc] init:_xBeam y_init:_yBeam width:50 height:50];
 
 //                                [ItemArray addObject:_item];
                                 [ItemArray insertObject:_item atIndex:0];
+                                //現状全てのアイテムは手前に進んで消えるので先に発生したものから消去
                                 if([ItemArray count] > 50){
                                     [ItemArray removeLastObject];
                                 }
@@ -635,14 +652,10 @@ float count = 0;//timer
                                  */
                                 
                                 //donextで寿命判定をして消滅させるので、配列化して別の所で消滅させる。
-                                NSLog(@"before occuring0");
                                 [KiraArray insertObject:[[ItemArray objectAtIndex:0] getOccurredParticle] atIndex:0];
-                                NSLog(@"before occuring1");
                                 [[KiraArray objectAtIndex:0] setUserInteractionEnabled: NO];//インタラクション拒否
-                                NSLog(@"before occuring2");
                                 [[KiraArray objectAtIndex:0] setIsEmitting:YES];//消去するには数秒後にNOに
                                 [self.view bringSubviewToFront: [KiraArray objectAtIndex:0]];//最前面に
-                                NSLog(@"before occuring3");
                                 [self.view addSubview: [KiraArray objectAtIndex:0]];//表示する
                                 
                             }else{
@@ -862,9 +875,28 @@ float count = 0;//timer
         EnemyClass *enemy = [[EnemyClass alloc]init:x size:OBJECT_SIZE];
         
         [EnemyArray insertObject:enemy atIndex:0];
+        
         if([EnemyArray count] > 30) {
-            [EnemyArray removeLastObject];
+            //発生した中で古いものから画面外にあるenemyを消去
+            for(int i = [EnemyArray count] - 1; i > 0;i--){
+                if([[EnemyArray objectAtIndex:i] getImageView].center.y > self.view.bounds.size.height ||
+                   !([[EnemyArray objectAtIndex:i] getIsAlive])){
+                    //画面から消去
+                    [[[EnemyArray objectAtIndex:i] getImageView] removeFromSuperview];
+                    //(パーティクルを生成していたら)パーティクルを消去
+                    [[[EnemyArray objectAtIndex:i] getDamageParticle] removeFromSuperview];
+                    [[[EnemyArray objectAtIndex:i] getExplodeParticle] removeFromSuperview];
+                    //配列から削除してメモリを解放
+                    [EnemyArray removeObjectAtIndex:i];
+                    break;
+                }
+            }
         }
+//        if([EnemyArray count] > 30) {
+//            [EnemyArray removeLastObject];
+//        }
+        
+        
     }
 }
 
@@ -961,6 +993,24 @@ float count = 0;//timer
                                                        selector:nil];
     [self.view addSubview:superView];
     
+    
+    //処理能力が低下するので自機以外のparticleを全て消去
+    //敵の爆発パーティクルは全て消去
+    for(int i = 0; i < [EnemyArray count] ;i++){
+        if([[EnemyArray objectAtIndex:i] getIsAlive]){
+            //生存している敵の処理：消去？=>メモリ解放に役立たないのでやらない。
+//            [[[EnemyArray objectAtIndex:i] getImageView]removeFromSuperview];
+            
+        }else{//死亡した敵の処理：爆発パーティクルは消去：メモリ消去
+            [[[EnemyArray objectAtIndex:i] getExplodeParticle] removeFromSuperview];
+            [[[EnemyArray objectAtIndex:i] getDamageParticle] removeFromSuperview];
+        }
+    }
+    
+    //ItemClassのパーティクルは最後に生成された物(index:0)以外すべて消去
+    for(int i = 1; i < [KiraArray count];i++){
+        [[KiraArray objectAtIndex:i] removeFromSuperview];
+    }
     
     //ゲーム終了時に呼び出されるメソッド
     //終了報告イメージ？ダイアログ？表示
@@ -1144,7 +1194,7 @@ float count = 0;//timer
             //メインスレッドで途中結果表示
             dispatch_async(mainQueue, ^{
                 
-                tv_complete.text = [NSString stringWithFormat:@"complete : %d%%", cnt + 1];
+                tv_complete.text = [NSString stringWithFormat:@"complete : %d%%", cnt];//cnt+1にしてしまうと倒してないのに1%
                 pv_complete.progress = (float)cnt / 100.0f;
                 
                 

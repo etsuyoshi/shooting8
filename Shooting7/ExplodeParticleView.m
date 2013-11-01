@@ -19,7 +19,7 @@
         // Initialization code
         
 #ifdef DEBUG
-        NSLog(@"ExplodeParticleView start");
+//        NSLog(@"ExplodeParticleView start");
 #endif
         particleEmitter = (CAEmitterLayer *) self.layer;
         particleEmitter.emitterPosition = CGPointMake(0, 0);//CGPointMake(frame.origin.x, frame.origin.y);//CGPointMake(0, 0);
@@ -48,7 +48,7 @@
     }
 //    NSLog(@"%@", self);//<ExplodeParticleView: 0x92458e0; frame = (160 160; 150 150); layer = <CAEmitterLayer: 0x9243e50>>
 #ifdef DEBUG
-    NSLog(@"ExplodeParticleView end");
+//    NSLog(@"ExplodeParticleView end");
 #endif
 
     return self;
@@ -80,7 +80,7 @@
 
 -(void)setType:(int)_type{
 #ifdef DEBUG
-    NSLog(@"setType start");
+//    NSLog(@"setType start");
 #endif
     type = _type;
     
@@ -106,7 +106,7 @@
     
     
     
-    NSLog(@"setType exit");
+//    NSLog(@"setType exit");
     
 }
 
@@ -118,7 +118,7 @@
 //               forKeyPath:@"emitterCells.fire.birthRate"];
     
 #ifdef DEBUG
-    NSLog(@"setEmitting start");
+//    NSLog(@"setEmitting start");
 #endif
     if(isEmitting){
         isFinished = false;
@@ -133,14 +133,14 @@
 //    [particleEmitter setValue:[NSNumber numberWithInt:isEmitting?30:0] forKeyPath:@"emitterCells.particle.birthRate"];
     
 #ifdef DEBUG
-    NSLog(@"setEmitting exit");
+//    NSLog(@"setEmitting exit");
 #endif
 
 }
 
 -(Boolean)getIsFinished{
 #ifdef DEBUG
-    NSLog(@"getIsFinished @ Explodeparticle");
+//    NSLog(@"getIsFinished @ Explodeparticle");
 #endif
     return isFinished;
 }

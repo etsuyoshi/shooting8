@@ -13,6 +13,7 @@
 #import "CreateComponentClass.h"
 #import "InviteFriendsViewController.h"
 #import "TestViewController.h"
+#import "AttrClass.h"
 #import <QuartzCore/QuartzCore.h>
 
 //#define COMPONENT_00 0
@@ -56,6 +57,8 @@ NSMutableArray *titleArray;
 UIView *subView;
 UIButton *closeButton;//閉じるボタン
 BGMClass *bgmClass;
+AttrClass *attr;
+
 //CreateComponentClass *createComponentClass;
 
 @interface MenuViewController ()
@@ -91,7 +94,7 @@ BGMClass *bgmClass;
 {
     [super viewDidLoad];
     
-    // ステータスバーを非表示にする:plistでも可
+    // ステータスバーを非表示にする:plistでの処理はiOS7以降非推奨
     if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)])
     {
         //ios7用
@@ -103,6 +106,8 @@ BGMClass *bgmClass;
         // iOS 6=>iOS 7ではきかない
         [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
     }
+    
+    attr = [[AttrClass alloc]init];
     
     
     //タイトル配列
@@ -225,8 +230,9 @@ BGMClass *bgmClass;
                                         Y_MOST_UPPER_COMPONENT + H_MOST_UPPER_COMPONENT - 30,
                                         W_MOST_UPPER_COMPONENT,
                                         H_MOST_UPPER_COMPONENT);
+    NSString *strLevel = [NSString stringWithFormat:@"%09d", [[attr getValueFromDevice:@"level"] intValue]];
     UITextView *tvLevelAmount = [CreateComponentClass createTextView:rectLevelAmount
-                                                          text:@"000000000"
+                                                          text:strLevel
                                                           font:@"AmericanTypewriter-Bold"
                                                           size:10
                                                      textColor:[UIColor whiteColor]
@@ -264,8 +270,9 @@ BGMClass *bgmClass;
                                         Y_MOST_UPPER_COMPONENT + H_MOST_UPPER_COMPONENT - 30,
                                         W_MOST_UPPER_COMPONENT,
                                         H_MOST_UPPER_COMPONENT);
+    NSString *strExp = [NSString stringWithFormat:@"%09d", [[attr getValueFromDevice:@"exp"] intValue]];
     UITextView *tvScoreAmount = [CreateComponentClass createTextView:rectScoreAmount
-                                                                text:@"9876543210"
+                                                                text:strExp
                                                                 font:@"AmericanTypewriter-Bold"
                                                                 size:10
                                                            textColor:[UIColor whiteColor]
@@ -316,8 +323,9 @@ BGMClass *bgmClass;
                                         Y_MOST_UPPER_COMPONENT + H_MOST_UPPER_COMPONENT - 30,
                                         W_MOST_UPPER_COMPONENT,
                                         H_MOST_UPPER_COMPONENT);
+    NSString *strGold = [NSString stringWithFormat:@"%09d", [[attr getValueFromDevice:@"gold"] intValue]];
     UITextView *tvGoldAmount = [CreateComponentClass createTextView:rectGoldAmount
-                                                                text:@"9876543210"
+                                                                text:strGold
                                                                 font:@"AmericanTypewriter-Bold"
                                                                 size:10
                                                            textColor:[UIColor whiteColor]

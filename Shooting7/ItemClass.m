@@ -24,6 +24,7 @@
     //アイテム生成時のパーティクルの初期化
     occurredParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)];
     [occurredParticle setLifeSpan:10];
+    [occurredParticle setParticleType:ParticleTypeOccurred];
     
     //アイテム動線上にランダムに発生するパーティクル格納配列：doNext内で要素生成＆格納
     kiraMovingArray = [[NSMutableArray alloc]init];
@@ -142,7 +143,7 @@
     
     Boolean isOccurringParticle = false;
     //移動
-    y_loc++;
+    y_loc += 10;
     
     //引寄せアイテム発動中でなければ
     iv.center = CGPointMake(x_loc, y_loc);
@@ -150,29 +151,29 @@
     
     //動線上にキラキラ表示
     
-    //既存movingParticleの寿命進行
-    for(int i = 0 ; i < [kiraMovingArray count]; i++){
-        if([(KiraParticleView *)[kiraMovingArray objectAtIndex:i] getIsAlive]){
-            [(KiraParticleView *)[kiraMovingArray objectAtIndex:i] doNext];
-        }else{
-            [(KiraParticleView *)[kiraMovingArray objectAtIndex:i] setIsEmitting:NO];
-        }
-    }
+    //既存movingParticleの寿命進行=>ここではやらない：itemClassがisDead(doNext実行されない状態)になってもパーティクルは数カウント間描画されるべきであるため
+//    for(int i = 0 ; i < [kiraMovingArray count]; i++){
+//        if([(KiraParticleView *)[kiraMovingArray objectAtIndex:i] getIsAlive]){
+//            [(KiraParticleView *)[kiraMovingArray objectAtIndex:i] doNext];
+//        }else{
+//            [(KiraParticleView *)[kiraMovingArray objectAtIndex:i] setIsEmitting:NO];
+//            //remove superview
+//            [[kiraMovingArray objectAtIndex:i] removeFromSuperview];
+//            //remove array
+//            [kiraMovingArray removeObjectAtIndex:i];
+//            
+//        }
+//    }
     //新規キラキラ発生
     if(arc4random() % 3 ==0){
-        KiraParticleView *movingParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)];
+        KiraParticleView *movingParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)
+                                                                     particleType:ParticleTypeMoving];
+//        [movingParticle setParticleType:ParticleTypeMoving];
         [movingParticle setIsEmitting:3];
         [kiraMovingArray insertObject:movingParticle atIndex:0];//FIFO
+        isOccurringParticle = true;
         
     }
-    
-    //発生時パーティクルの寿命進行&削除判定
-    if([occurredParticle getIsAlive]){
-        [occurredParticle doNext];
-    }else{
-        [occurredParticle setIsEmitting:NO];
-    }
-    
     
     return isOccurringParticle;
     

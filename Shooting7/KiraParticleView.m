@@ -10,10 +10,18 @@
 #import "QuartzCore/QuartzCore.h"
 
 
-int birthRate = 5;
+
 @implementation KiraParticleView
+@synthesize particleType;
+
+- (id)initWithFrame:(CGRect)frame{
+    self = [self initWithFrame:frame
+                  particleType:ParticleTypeOccurred];
+    return self;
+}
 
 - (id)initWithFrame:(CGRect)frame
+       particleType:(ParticleType)_particleType
 //          birthRate:(int)birthRate
 //           lifetime:(float)lifetime
 //       lifetimeRage:(float)lifetimeRange
@@ -72,23 +80,11 @@ int birthRate = 5;
         particle.name = @"snow";
         particle.enabled = YES;
         
-        int pattern = arc4random() % 5;
-        if(pattern == 0){
-            particle.contents = (id)[[UIImage imageNamed:@"kira"] CGImage];
-        }else if(pattern == 1){
-            particle.contents = (id)[[UIImage imageNamed:@"kira2"] CGImage];
-        }else if(pattern >= 2){
-            particle.contents = (id)[[UIImage imageNamed:@"snow"] CGImage];
-        }
         particle.contentsRect = CGRectMake(0.00, 0.00, 1.00, 1.00);
         
         particle.magnificationFilter = kCAFilterTrilinear;
         particle.minificationFilter = kCAFilterLinear;
         particle.minificationFilterBias = 0.00;
-        
-        particle.scale = 0.72;
-        particle.scaleRange = 0.14;
-        particle.scaleSpeed = -0.25;
         
         particle.color = [[UIColor colorWithRed:0.77 green:0.55 blue:0.60 alpha:0.55] CGColor];
         //        particle.redRange = 0.09;
@@ -100,22 +96,64 @@ int birthRate = 5;
         particle.blueRange = 0.7;
         particle.alphaRange = 0.8;
         
-        //色を残す場合
-        particle.redSpeed = 0.2;
-        particle.greenSpeed = 0.4;
-        particle.blueSpeed = 0.4;
-        particle.alphaSpeed = 0.5;
-        //すぐに白くする場合
-        //        particle.redSpeed = 0.92;//赤増加速度
-        //        particle.greenSpeed = 0.84;
-        //        particle.blueSpeed = 0.74;
-        //        particle.alphaSpeed = 0.55;
+        switch(_particleType){
+                
+            case ParticleTypeOccurred:{
+                
+                particle.contents = (id) [[UIImage imageNamed: @"kira2.png"] CGImage];
+                
+                //色を残す
+                particle.redSpeed = 0.2;
+                particle.greenSpeed = 0.4;
+                particle.blueSpeed = 0.4;
+                particle.alphaSpeed = 0.5;
+                
+                //大きめ
+                particle.scale = 0.72;
+                particle.scaleRange = 0.14;
+                particle.scaleSpeed = -0.25;
+
+                //拡散
+                particle.velocity = -50.00;
+                
+                //密度薄く
+                birthRate = 25;
+                particle.birthRate = birthRate;
+
+                break;
+            }
+            case ParticleTypeMoving:{
+                particle.contents = (id) [[UIImage imageNamed: @"snow.png"] CGImage];
+                
+                //すぐに白くする場合
+                particle.redSpeed = 0.92;//赤増加速度
+                particle.greenSpeed = 0.84;
+                particle.blueSpeed = 0.74;
+                particle.alphaSpeed = 0.55;
+                
+                //大きさを小さく
+                particle.scale = 0.3;
+                particle.scaleRange = 0.1;
+                particle.scaleSpeed = -0.1;
+                
+                //拡散しないように
+                particle.velocity = 20.00;
+                
+                //密度薄く
+                birthRate = 10;
+                particle.birthRate = birthRate;
+
+                break;
+            }
+            case ParticleTypeKilled:{
+                
+                break;
+            }
+        }
         
-        particle.lifetime = 10.0f;
-        particle.lifetimeRange = 10.5f;//2.37;
-        particle.birthRate = birthRate;
-        particle.velocity = -20.00;
-        particle.velocityRange = 20.00;
+        particle.lifetimeRange = 3.5f;//2.37;
+        
+        particle.velocityRange = 5.00;
         particle.xAcceleration = 1.00;
         particle.yAcceleration = -10.00;
         particle.zAcceleration = 12.00;
@@ -169,5 +207,72 @@ int birthRate = 5;
     //                   forKeyPath:@"emitterCells.particle.birthRate"];
     [particleEmitter setValue:[NSNumber numberWithInt:isEmitting?birthRate:0]
                    forKeyPath:@"emitterCells.snow.birthRate"];
+}
+
+-(void)setParticleType:(ParticleType)_type{
+    
+//    int pattern = arc4random() % 5;
+//    if(pattern == 0){
+//        particle.contents = (id)[[UIImage imageNamed:@"kira"] CGImage];
+//    }else if(pattern == 1){
+//        particle.contents = (id)[[UIImage imageNamed:@"kira2"] CGImage];
+//    }else if(pattern >= 2){
+//        particle.contents = (id)[[UIImage imageNamed:@"snow"] CGImage];
+//    }
+    particleType = _type;
+    switch(_type){
+        case ParticleTypeOccurred:{
+            [particleEmitter setValue:(id) [[UIImage imageNamed: @"kira2.png"] CGImage]
+                           forKeyPath:@"emitterCells.snow.contents"];
+            break;
+        }
+        case ParticleTypeMoving:{
+            //色を早く白くする
+            //        particle.redSpeed = 0.92;//赤増加速度
+            //        particle.greenSpeed = 0.84;
+            //        particle.blueSpeed = 0.74;
+            //        particle.alphaSpeed = 0.55;
+            
+            //以下のパラメタがきいてない＝＞要調査:これらのパラメータはsetValueメソッドで対応できない？！
+            [particleEmitter setValue:[NSNumber numberWithInt:0.92]
+                           forKeyPath:@"emitterCells.snow.redSpeed"];
+            [particleEmitter setValue:[NSNumber numberWithInt:0.84]
+                           forKeyPath:@"emitterCells.snow.greenSpeed"];
+            [particleEmitter setValue:[NSNumber numberWithInt:0.74]
+                           forKeyPath:@"emitterCells.snow.blueSpeed"];
+            [particleEmitter setValue:[NSNumber numberWithInt:0.55]
+                           forKeyPath:@"emitterCells.snow.alphaSpeed"];
+
+            //大きさを小さく
+//            particle.scale = 0.72;
+//            particle.scaleRange = 0.14;
+//            particle.scaleSpeed = -0.25;
+//            [particleEmitter setValue:[NSNumber numberWithInt:0.3]
+//                           forKeyPath:@"emitterCells.snow.scale"];
+//            [particleEmitter setValue:[NSNumber numberWithInt:0.1]
+//                           forKeyPath:@"emitterCells.snow.scaleRange"];
+//            [particleEmitter setValue:[NSNumber numberWithInt:-0.05]
+//                           forKeyPath:@"emitterCells.snow.scaleSpeed"];
+            
+            //拡散しないように
+//            particle.velocity = -50.00;
+            [particleEmitter setValue:[NSNumber numberWithInt:20.0]
+                           forKeyPath:@"emitterCells.snow.velocity"];
+            
+            //密度薄く
+            [particleEmitter setValue:[NSNumber numberWithInt:1.0]
+                           forKeyPath:@"emitterCells.snow.birthRate"];
+            
+            //形状
+            [particleEmitter setValue:(id) [[UIImage imageNamed: @"snow.png"] CGImage]
+                           forKeyPath:@"emitterCells.snow.contents"];
+            break;
+        }
+        case ParticleTypeKilled:{
+            
+            break;
+        }
+    }
+
 }
 @end

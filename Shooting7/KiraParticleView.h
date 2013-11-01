@@ -8,13 +8,22 @@
 
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
+typedef NS_ENUM(NSInteger, ParticleType) {
+    ParticleTypeOccurred,
+    ParticleTypeMoving,
+    ParticleTypeKilled
+};
+
 
 @interface KiraParticleView : UIView{
     CAEmitterLayer *particleEmitter;
     int lifeTime;
     Boolean isAlive;
     int lifeSpan;
+    int birthRate;
 }
+@property(nonatomic) ParticleType particleType;
+-(id)initWithFrame:(CGRect)frame particleType:(ParticleType)_particleType;
 -(void)setIsEmitting:(BOOL)isEmitting;
 -(void)doNext;
 -(int)getLifeTime;
