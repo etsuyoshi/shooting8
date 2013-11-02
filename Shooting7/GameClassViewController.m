@@ -1,9 +1,11 @@
-//自分のダメージが恒常的に表示される？=>定期的に削除(最悪配列に入れる？！)
-//画面がカクカク
+//自分のダメージが恒常的に表示される？：毎回削除(最悪配列に入れる？！)
+//画面がカクカク：メモリ削除により改善
 //敵機が画面外に外れた場合、生死に関わらず削除
 //enemy addsubview => .center
 //敵機撃破時に画面停止
 
+
+//line等のソーシャルプラットフォームがないため、PCエミュレータ上ではプロンプト上に警告が表示される(端末では問題ないので無視)
 //
 //  GameClassViewController.m
 //  ShootingTest
@@ -64,7 +66,7 @@ int world_no;
 
 //NSMutableArray *iv_arr_tokuten;
 int y_background1, y_background2;
-const int explosionCycle = 10;//爆発時間
+const int explosionCycle = 3;//爆発時間
 int max_enemy_in_frame;
 int x_frame, y_frame;
 //int x_myMachine, x_enemyMachine, x_beam;
@@ -310,8 +312,8 @@ float count = 0;//timer
     [self.view bringSubviewToFront:iv_frame];
     
     //メモリ確認
-    NSLog(@"enemyArray length = %d", [EnemyArray count]);
-    NSLog(@"particleArray length = %d", [KiraArray count]);
+//    NSLog(@"enemyArray length = %d", [EnemyArray count]);
+//    NSLog(@"particleArray length = %d", [KiraArray count]);
     
     
     //消去、生成、更新、表示
@@ -360,10 +362,12 @@ float count = 0;//timer
     if([MyMachine getIsAlive] ||
        [MyMachine getDeadTime] < explosionCycle){
         
+        
+        //生きている間か、爆死してから一定時間内においてはダメージパーティクルの消去
+        [[MyMachine getDamageParticle] setIsEmitting:NO];
+        
         [MyMachine doNext];//設定されたtype、x_loc,y_locプロパティでUIImageViewを作成する
         
-        //ダメージパーティクルの消去
-        [[MyMachine getDamageParticle] setIsEmitting:NO];
         
         //ダメージを受けたときのイフェクト(画面を揺らす)
         
@@ -405,7 +409,7 @@ float count = 0;//timer
                 [[(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle] setIsEmitting:NO];//消去するには数秒後にNOに
                 [[[EnemyArray objectAtIndex:i] getExplodeParticle]removeFromSuperview];
                 [[[EnemyArray objectAtIndex:i] getDamageParticle]removeFromSuperview];
-                [[[EnemyArray objectAtIndex:i] getImageView]removeFromSuperview];
+//                [[[EnemyArray objectAtIndex:i] getImageView]removeFromSuperview];//既に爆発パーティクルが発生した瞬間に消去されているはず
                 [EnemyArray removeObjectAtIndex:i];
             }
         }
@@ -475,7 +479,7 @@ float count = 0;//timer
             y_enemy = [[EnemyArray objectAtIndex:i] getY];
             CGPoint movedPoint = CGPointMake(x_enemy, y_enemy);
             ((UIImageView *)[[EnemyArray objectAtIndex:i] getImageView]).center = movedPoint;
-            NSLog(@"enemy %d move to %f, %f",i, x_enemy, y_enemy);
+//            NSLog(@"enemy %d move to %f, %f",i, x_enemy, y_enemy);
         }
     }
     
@@ -618,7 +622,7 @@ float count = 0;//timer
                         //            bl_enemyAlive = false;
                         int damage = [_beam getPower];
                         
-                        //ダメージ負荷時に切り替える
+                        //ダメージ負荷モード(フラグ立て)に切り替える
                         [[EnemyArray objectAtIndex:i] setIsDamaged:true];
                         
                         [(EnemyClass *)[EnemyArray objectAtIndex:i] setDamage:damage location:CGPointMake(_xBeam + _sBeam/2, _yBeam + _sBeam/2)];
@@ -636,7 +640,7 @@ float count = 0;//timer
                         
                         [self.view bringSubviewToFront: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//最前面に
                         
-                        [self.view addSubview: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//表示する
+                        [self.view addSubview: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//表示する:次のcountで消去
                         
                         
                         
@@ -647,6 +651,9 @@ float count = 0;//timer
                         
                         //敵を倒したら
                         if(![[EnemyArray objectAtIndex:i] getIsAlive]){
+                            
+                            //imageViewを消去(爆発パーティクルが描画するためインスタンス自体は残しておく)
+                            [[[EnemyArray objectAtIndex:i] getImageView] removeFromSuperview];
                             
                             //効果音=>別クラスに格納してstatic method化して簡潔に！
                             CFBundleRef mainBundle;
@@ -813,7 +820,7 @@ float count = 0;//timer
 //            [self performSelector:@selector(exitProcess) withObject:nil afterDelay:0.1];//自機爆破後、即座に終了させると違和感あるため少しdelay
 //            [self exitProcess];//delayさせるとその間にprogressが進んでしまうので即座に表示
 //        }
-        count += 0.1;
+        count += 0.1f;
         
         if(count >= TIMEOVER_SECOND){
             isGameMode = false;
@@ -889,7 +896,7 @@ float count = 0;//timer
 -(void) yieldEnemy{
     Boolean isYield = false;
     
-#ifdef TEST
+#ifndef TEST
     if(count < 5){
         if(arc4random() % 20 == 0){//20分の1
             isYield = true;
@@ -916,9 +923,20 @@ float count = 0;//timer
         }
     }
 #else
-    //1秒に1回発生
-    if(count % 10 == 0){
-        isYield = true;
+    //1秒にfreq回発生
+    float freq = 0.5f;
+    float error = 0.01f;//内部計算誤差
+    //freq10:0.1, 0.2, 0.3
+    //freq4 :0.25,0.50,0.75
+    //freq3 :0.33,0.66,0.99
+//    if(1.0f / freq == count){
+    NSLog(@"");
+    for(int i = 0;i < 100000;i++){
+        if((1.0f / freq * (float)i >= count - error) &&
+           (1.0f / freq * (float)i <= count + error)){
+            isYield = true;
+            break;
+        }
     }
 #endif
     
@@ -946,7 +964,7 @@ float count = 0;//timer
             for(int i = [EnemyArray count] - 1; i > 0;i--){
                 if([[EnemyArray objectAtIndex:i] getImageView].center.y > self.view.bounds.size.height ||
                    !([[EnemyArray objectAtIndex:i] getIsAlive])){
-                    NSLog(@"memory release at enemy %d", i);
+//                    NSLog(@"memory release at enemy %d", i);
                     //画面から消去
                     [[[EnemyArray objectAtIndex:i] getImageView] removeFromSuperview];
                     //(パーティクルを生成していたら)パーティクルを消去
@@ -1070,12 +1088,15 @@ float count = 0;//timer
     //敵の爆発パーティクルは全て消去
     for(int i = 0; i < [EnemyArray count] ;i++){
         if([[EnemyArray objectAtIndex:i] getIsAlive]){
-            //生存している敵の処理：消去？=>メモリ解放に役立たないのでやらない。
+            //ゲーム終了後に生存している敵の処理：消去？=>メモリ解放に役立たないのでやらない。
 //            [[[EnemyArray objectAtIndex:i] getImageView]removeFromSuperview];
             
         }else{//死亡した敵の処理：爆発パーティクルは消去：メモリ消去
             [[[EnemyArray objectAtIndex:i] getExplodeParticle] removeFromSuperview];
             [[[EnemyArray objectAtIndex:i] getDamageParticle] removeFromSuperview];
+            
+            //画面からは消去せず(消去しても良いが)、配列から削除してメモリ解放
+            [EnemyArray removeObjectAtIndex:i];
         }
     }
     
