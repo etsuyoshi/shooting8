@@ -10,6 +10,7 @@
 #import "EnemyClass.h"
 
 @implementation EnemyClass
+@synthesize enemyType;
 
 int unique_id;
 -(id) init:(int)x_init size:(int)size{
@@ -26,29 +27,29 @@ int unique_id;
     damageParticle  = nil;
     rect = CGRectMake(x_loc, y_loc, mySize, mySize);
     iv = [[UIImageView alloc]initWithFrame:rect];
-    enemy_type = arc4random() % 5;
-    switch(enemy_type){
-        case 0:{
+    enemyType = arc4random() % 5;
+    switch(enemyType){
+        case EnemyTypeZou:{
             bomb_size = 20;
             iv.image = [UIImage imageNamed:@"mob_zou_01.png"];
             break;
         }
-        case 1:{
+        case EnemyTypeTanu:{
             bomb_size = 30;
             iv.image = [UIImage imageNamed:@"mob_tanu_01.png"];
             break;
         }
-        case 2:{
+        case EnemyTypePen:{
             bomb_size = 40;
             iv.image = [UIImage imageNamed:@"mob_pen_01.png"];
             break;
         }
-        case 3:{
+        case EnemyTypeMusa:{
             bomb_size = 40;
             iv.image = [UIImage imageNamed:@"mob_musa_01.png"];
             break;
         }
-        case 4:{
+        case EnemyTypeHari:{
             bomb_size = 40;
             iv.image = [UIImage imageNamed:@"mob_hari_01.png"];
             break;
@@ -99,54 +100,26 @@ int unique_id;
     isDamaged = _isDamaged;
 }
 -(void)doNext{
-    
+//    [self doNext:false];
+//}
+//-(void)doNext:(Boolean)isDamaged{
+
 //    [iv removeFromSuperview];
 //    NSLog(@"更新前 y = %d", y_loc);
     lifetime_count ++;//不要？
     if(!isAlive){
         dead_time ++;
+        return;
     }
     
-
-    if(y_loc <= 100){//衝突判定テストのため
-            y_loc += mySize/6;
-//            x_loc += mySize/10 * (int)pow(-1, arc4random()%2) % 200;//単位時間当たりに左右3個体分の移動距離を進む
-    }else{
-        //タイプによって進むものとそうでないものに分ける
-        
-        switch(enemy_type){
-            case 0:{
-                y_loc += mySize/6;
-//                x_loc += mySize/10 * (int)pow(-1, arc4random()%2) % 200;//単位時間当たりに左右3個体分の移動距離を進む
-                break;
-            }
-            case 1:{
-                y_loc += mySize/6;
-//                x_loc += mySize/10 * (int)pow(-1, arc4random()%2) % 200;//単位時間当たりに左右3個体分の移動距離を進む
-                break;
-            }
-            case 2:{
-                y_loc += mySize/6;
-                //                x_loc += mySize/10 * (int)pow(-1, arc4random()%2) % 200;//単位時間当たりに左右3個体分の移動距離を進む
-                break;
-            }
-            case 3:{
-                
-                break;
-            }
-            case 4:{
-                break;
-            }
-        }
-    }
+    y_loc += mySize/6;
     
     
-    
-    iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc, y_loc, mySize, mySize)];
+//    iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc, y_loc, mySize, mySize)];
 
     
-    switch(enemy_type){
-        case 0:{
+    switch(enemyType){
+        case EnemyTypeZou:{
             bomb_size = 20;
             if(!isDamaged){
                 iv.image = [UIImage imageNamed:@"mob_zou_01.png"];
@@ -155,7 +128,7 @@ int unique_id;
             }
             break;
         }
-        case 1:{
+        case EnemyTypeTanu:{
             bomb_size = 30;
             if(!isDamaged){
                 iv.image = [UIImage imageNamed:@"mob_tanu_01.png"];
@@ -164,7 +137,7 @@ int unique_id;
             }
             break;
         }
-        case 2:{
+        case EnemyTypePen:{
             bomb_size = 40;
             if(!isDamaged){
                 iv.image = [UIImage imageNamed:@"mob_pen_01.png"];
@@ -173,7 +146,7 @@ int unique_id;
             }
             break;
         }
-        case 3:{
+        case EnemyTypeMusa:{
             bomb_size = 40;
             if(!isDamaged){
                 iv.image = [UIImage imageNamed:@"mob_musa_01.png"];
@@ -182,7 +155,7 @@ int unique_id;
             }
             break;
         }
-        case 4:{
+        case EnemyTypeHari:{
             bomb_size = 40;
             if(!isDamaged){
                 iv.image = [UIImage imageNamed:@"mob_hari_01.png"];
@@ -192,26 +165,6 @@ int unique_id;
             break;
         }
     }
-//    switch(enemy_type){
-//        case 0:
-////            iv.image = [UIImage imageNamed:@"enemy01_stand_128.png"];//mechanical_design_3
-//            iv.image = [UIImage imageNamed:@"test_teki_rough.png"];
-//            break;
-//        case 1:
-////            iv.image = [UIImage imageNamed:@"enemy02_stand_128.png"];
-//            iv.image = [UIImage imageNamed:@"test_teki_rough.png"];
-//            break;
-//        case 2:
-//            iv.image = [UIImage imageNamed:@"test_teki_rough.png"];
-//            break;
-//    }
-
-
-//    NSLog(@"更新後 y = %d", y_loc);
-//    rect = CGRectMake(x_loc, y_loc, mySize, mySize);
-//    iv = [[UIImageView alloc]initWithFrame:rect];
-    
-    
     
     //最後にisDamagedを通常時に戻してあげる
     isDamaged = false;//ダメージを受けたときだけtrueにする

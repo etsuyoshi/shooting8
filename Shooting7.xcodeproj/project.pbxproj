@@ -55,6 +55,7 @@
 		3429D90E180FBD1A005CDFCE /* close.png in Resources */ = {isa = PBXBuildFile; fileRef = 3429D90D180FBD1A005CDFCE /* close.png */; };
 		342C03AB17F4604E0023C11F /* nothing32.png in Resources */ = {isa = PBXBuildFile; fileRef = 342C039D17F4604E0023C11F /* nothing32.png */; };
 		342C03AD17F4604E0023C11F /* gameover.png in Resources */ = {isa = PBXBuildFile; fileRef = 342C039F17F4604E0023C11F /* gameover.png */; };
+		342CA73D1824401000F072E0 /* tool.png in Resources */ = {isa = PBXBuildFile; fileRef = 342CA73C1824401000F072E0 /* tool.png */; };
 		342ECBBC17FC570500123886 /* star.png in Resources */ = {isa = PBXBuildFile; fileRef = 342ECBBB17FC570500123886 /* star.png */; };
 		342ECBC517FC5AF900123886 /* DamageParticleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 342ECBC417FC5AF900123886 /* DamageParticleView.m */; };
 		3436369C180FDA8B005A5C01 /* FontTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3436369B180FDA8B005A5C01 /* FontTestViewController.m */; };
@@ -234,6 +235,7 @@
 		3429D90D180FBD1A005CDFCE /* close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = close.png; sourceTree = "<group>"; };
 		342C039D17F4604E0023C11F /* nothing32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nothing32.png; sourceTree = "<group>"; };
 		342C039F17F4604E0023C11F /* gameover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gameover.png; sourceTree = "<group>"; };
+		342CA73C1824401000F072E0 /* tool.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tool.png; path = ../../../../Downloads/tool.png; sourceTree = "<group>"; };
 		342ECBBB17FC570500123886 /* star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star.png; sourceTree = "<group>"; };
 		342ECBC317FC5AF900123886 /* DamageParticleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DamageParticleView.h; sourceTree = "<group>"; };
 		342ECBC417FC5AF900123886 /* DamageParticleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DamageParticleView.m; sourceTree = "<group>"; };
@@ -446,8 +448,6 @@
 				34FA1A30180BC2460011E1CA /* AttrClass.m */,
 				348AD7EB180A9159007226EC /* DBAccessClass.h */,
 				348AD7EC180A9159007226EC /* DBAccessClass.m */,
-				34C16CCD181C2D9000650A40 /* TestViewController.h */,
-				34C16CCE181C2D9000650A40 /* TestViewController.m */,
 				342057D817F2B34C0084E99D /* Supporting Files */,
 			);
 			name = Shooting7;
@@ -457,6 +457,7 @@
 		342057D817F2B34C0084E99D /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				342CA73B1824400000F072E0 /* Tool */,
 				34A2B1BB181F9DEC00CB97F2 /* bullet */,
 				34A2B1BA181F9DDD00CB97F2 /* gameEffect */,
 				34A2B1B9181F9DB500CB97F2 /* player */,
@@ -501,6 +502,14 @@
 				34C09EDA18009C5E00E4A4D8 /* yellow_item_thunder.png */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		342CA73B1824400000F072E0 /* Tool */ = {
+			isa = PBXGroup;
+			children = (
+				342CA73C1824401000F072E0 /* tool.png */,
+			);
+			name = Tool;
 			sourceTree = "<group>";
 		};
 		347D26F118166DFC00498F68 /* number */ = {
@@ -731,6 +740,8 @@
 				34A6A1A2180EF48F006F26D6 /* ItemListViewController.m */,
 				3436369A180FDA8B005A5C01 /* FontTestViewController.h */,
 				3436369B180FDA8B005A5C01 /* FontTestViewController.m */,
+				34C16CCD181C2D9000650A40 /* TestViewController.h */,
+				34C16CCE181C2D9000650A40 /* TestViewController.m */,
 			);
 			name = ViewController;
 			sourceTree = "<group>";
@@ -902,6 +913,7 @@
 				348AD7F3180ACD52007226EC /* back_desert.png in Resources */,
 				348AD7F4180ACD52007226EC /* back_forest.png in Resources */,
 				34A1ED3F181CCDF20007471C /* FireBow.png in Resources */,
+				342CA73D1824401000F072E0 /* tool.png in Resources */,
 				348AD7F5180ACD52007226EC /* back_nangoku.png in Resources */,
 				348AD7F6180ACD52007226EC /* back_snow.png in Resources */,
 				34E216C1181BE80400B939E6 /* flinging.mp3 in Resources */,

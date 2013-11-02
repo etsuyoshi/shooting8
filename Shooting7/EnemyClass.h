@@ -10,11 +10,19 @@
 #import "ExplodeParticleView.h"
 #import "DamageParticleView.h"
 
+typedef NS_ENUM(NSInteger, EnemyType) {
+    EnemyTypeZou,
+    EnemyTypeTanu,
+    EnemyTypePen,
+    EnemyTypeMusa,
+    EnemyTypeHari
+};
+
+
 @interface EnemyClass : NSObject{
     
     int x_loc;
     int y_loc;
-    int enemy_type;//機体の型
     int hitPoint;
     int mySize;
     int lifetime_count;
@@ -27,6 +35,7 @@
     ExplodeParticleView *explodeParticle;
     DamageParticleView *damageParticle;
 }
+@property(nonatomic) EnemyType enemyType;
 
 
 -(id)init:(int)x_init size:(int)size;

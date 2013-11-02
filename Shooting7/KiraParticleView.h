@@ -14,7 +14,6 @@ typedef NS_ENUM(NSInteger, ParticleType) {
     ParticleTypeKilled
 };
 
-
 @interface KiraParticleView : UIView{
     CAEmitterLayer *particleEmitter;
     int lifeTime;

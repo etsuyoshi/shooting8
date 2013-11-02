@@ -6,6 +6,9 @@
 //  Copyright (c) 2013年 endo.tuyo. All rights reserved.
 //
 
+#define TEST
+#import "EnemyClass.h"
+#import "CreateComponentClass.h"
 #import "TestViewController.h"
 
 @interface TestViewController ()
@@ -15,6 +18,8 @@
 @implementation TestViewController
 
 UIView *uiv;
+NSTimer *tm;
+NSMutableArray *uiArray;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -42,6 +47,13 @@ UIView *uiv;
                                                           action:@selector(onFlickedFrame:)];
     
     [uiv addGestureRecognizer:flick_frame];
+    
+    uiArray = [[NSMutableArray alloc]init];
+    tm = [NSTimer scheduledTimerWithTimeInterval:0.1
+                                          target:self
+                                        selector:@selector(time:)//タイマー呼び出し
+                                        userInfo:nil
+                                         repeats:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -64,6 +76,56 @@ UIView *uiv;
     }
 }
 
+- (void)time:(NSTimer*)timer{
+    [self createBox];
+    [self moveBox];
+}
+-(void)createBox{
+    
+#ifndef TEST
+    CGRect rect = CGRectMake(arc4random() % (int)self.view.bounds.size.width, 0, 30, 30);
+    UIView *newView = [CreateComponentClass createImageView:rect image:@"mob_tanu_01.png"];
+    //    [[UIView alloc]initWithFrame:CGRectMake(arc4random() % (int)self.view.bounds.size.width, 0, 30, 30)];
+    [newView setBackgroundColor:[UIColor colorWithRed:0.5f green:0 blue:0 alpha:0.5f]];
+    
+    [uiArray insertObject:newView atIndex:0];
+    [self.view addSubview:[uiArray objectAtIndex:0]];
+    if([uiArray count] > 10){
+        [[uiArray lastObject] removeFromSuperview];
+        [uiArray removeLastObject];
+    }
 
+#else
+    EnemyClass *enemy = [[EnemyClass alloc]init];
+    [enemy getImageView].center = CGPointMake(arc4random() % (int)self.view.bounds.size.width, 0);
+    [uiArray insertObject:enemy atIndex:0];
+    [self.view addSubview:[[uiArray objectAtIndex:0] getImageView]];
+    if([uiArray count] > 100){
+        [[[uiArray lastObject] getImageView] removeFromSuperview];
+        [uiArray removeLastObject];
+    }
+
+#endif
+    
+}
+
+-(void)moveBox{
+#ifndef TEST
+    for(int i = 0; i < [uiArray count] ;i++){
+        ((UIView *)[uiArray objectAtIndex:i]).center =
+            CGPointMake(((UIView *)[uiArray objectAtIndex:i]).center.x,
+                        ((UIView *)[uiArray objectAtIndex:i]).center.y + 10);
+    }
+    CGPoint movedPoint = CGPointMake(uiv.center.x + 10, uiv.center.y + 10);
+    uiv.center = movedPoint;//CGPointMake(uiv.center.x, uiv.center.y + 100);
+#else
+    for(int i = 0; i < [uiArray count] ;i++){
+        ((UIView *)[[uiArray objectAtIndex:i] getImageView]).center =
+        CGPointMake(((UIView *)[[uiArray objectAtIndex:i] getImageView]).center.x,
+                    ((UIView *)[[uiArray objectAtIndex:i] getImageView]).center.y + 30);
+    }
+    
+#endif
+}
 
 @end

@@ -1,3 +1,9 @@
+//自分のダメージが恒常的に表示される？=>定期的に削除(最悪配列に入れる？！)
+//画面がカクカク
+//敵機が画面外に外れた場合、生死に関わらず削除
+//enemy addsubview => .center
+//敵機撃破時に画面停止
+
 //
 //  GameClassViewController.m
 //  ShootingTest
@@ -25,6 +31,8 @@
  ・自機の移動はpanGesture:済
  */
 
+#define TEST
+
 #import "GameClassViewController.h"
 #import "BGMClass.h"
 #import "DBAccessClass.h"
@@ -46,6 +54,10 @@ UIImageView *iv_frame, *iv_myMachine, *iv_enemyBeam, *iv_beam_launch, *iv_backgr
 
 UIView *_loadingView;
 UIActivityIndicatorView *_indicator;
+
+#ifdef TEST
+UITextView *tvCount;//テスト用
+#endif
 
 int world_no;
 
@@ -120,7 +132,16 @@ float count = 0;//timer
     [super viewDidLoad];
     
     
-    // ステータスバーを非表示にする:plistでも可
+#ifdef TEST
+    //テスト用
+    tvCount = [CreateComponentClass createTextView:CGRectMake(0, 100, 100, 50)
+                                              text:@"count:0"];
+#endif
+    [tvCount setBackgroundColor:[UIColor blackColor]];
+    tvCount.textColor = [UIColor whiteColor];
+    [self.view addSubview:tvCount];
+    
+    // ステータスバーを非表示にする
     if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)])
     {
         //ios7用
@@ -207,6 +228,8 @@ float count = 0;//timer
     
     //自機定義
     MyMachine = [[MyMachineClass alloc] init:x_frame/2 size:OBJECT_SIZE];
+    [self.view addSubview:[MyMachine getImageView]];
+    [self.view bringSubviewToFront:[MyMachine getImageView]];
     
     //自機が発射したビームを格納する配列初期化=>MyMachineクラス内に実装
 //    BeamArray = [[NSMutableArray alloc] init];
@@ -287,8 +310,8 @@ float count = 0;//timer
     [self.view bringSubviewToFront:iv_frame];
     
     //メモリ確認
-    NSLog(@"enemy = %d", [EnemyArray count]);
-    NSLog(@"particle = %d", [KiraArray count]);
+    NSLog(@"enemyArray length = %d", [EnemyArray count]);
+    NSLog(@"particleArray length = %d", [KiraArray count]);
     
     
     //消去、生成、更新、表示
@@ -297,9 +320,13 @@ float count = 0;//timer
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/前時刻の描画を消去_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-    for(int i = 0;i < [EnemyArray count] ; i++){
-        [[(EnemyClass *)[EnemyArray objectAtIndex:i] getImageView ] removeFromSuperview];
-    }
+    
+#ifdef REMOVE_AND_ADD_VIEW_MODE
+    //removeではなく.center対応できる？
+//    for(int i = 0;i < [EnemyArray count] ; i++){
+//        [[(EnemyClass *)[EnemyArray objectAtIndex:i] getImageView ] removeFromSuperview];
+//    }
+#endif
     
 //    for(int i = 0; i < [BeamArray count] ;i++){
 //        
@@ -309,7 +336,7 @@ float count = 0;//timer
         [[[MyMachine getBeam:i] getImageView] removeFromSuperview];
     }
     
-    [[MyMachine getImageView] removeFromSuperview];
+//    [[MyMachine getImageView] removeFromSuperview];
     
     
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
@@ -366,14 +393,19 @@ float count = 0;//timer
             [(EnemyClass *)[EnemyArray objectAtIndex:i] doNext];
 //            NSLog(@"%d番目敵：y=%d", i, [(EnemyClass *)[EnemyArray objectAtIndex:i] getY]);
             
-            //ダメージパーティクルの消去
-            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setIsEmitting:NO];//消去するには数秒後にNOに
+            //ダメージパーティクルの消去:1countで消去するため配列化する必要ない？
+            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setIsEmitting:NO];
             
             //爆発してから時間が所定時間が経過してる場合
             if([(EnemyClass *)[EnemyArray objectAtIndex: i] getDeadTime] >= explosionCycle){
                 //爆発パーティクルの消去
-//                NSLog(@"パーティクル消去 at %d", i);
+#ifdef TEST
+                NSLog(@"enemy remove at at %d", i);
+#endif
                 [[(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle] setIsEmitting:NO];//消去するには数秒後にNOに
+                [[[EnemyArray objectAtIndex:i] getExplodeParticle]removeFromSuperview];
+                [[[EnemyArray objectAtIndex:i] getDamageParticle]removeFromSuperview];
+                [[[EnemyArray objectAtIndex:i] getImageView]removeFromSuperview];
                 [EnemyArray removeObjectAtIndex:i];
             }
         }
@@ -428,18 +460,31 @@ float count = 0;//timer
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/表示_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+    
+#ifdef REMOVE_AND_ADD_VIEW_MODE
+//    for(int i = 0; i < [EnemyArray count] ;i++){
+//        //ビューにメインイメージを貼り付ける
+//        [self.view addSubview:[(EnemyClass *)[EnemyArray objectAtIndex:i] getImageView]];
+//    }
+#endif
+    float x_enemy = 0;
+    float y_enemy = 0;
     for(int i = 0; i < [EnemyArray count] ; i++){
         if([(EnemyClass *)[EnemyArray objectAtIndex:i] getIsAlive]){
-            //ビューにメインイメージを貼り付ける
-            [self.view addSubview:[(EnemyClass *)[EnemyArray objectAtIndex:i] getImageView]];
-            
+            x_enemy = [[EnemyArray objectAtIndex:i] getX];
+            y_enemy = [[EnemyArray objectAtIndex:i] getY];
+            CGPoint movedPoint = CGPointMake(x_enemy, y_enemy);
+            ((UIImageView *)[[EnemyArray objectAtIndex:i] getImageView]).center = movedPoint;
+            NSLog(@"enemy %d move to %f, %f",i, x_enemy, y_enemy);
         }
     }
     
-    if([MyMachine getIsAlive]){
-        [MyMachine setType:(int)(count * 10) % 7];
-        [self.view addSubview:[MyMachine getImageView]];
-    }
+    
+    
+//    if([MyMachine getIsAlive]){
+//        [MyMachine setType:(int)(count * 10) % 7];
+//        [self.view addSubview:[MyMachine getImageView]];
+//    }
     
     
 //    for(int i = 0; i < [BeamArray count] ; i++){
@@ -772,6 +817,7 @@ float count = 0;//timer
         
         if(count >= TIMEOVER_SECOND){
             isGameMode = false;
+            [self exitProcess];//delayさせるとその間にprogressが進んでしまうので即座に表示
         }
         
     }else{
@@ -842,6 +888,8 @@ float count = 0;//timer
  */
 -(void) yieldEnemy{
     Boolean isYield = false;
+    
+#ifdef TEST
     if(count < 5){
         if(arc4random() % 20 == 0){//20分の1
             isYield = true;
@@ -867,6 +915,12 @@ float count = 0;//timer
             isYield = true;
         }
     }
+#else
+    //1秒に1回発生
+    if(count % 10 == 0){
+        isYield = true;
+    }
+#endif
     
     if(isYield){
         enemyCount ++;
@@ -875,12 +929,24 @@ float count = 0;//timer
         EnemyClass *enemy = [[EnemyClass alloc]init:x size:OBJECT_SIZE];
         
         [EnemyArray insertObject:enemy atIndex:0];
+        [self.view addSubview:[[EnemyArray objectAtIndex:0] getImageView]];
+        [self.view bringSubviewToFront:[[EnemyArray objectAtIndex:0] getImageView]];
+        
+        
+//#ifdef TEST
+//      [[EnemyArray objectAtIndex:0] getImageView].center = CGPointMake(self.view.bounds.size.width / 2,
+//                                                                       arc4random() % (int)self.view.bounds.size.height);
+//#endif
+        
+//        [iv_background1 bringSubviewToFront:[[EnemyArray objectAtIndex:0] getImageView]];
+//        [iv_background2 bringSubviewToFront:[[EnemyArray objectAtIndex:0] getImageView]];
         
         if([EnemyArray count] > 30) {
             //発生した中で古いものから画面外にあるenemyを消去
             for(int i = [EnemyArray count] - 1; i > 0;i--){
                 if([[EnemyArray objectAtIndex:i] getImageView].center.y > self.view.bounds.size.height ||
                    !([[EnemyArray objectAtIndex:i] getIsAlive])){
+                    NSLog(@"memory release at enemy %d", i);
                     //画面から消去
                     [[[EnemyArray objectAtIndex:i] getImageView] removeFromSuperview];
                     //(パーティクルを生成していたら)パーティクルを消去
@@ -912,6 +978,12 @@ float count = 0;//timer
 //}
 
 -(void)drawBackground{
+    //テスト用
+#ifdef TEST
+    tvCount.text = [NSString stringWithFormat:@"count : %f", count];
+    [self.view bringSubviewToFront:tvCount];
+#endif
+    
     //frameの大きさと背景の現在描画位置を決定
     //点数オブジェクトで描画
     
@@ -932,8 +1004,7 @@ float count = 0;//timer
         iv_background2.center = CGPointMake(iv_background2.center.x, rect_frame.size.height * -0.5f - 10);
         
     }
-    
-    
+#ifndef TEST
     switch(world_no){
         case 0:{
             //宇宙空間の描画方法
@@ -977,6 +1048,7 @@ float count = 0;//timer
             break;
         }
     }
+#endif
 }
 
 
@@ -1216,7 +1288,7 @@ float count = 0;//timer
         //gold
         for(int cnt = cntInit; cnt < [GoldBoard getScore] ;cnt++){//expTilNextLevelを100分割した時に獲得したスコアがそのユニットの何倍か
             //時間のかかる処理
-            for(int i = 0; i < 50; i++){
+            for(int i = 0; i < 5; i++){
                 NSLog(@"gold : cnt = %d", cnt);
             }
             

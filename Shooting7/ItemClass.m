@@ -30,13 +30,13 @@
     kiraMovingArray = [[NSMutableArray alloc]init];
     
 //    http://stackoverflow.com/questions/9395914/switch-with-typedef-enum-type-from-string
-    type = arc4random() % 5;//[NSNumber numberWithInt:arc4random()];
+    type = arc4random() % 1;//[NSNumber numberWithInt:arc4random()];
     switch(type){
         case ItemTypeWeapon0:{//青：攻撃力上昇
 //            rect = CGRectMake(x_loc, y_loc, w, h);
             rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"blue_item_yuri_big2.png"];
+            iv.image = [UIImage imageNamed:@"tool"];
 //            iv.image = [UIImage imageNamed:@"coin001_32.png"];
             break;
         }

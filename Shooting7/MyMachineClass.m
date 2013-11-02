@@ -111,7 +111,7 @@ int unique_id;
     }
     
 //            NSLog(@"machine iv generated");    
-    iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc-mySize/2, y_loc-mySize/2, mySize, mySize)];
+//    iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc-mySize/2, y_loc-mySize/2, mySize, mySize)];
     
     
     switch(machine_type){

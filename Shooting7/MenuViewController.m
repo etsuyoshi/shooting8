@@ -6,6 +6,8 @@
 //  Copyright (c) 2013年 endo.tuyo. All rights reserved.
 //
 
+//#define TEST
+
 #import "BGMClass.h"
 #import "MenuViewController.h"
 #import "GameClassViewController.h"
@@ -465,12 +467,13 @@ AttrClass *attr;
             }
             
             
-            //test
-//            TestViewController *tvc = [[TestViewController alloc]init];
-//            [self presentViewController: tvc animated:YES completion: nil];
-
+#ifdef TEST
+            TestViewController *tvc = [[TestViewController alloc]init];
+            [self presentViewController: tvc animated:YES completion: nil];
+#else
             GameClassViewController *gameView = [[GameClassViewController alloc] init];
             [self presentViewController: gameView animated:YES completion: nil];
+#endif
             //参考戻る時(時間経過等ゲーム終了時で)：[self dismissModalViewControllerAnimated:YES];=>deprecated
 //            NSLog(@"return");
 //            [self dismissViewControllerAnimated:YES completion:nil];
