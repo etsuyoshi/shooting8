@@ -7,8 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
-@interface BackGroundClass : NSObject
+#import <UIKit/UIKit.h>
 typedef NS_ENUM(NSInteger, WorldType) {
     WorldTypeUniverse1,
     WorldTypeUniverse2,
@@ -17,6 +16,17 @@ typedef NS_ENUM(NSInteger, WorldType) {
     WorldTypeNangoku,
     WorldTypeSnow
 };
+
+
+
+@interface BackGroundClass : NSObject{
+    
+    int y_loc;
+    NSString *imageName;
+    UIImageView *iv_background1;
+    UIImageView *iv_background2;
+}
+@property(nonatomic) WorldType wType;
 
 -(id)init;
 -(id)init:(WorldType)_type width:(int)width height:(int)height;

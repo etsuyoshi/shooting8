@@ -508,7 +508,6 @@
 				3429D90D180FBD1A005CDFCE /* close.png */,
 				34FA1A2D180BBD540011E1CA /* coin001_32.png */,
 				34A087471803F194005458EF /* coin2.png */,
-				3411FB8917FF2D06001D1491 /* cosmos_star4_repair.png */,
 				348D635D17FE1A1100A3049B /* cross.png */,
 				342057E717F2B34C0084E99D /* Default-568h@2x.png */,
 				342057E317F2B34C0084E99D /* Default.png */,
@@ -692,6 +691,7 @@
 				348AD7F1180ACD52007226EC /* back_snow.png */,
 				348AD7F2180ACD52007226EC /* back_univ.png */,
 				34FA1A15180B95BD0011E1CA /* back_univ2.png */,
+				3411FB8917FF2D06001D1491 /* cosmos_star4_repair.png */,
 			);
 			name = background;
 			sourceTree = "<group>";

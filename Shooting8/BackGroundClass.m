@@ -5,19 +5,14 @@
 //  Created by 遠藤 豪 on 2013/11/04.
 //  Copyright (c) 2013年 endo.tuyo. All rights reserved.
 //
-#define TEST
+//#define TEST
 #import "BackGroundClass.h"
 #import "UIView+Animation.h"
-
+#import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
 
 @implementation BackGroundClass
-
-
-int y_loc;
-NSString *imageName;
-UIImageView *iv_background1;
-UIImageView *iv_background2;
-WorldType wType;
+@synthesize wType;
 
 -(id)init{
     self = [self init:0 width:320 height:480];
@@ -36,7 +31,7 @@ WorldType wType;
     //frameの大きさと背景の現在描画位置を決定
     //点数オブジェクトで描画
     
-#ifndef TEST
+//#ifndef TEST
     switch(wType){
         case WorldTypeUniverse1:{
             //宇宙空間の描画方法
@@ -80,12 +75,17 @@ WorldType wType;
             break;
         }
     }
-#endif
+//#endif
 
     //ここでアニメーションスタートさせても目的地をセットするための(貼付けられるべき)スーパービューが設定されていない
-//    [iv_background1 moveDownDuration:3.0f option:0];
-//    [iv_background2 moveDownDuration:3.0f option:0];
+
+    [iv_background1 moveTo:CGPointMake(0, height + 10)
+                  duration:3.0f
+                    option:UIViewAnimationOptionCurveLinear];//一定速度
     
+    [iv_background2 moveTo:CGPointMake(0, height + 10)
+                  duration:6.0f
+                    option:UIViewAnimationOptionCurveLinear];//一定速度
     return self;
 }
 

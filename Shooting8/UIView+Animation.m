@@ -18,7 +18,10 @@
                           delay:0.0
                         options:option
                      animations:^{
-                         self.frame = CGRectMake(destination.x,destination.y, self.frame.size.width, self.frame.size.height);
+                         self.frame = CGRectMake(destination.x,
+                                                 destination.y,
+                                                 self.frame.size.width,
+                                                 self.frame.size.height);
                      }
                      completion:nil];
 }
@@ -33,7 +36,7 @@
 //    [UIView setAnimationRepeatAutoreverses:TRUE]; //最初の位置に戻る
     [UIView animateWithDuration:0.4f
                           delay:0.0f
-     options:UIViewAnimationOptionCurveEaseOut//はじめ早く、段々ゆっくりに停止
+                        options:UIViewAnimationOptionCurveEaseOut//はじめ早く、段々ゆっくりに停止
                      animations:^{
 //                         NSLog(@"start    down from bound Method");
                          
@@ -107,6 +110,7 @@
                          }
                      }];
 }
+
 
 -(void)oscillate:(float)secs option:(UIViewAnimationOptions)option{
     [UIView setAnimationRepeatAutoreverses:TRUE]; //最初の位置に戻る
