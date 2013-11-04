@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "342057CD17F2B34C0084E99D"
-               BuildableName = "Shooting7.app"
-               BlueprintName = "Shooting7"
-               ReferencedContainer = "container:Shooting7.xcodeproj">
+               BuildableName = "Shooting8.app"
+               BlueprintName = "Shooting8"
+               ReferencedContainer = "container:Shooting8.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -31,7 +31,7 @@
                BlueprintIdentifier = "347E0D00180C07AB00B0DC09"
                BuildableName = "TestsShooting.app"
                BlueprintName = "TestsShooting"
-               ReferencedContainer = "container:Shooting7.xcodeproj">
+               ReferencedContainer = "container:Shooting8.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -45,7 +45,7 @@
                BlueprintIdentifier = "347E0D21180C07AC00B0DC09"
                BuildableName = "TestsShootingTests.octest"
                BlueprintName = "TestsShootingTests"
-               ReferencedContainer = "container:Shooting7.xcodeproj">
+               ReferencedContainer = "container:Shooting8.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -63,7 +63,7 @@
                BlueprintIdentifier = "347E0D21180C07AC00B0DC09"
                BuildableName = "TestsShootingTests.octest"
                BlueprintName = "TestsShootingTests"
-               ReferencedContainer = "container:Shooting7.xcodeproj">
+               ReferencedContainer = "container:Shooting8.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -71,9 +71,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "342057CD17F2B34C0084E99D"
-            BuildableName = "Shooting7.app"
-            BlueprintName = "Shooting7"
-            ReferencedContainer = "container:Shooting7.xcodeproj">
+            BuildableName = "Shooting8.app"
+            BlueprintName = "Shooting8"
+            ReferencedContainer = "container:Shooting8.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -90,9 +90,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "342057CD17F2B34C0084E99D"
-            BuildableName = "Shooting7.app"
-            BlueprintName = "Shooting7"
-            ReferencedContainer = "container:Shooting7.xcodeproj">
+            BuildableName = "Shooting8.app"
+            BlueprintName = "Shooting8"
+            ReferencedContainer = "container:Shooting8.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -108,9 +108,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "342057CD17F2B34C0084E99D"
-            BuildableName = "Shooting7.app"
-            BlueprintName = "Shooting7"
-            ReferencedContainer = "container:Shooting7.xcodeproj">
+            BuildableName = "Shooting8.app"
+            BlueprintName = "Shooting8"
+            ReferencedContainer = "container:Shooting8.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

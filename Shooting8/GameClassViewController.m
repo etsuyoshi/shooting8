@@ -3,6 +3,7 @@
 //敵機が画面外に外れた場合、生死に関わらず削除
 //enemy addsubview => .center
 //敵機撃破時に画面停止
+//全てanimationに置き換える：progressViewも確認
 //ビームを削除＆表示はなくす：現状は[[[MyMachine getBeam:i] getImageView] removeFromSuperview];で毎回表示
 
 //line等のソーシャルプラットフォームがないため、PCエミュレータ上ではプロンプト上に警告が表示される(端末では問題ないので無視)
@@ -46,6 +47,7 @@
 #import "MyMachineClass.h"
 #import "ScoreBoardClass.h"
 #import "GoldBoardClass.h"
+#import "UIView+Animation.h"
 #import <QuartzCore/QuartzCore.h>
 #define TIMEOVER_SECOND 100
 #define OBJECT_SIZE 70//自機と敵機のサイズ
@@ -695,6 +697,7 @@ float count = 0;//timer
                                 }
                                 [self.view bringSubviewToFront:[[ItemArray objectAtIndex:0] getImageView]];
                                 [self.view addSubview:[[ItemArray objectAtIndex:0] getImageView]];
+                                
                                 
                                 //重なった時に被らないように最前面に
 //                                [self.view bringSubviewToFront: [[ItemArray objectAtIndex:([ItemArray count]-1)] getImageView]];

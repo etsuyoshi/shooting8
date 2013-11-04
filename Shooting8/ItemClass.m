@@ -7,6 +7,7 @@
 //
 
 #import "ItemClass.h"
+#import "UIView+Animation.h"
 #import "KiraParticleView.h"
 
 @implementation ItemClass
@@ -124,6 +125,8 @@
             break;
         }
     }
+    
+//    [iv moveBoundDuration:0 option:0];
     
     return self;
 }
