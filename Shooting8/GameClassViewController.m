@@ -45,6 +45,7 @@
 #import "ItemClass.h"
 #import "PowerGaugeClass.h"
 #import "MyMachineClass.h"
+#import "BackGroundClass.h"
 #import "ScoreBoardClass.h"
 #import "GoldBoardClass.h"
 #import "UIView+Animation.h"
@@ -54,7 +55,7 @@
 
 
 CGRect rect_frame, rect_myMachine, rect_enemyBeam, rect_beam_launch;
-UIImageView *iv_frame, *iv_myMachine, *iv_enemyBeam, *iv_beam_launch, *iv_background1, *iv_background2;
+UIImageView *iv_frame, *iv_myMachine, *iv_enemyBeam, *iv_beam_launch;//, *iv_background1, *iv_background2;
 
 UIView *_loadingView;
 UIActivityIndicatorView *_indicator;
@@ -82,6 +83,7 @@ UIPanGestureRecognizer *panGesture;
 //UILongPressGestureRecognizer *longPress_frame;
 Boolean isTouched;
 
+BackGroundClass *BackGround;
 MyMachineClass *MyMachine;
 NSMutableArray *EnemyArray;
 //NSMutableArray *BeamArray;
@@ -216,20 +218,21 @@ float count = 0;//timer
     [self.view addSubview:iv_frame];
 
     
-    //backgroundの描画：絵を二枚用意して一枚目を表示して時間経過と共に進行方向(逆)にスクロールさせ、１枚目の終端を描画し始めたら２枚目の最初を描画させる
-    iv_background1 = [[UIImageView alloc]initWithFrame:rect_frame];
-    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(rect_frame.origin.x,
-                                                                  -rect_frame.size.height - 10,
-                                                                  rect_frame.size.width,
-                                                                  rect_frame.size.height + 10)];
-    [self.view addSubview:iv_background1];//初期状態ではまず１枚目を描画させる
-    [self.view addSubview:iv_background2];
     
     length_beam = 20;
     thick_beam = 5;
     
     //敵の発生時の格納箱初期化
     EnemyArray = [[NSMutableArray alloc]init];
+    
+    //背景インスタンス定義
+    BackGround = [[BackGroundClass alloc]init:3
+                                        width:self.view.bounds.size.width
+                                       height:self.view.bounds.size.height];
+    
+    [self.view addSubview:[BackGround getImageView1]];
+    [self.view addSubview:[BackGround getImageView2]];
+    
     
     //自機定義
     MyMachine = [[MyMachineClass alloc] init:x_frame/2 size:OBJECT_SIZE];
@@ -360,6 +363,9 @@ float count = 0;//timer
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/進行:各オブジェクトのdoNext_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+    
+    //背景部分
+    [BackGround doNext];
     
     
     if([MyMachine getIsAlive] ||
@@ -824,7 +830,6 @@ float count = 0;//timer
  */
 - (void)time:(NSTimer*)timer{
     if(isGameMode){
-        [self drawBackground];
         [self ordinaryAnimationStart];
         
         //一定時間経過するとゲームオーバー
@@ -1008,80 +1013,6 @@ float count = 0;//timer
 //    
 //    
 //}
-
--(void)drawBackground{
-    //テスト用
-#ifdef TEST
-    tvCount.text = [NSString stringWithFormat:@"count : %f", count];
-    [self.view bringSubviewToFront:tvCount];
-#endif
-    
-    //frameの大きさと背景の現在描画位置を決定
-    //点数オブジェクトで描画
-    
-    int velocity = 5;
-    if(count < 50){
-        velocity = 10;
-    }else if(count < 100){
-        velocity = 20;
-    }else if(count < 150){
-        velocity = 30;
-    }
-    
-    iv_background1.center = CGPointMake(iv_background1.center.x, iv_background1.center.y + velocity);
-    iv_background2.center = CGPointMake(iv_background2.center.x, iv_background2.center.y + velocity);
-    if(iv_background1.center.y > (float)rect_frame.size.height * 1.5f){
-        iv_background1.center = CGPointMake(iv_background1.center.x, rect_frame.size.height * -0.5f - 10);
-    }else if(iv_background2.center.y > (float)rect_frame.size.height * 1.5f){
-        iv_background2.center = CGPointMake(iv_background2.center.x, rect_frame.size.height * -0.5f - 10);
-        
-    }
-#ifndef TEST
-    switch(world_no){
-        case 0:{
-            //宇宙空間の描画方法
-            iv_background1.image = [UIImage imageNamed:@"cosmos_star4_repair.png"];
-            iv_background2.image = [UIImage imageNamed:@"cosmos_star4_repair.png"];
-            break;
-        }
-        case 1:{
-            //南国バージョン
-            iv_background1.image = [UIImage imageNamed:@"back_nangoku.png"];
-            iv_background2.image = [UIImage imageNamed:@"back_nangoku.png"];
-
-            break;
-        }
-        case 2:{
-            //宇宙バージョン
-            iv_background1.image = [UIImage imageNamed:@"back_univ.png"];
-            iv_background2.image = [UIImage imageNamed:@"back_univ2.png"];
-
-            break;
-        }
-        case 3:{
-            
-            //雪山バージョン
-            iv_background1.image = [UIImage imageNamed:@"back_snow.png"];
-            iv_background2.image = [UIImage imageNamed:@"back_snow.png"];
-
-            break;
-        }
-        case 4:{
-            //砂漠バージョン
-            iv_background1.image = [UIImage imageNamed:@"back_desert.png"];
-            iv_background2.image = [UIImage imageNamed:@"back_desert.png"];
-
-            break;
-        }
-        case 5:{
-            //森バージョン
-            iv_background1.image = [UIImage imageNamed:@"back_forest.png"];
-            iv_background2.image = [UIImage imageNamed:@"back_forest.png"];
-            break;
-        }
-    }
-#endif
-}
 
 
 -(void)exitProcess{

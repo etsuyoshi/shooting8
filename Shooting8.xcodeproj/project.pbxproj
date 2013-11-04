@@ -71,6 +71,7 @@
 		344BD61E1815936B00387201 /* mob_hari_02.png in Resources */ = {isa = PBXBuildFile; fileRef = 344BD6151815936B00387201 /* mob_hari_02.png */; };
 		344BD61F1815936B00387201 /* mob_hari_01.png in Resources */ = {isa = PBXBuildFile; fileRef = 344BD6161815936B00387201 /* mob_hari_01.png */; };
 		344BD6211815943400387201 /* mob_tanu_01.png in Resources */ = {isa = PBXBuildFile; fileRef = 344BD6201815943400387201 /* mob_tanu_01.png */; };
+		3458DB251827C3E2003F1672 /* BackGroundClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 3458DB241827C3E2003F1672 /* BackGroundClass.m */; };
 		3460F94E1824FA2700951A99 /* weapon_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 3460F9431824FA2700951A99 /* weapon_diffuse.png */; };
 		3460F94F1824FA2700951A99 /* coin_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 3460F9441824FA2700951A99 /* coin_blue.png */; };
 		3460F9501824FA2700951A99 /* tool_bomb.png in Resources */ = {isa = PBXBuildFile; fileRef = 3460F9451824FA2700951A99 /* tool_bomb.png */; };
@@ -267,6 +268,8 @@
 		344BD6151815936B00387201 /* mob_hari_02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mob_hari_02.png; sourceTree = "<group>"; };
 		344BD6161815936B00387201 /* mob_hari_01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mob_hari_01.png; sourceTree = "<group>"; };
 		344BD6201815943400387201 /* mob_tanu_01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mob_tanu_01.png; sourceTree = "<group>"; };
+		3458DB231827C3E2003F1672 /* BackGroundClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackGroundClass.h; sourceTree = "<group>"; };
+		3458DB241827C3E2003F1672 /* BackGroundClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackGroundClass.m; sourceTree = "<group>"; };
 		3460F9431824FA2700951A99 /* weapon_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = weapon_diffuse.png; sourceTree = "<group>"; };
 		3460F9441824FA2700951A99 /* coin_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = coin_blue.png; sourceTree = "<group>"; };
 		3460F9451824FA2700951A99 /* tool_bomb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tool_bomb.png; sourceTree = "<group>"; };
@@ -733,6 +736,8 @@
 			children = (
 				3467B72017FD5980004EEE94 /* PowerGaugeClass.h */,
 				3467B72117FD5980004EEE94 /* PowerGaugeClass.m */,
+				3458DB231827C3E2003F1672 /* BackGroundClass.h */,
+				3458DB241827C3E2003F1672 /* BackGroundClass.m */,
 				3411FB8217FEE301001D1491 /* MyMachineClass.h */,
 				3411FB8317FEE301001D1491 /* MyMachineClass.m */,
 				3400396D17F408070093E07E /* EnemyClass.h */,
@@ -1044,6 +1049,7 @@
 				3420AB961827AA9200AB0A84 /* UIView+Animation.m in Sources */,
 				34F3006F182162660082DCBC /* KiraParticleView.m in Sources */,
 				343F802B17FF947100224839 /* ScoreBoardClass.m in Sources */,
+				3458DB251827C3E2003F1672 /* BackGroundClass.m in Sources */,
 				34C09ECE1800497900E4A4D8 /* GoldBoardClass.m in Sources */,
 				344928B218025E6100315F2D /* MenuViewController.m in Sources */,
 				348AD7ED180A9159007226EC /* DBAccessClass.m in Sources */,
