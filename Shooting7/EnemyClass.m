@@ -67,15 +67,17 @@ int unique_id;
 
 -(void)setDamage:(int)damage location:(CGPoint)location{
     damageParticle = [[DamageParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, damage, damage)];
+//    damageParticle.center = CGPointMake(x_loc, y_loc);
     hitPoint -= damage;
     if(hitPoint < 0){
-        [self die:location];
+        [self die];
     }
 }
 
--(void) die:(CGPoint) location{
+-(void) die{
     //爆発用パーティクルの初期化
-    explodeParticle = [[ExplodeParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, bomb_size, bomb_size)];
+    explodeParticle = [[ExplodeParticleView alloc] initWithFrame:CGRectMake(x_loc, y_loc, bomb_size, bomb_size)];
+//    explodeParticle.center = CGPointMake(x_loc, y_loc);
     isAlive = false;
     dead_time ++;
 //    NSLog(@"die exit");

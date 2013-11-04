@@ -1,9 +1,9 @@
 //自分のダメージが恒常的に表示される？：毎回削除(最悪配列に入れる？！)
-//画面がカクカク：メモリ削除により改善
+//画面がカクカク：メモリ削除により改善？
 //敵機が画面外に外れた場合、生死に関わらず削除
 //enemy addsubview => .center
 //敵機撃破時に画面停止
-
+//ビームを削除＆表示はなくす：現状は[[[MyMachine getBeam:i] getImageView] removeFromSuperview];で毎回表示
 
 //line等のソーシャルプラットフォームがないため、PCエミュレータ上ではプロンプト上に警告が表示される(端末では問題ないので無視)
 //
@@ -33,7 +33,7 @@
  ・自機の移動はpanGesture:済
  */
 
-#define TEST
+//#define TEST
 
 #import "GameClassViewController.h"
 #import "BGMClass.h"
@@ -138,10 +138,11 @@ float count = 0;//timer
     //テスト用
     tvCount = [CreateComponentClass createTextView:CGRectMake(0, 100, 100, 50)
                                               text:@"count:0"];
-#endif
+
     [tvCount setBackgroundColor:[UIColor blackColor]];
     tvCount.textColor = [UIColor whiteColor];
     [self.view addSubview:tvCount];
+#endif
     
     // ステータスバーを非表示にする
     if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)])
@@ -395,13 +396,16 @@ float count = 0;//timer
             
             //更新(進行位置の更新と爆発後の時間経過)
             [(EnemyClass *)[EnemyArray objectAtIndex:i] doNext];
+            
+            
 //            NSLog(@"%d番目敵：y=%d", i, [(EnemyClass *)[EnemyArray objectAtIndex:i] getY]);
             
             //ダメージパーティクルの消去:1countで消去するため配列化する必要ない？
             [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setIsEmitting:NO];
             
-            //爆発してから時間が所定時間が経過してる場合
-            if([(EnemyClass *)[EnemyArray objectAtIndex: i] getDeadTime] >= explosionCycle){
+            //爆発してから時間が所定時間が経過してる場合 or 画面外に移動した場合、削除
+            if([(EnemyClass *)[EnemyArray objectAtIndex: i] getDeadTime] >= explosionCycle ||
+               [[EnemyArray objectAtIndex:i] getY] >= self.view.bounds.size.height + OBJECT_SIZE){
                 //爆発パーティクルの消去
 #ifdef TEST
                 NSLog(@"enemy remove at at %d", i);
@@ -409,7 +413,7 @@ float count = 0;//timer
                 [[(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle] setIsEmitting:NO];//消去するには数秒後にNOに
                 [[[EnemyArray objectAtIndex:i] getExplodeParticle]removeFromSuperview];
                 [[[EnemyArray objectAtIndex:i] getDamageParticle]removeFromSuperview];
-//                [[[EnemyArray objectAtIndex:i] getImageView]removeFromSuperview];//既に爆発パーティクルが発生した瞬間に消去されているはず
+                [[[EnemyArray objectAtIndex:i] getImageView]removeFromSuperview];//既に爆発パーティクルが発生している場合、削除済
                 [EnemyArray removeObjectAtIndex:i];
             }
         }
@@ -576,7 +580,7 @@ float count = 0;//timer
                 [self.view addSubview: [MyMachine getDamageParticle]];//表示する
                 
                 
-                //爆発パーティクル(ダメージ前isAliveがtrueからダメージ後falseになった場合は攻撃によって死んだ物として爆発)
+                //爆発パーティクル(ダメージ前isAliveがtrueからダメージ後falseになった場合は攻撃によって死んだものとして爆発)
                 if(![MyMachine getIsAlive]){
                     
                     /*
@@ -604,7 +608,7 @@ float count = 0;//timer
                     //左上位置
                     int _xBeam = [_beam getX];
                     int _yBeam = [_beam getY];
-                    int _sBeam = [_beam getSize];
+//                    int _sBeam = [_beam getSize];
                     
                     //敵機とビームの衝突判定
                     if(
@@ -625,7 +629,8 @@ float count = 0;//timer
                         //ダメージ負荷モード(フラグ立て)に切り替える
                         [[EnemyArray objectAtIndex:i] setIsDamaged:true];
                         
-                        [(EnemyClass *)[EnemyArray objectAtIndex:i] setDamage:damage location:CGPointMake(_xBeam + _sBeam/2, _yBeam + _sBeam/2)];
+                        //ビームが衝突した位置にdamageParticle表示
+                        [(EnemyClass *)[EnemyArray objectAtIndex:i] setDamage:damage location:CGPointMake(_xBeam, _yBeam)];
                         
                         //上記setDamageでdieメソッドも包含実行
                         //                        [(EnemyClass *)[EnemyArray objectAtIndex:i] die:CGPointMake(_xBeam, _yBeam)];
@@ -680,7 +685,7 @@ float count = 0;//timer
                             //アイテム出現
                             if(true){//arc4random() % 2 == 0){
 //                                NSLog(@"アイテム出現");
-                                ItemClass *_item = [[ItemClass alloc] init:_xBeam y_init:_yBeam width:50 height:50];
+                                ItemClass *_item = [[ItemClass alloc] init:[_enemy getX] y_init:[_enemy getY] width:50 height:50];
 
 //                                [ItemArray addObject:_item];
                                 [ItemArray insertObject:_item atIndex:0];
@@ -924,7 +929,7 @@ float count = 0;//timer
     }
 #else
     //1秒にfreq回発生
-    float freq = 0.5f;
+    float freq = 1.0f;
     float error = 0.01f;//内部計算誤差
     //freq10:0.1, 0.2, 0.3
     //freq4 :0.25,0.50,0.75

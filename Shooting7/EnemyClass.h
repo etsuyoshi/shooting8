@@ -51,7 +51,7 @@ typedef NS_ENUM(NSInteger, EnemyType) {
 -(void)setIsDamaged:(Boolean)_isDamaged;
 -(void)doNext;
 
--(void)die:(CGPoint)loc;
+-(void)die;
 -(void)setLocation:(CGPoint)loc;
 -(void)setX:(int)x;
 -(void)setY:(int)y;
