@@ -10,8 +10,7 @@
 
 @interface UIView (Animation)
 - (void) moveTo:(CGPoint)destination duration:(float)secs option:(UIViewAnimationOptions)option;
--(void) moveColorDuration:(float)secs
-                   option:(UIViewAnimationOptions)option;
+
 -(void) moveBoundDuration:(float)secs
                    option:(UIViewAnimationOptions)option;
 

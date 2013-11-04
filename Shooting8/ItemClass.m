@@ -37,7 +37,7 @@
 //            rect = CGRectMake(x_loc, y_loc, w, h);
             rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"tool"];
+            iv.image = [UIImage imageNamed:@"tool_bomb.png"];
 //            iv.image = [UIImage imageNamed:@"coin001_32.png"];
             break;
         }
@@ -126,12 +126,12 @@
         }
     }
     
-//    [iv moveBoundDuration:0 option:0];
+    [iv moveBoundDuration:0 option:0];
     
     return self;
 }
 -(id) init{
-    NSLog(@"call enemy class initialization");
+//    NSLog(@"call enemy class initialization");
     return [self init:0 y_init:0 width:10 height:10];
 }
 
@@ -143,31 +143,22 @@
  *アイテム移動中にパーティクルが発生したらtrueを返す
  */
 -(Boolean)doNext{
-    
+//    NSLog(@"donext at item class");
     Boolean isOccurringParticle = false;
     //移動
-    y_loc += 10;
+//    y_loc += 10;
     
     //引寄せアイテム発動中でなければ
-    iv.center = CGPointMake(x_loc, y_loc);
+//    iv.center = CGPointMake(x_loc, y_loc);
     
     
-    //動線上にキラキラ表示
+    //ivはmoveBoundDurationによって自動アニメーション：各時刻の値をパラメータに格納
+    CALayer *mLayer = [iv.layer presentationLayer];
+    x_loc = mLayer.position.x;
+    y_loc = mLayer.position.y;
     
-    //既存movingParticleの寿命進行=>ここではやらない：itemClassがisDead(doNext実行されない状態)になってもパーティクルは数カウント間描画されるべきであるため
-//    for(int i = 0 ; i < [kiraMovingArray count]; i++){
-//        if([(KiraParticleView *)[kiraMovingArray objectAtIndex:i] getIsAlive]){
-//            [(KiraParticleView *)[kiraMovingArray objectAtIndex:i] doNext];
-//        }else{
-//            [(KiraParticleView *)[kiraMovingArray objectAtIndex:i] setIsEmitting:NO];
-//            //remove superview
-//            [[kiraMovingArray objectAtIndex:i] removeFromSuperview];
-//            //remove array
-//            [kiraMovingArray removeObjectAtIndex:i];
-//            
-//        }
-//    }
-    //新規キラキラ発生
+    
+    //動線上に新規キラキラ発生
     if(arc4random() % 3 ==0){
         KiraParticleView *movingParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)
                                                                      particleType:ParticleTypeMoving];

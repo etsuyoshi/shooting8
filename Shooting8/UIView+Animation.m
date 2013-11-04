@@ -24,34 +24,6 @@
 }
 
 
--(void) moveColorDuration:(float)secs
-              option:(UIViewAnimationOptions)option{
-    
-    
-    [UIView animateWithDuration:secs
-                          delay:0.0f
-                        options:UIViewAnimationOptionCurveEaseIn|
-     UIViewAnimationOptionAllowUserInteraction
-                     animations:^{
-                         self.alpha = 1.0;
-                     }
-                     completion:^(BOOL finished) {
-                         
-                         
-                         //再度別のアニメーションを描く
-                         [UIView animateWithDuration:1.0f
-                                               delay:1.0f
-                                             options:UIViewAnimationOptionCurveEaseOut|
-                          UIViewAnimationOptionAllowUserInteraction
-                                          animations:^{
-                                              self.alpha = 0.0;
-                                          }
-                                          completion:^(BOOL finished) {
-                                              [self removeFromSuperview];
-                                          }];
-                     }];
-}
-
 
 //bound
 -(void) moveBoundDuration:(float)secs
@@ -63,23 +35,24 @@
                           delay:0.0f
      options:UIViewAnimationOptionCurveEaseOut//はじめ早く、段々ゆっくりに停止
                      animations:^{
-                         NSLog(@"start    down from bound Method");
+//                         NSLog(@"start    down from bound Method");
                          
                          self.center = CGPointMake(self.center.x,
-                                                   self.center.y - 200);
+                                                   self.center.y * 0.2f);
+//                                                   (self.center.y - 200 ) < 0? 0:self.center.y - 200);
                          //アニメーションの中でアニメーションをしてしまっているので、
                          //以下のアニメーションは実行されず、最終形態に移行する
 //                        [self moveDownDuration:secs
 //                                        option:option];
-                         NSLog(@"complete down from bound Method");
+//                         NSLog(@"complete down from bound Method");
                      }
                      completion:^(BOOL finished){
                          
                          if(finished){
-                             NSLog(@"stard    up from bound Method");
+//                             NSLog(@"stard    up from bound Method");
                              [self moveDownDuration:secs
                                            option:option];
-                             NSLog(@"complete up from bound Method");
+//                             NSLog(@"complete up from bound Method");
                          }
                      }];
 }
@@ -91,16 +64,16 @@
 //                          delay:0.0f
 //                        options:UIViewAnimationOptionCurveEaseIn
                      animations:^{
-                         NSLog(@"start    up from up1 Method");
+//                         NSLog(@"start    up from up1 Method");
                          self.frame = CGRectMake(0,
                                                  0,
                                                  self.frame.size.width,
                                                  self.frame.size.height);
                          
-                         NSLog(@"complete up from up1 Method");
+//                         NSLog(@"complete up from up1 Method");
                      }
                      completion:^(BOOL finished){
-                         NSLog(@"complete up from up2 Method");
+//                         NSLog(@"complete up from up2 Method");
                          
                      }];
 }
@@ -110,27 +83,27 @@
 -(void) moveDownDuration:(float)secs//使用しない
                 option:(UIViewAnimationOptions)option{
 
-    float destination_y =self.superview.bounds.size.height + self.center.y + 10;//外10px
-    float _secs = destination_y * 0.002f;//Xpx = 0.002sec(2msec)
-    NSLog(@"%f, %f", destination_y, _secs);
-    NSLog(@"moveDownDuration:%f option:%d", secs, option);
+    float destination_y =self.superview.bounds.size.height + 50;
+    float _secs = destination_y * 0.002f;//1px = 0.002sec(2msec)
+//    NSLog(@"%f, %f", destination_y, _secs);
+//    NSLog(@"moveDownDuration:%f option:%d", secs, option);
     [UIView animateWithDuration:_secs
                           delay:0.0f
                         options:UIViewAnimationOptionCurveEaseIn//ゆっくりから早く(突然停止)
                      animations:^{
-                         NSLog(@"start down from down1 Method");
+//                         NSLog(@"start down from down1 Method");
 //                         self.frame = CGRectMake(300,//self.superview.bounds.size.width - self.frame.size.width,
 //                                                 300,//self.superview.bounds.size.height - self.frame.size.height,
 //                                                 self.frame.size.width,
 //                                                 self.frame.size.height);
                          self.center = CGPointMake(self.center.x,
                                                    destination_y);
-                         NSLog(@"complete down from down1 Method");
+//                         NSLog(@"complete down from down1 Method");
                      }
                      completion:^(BOOL finished){
                          
                          if(finished){
-                             NSLog(@"complete down from down2 Method");
+//                             NSLog(@"complete down from down2 Method");
                          }
                      }];
 }

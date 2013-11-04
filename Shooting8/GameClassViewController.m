@@ -303,7 +303,7 @@ float count = 0;//timer
 
     
     //以下実行後、0.1秒間隔でtimerメソッドが呼び出されるが、それと並行してこのメソッド(viewDidLoad)も実行される(マルチスレッドのような感じ)
-    tm = [NSTimer scheduledTimerWithTimeInterval:0.1
+    tm = [NSTimer scheduledTimerWithTimeInterval:0.01
                                           target:self
                                         selector:@selector(time:)//タイマー呼び出し
                                         userInfo:nil
@@ -438,6 +438,7 @@ float count = 0;//timer
     for(int i = 0 ; i< [ItemArray count]; i ++){
         if([[ItemArray objectAtIndex:i] getIsAlive]){
             if([(ItemClass *)[ItemArray objectAtIndex:i] doNext]){//移動とパーティクル発生判定：同時実行
+//                NSLog(@"create particle");
                 //動線上パーティクルの格納と表示
                 [KiraArray insertObject:[((ItemClass*)[ItemArray objectAtIndex:i]) getMovingParticle:0] atIndex:0];
                 [self.view addSubview:[KiraArray objectAtIndex:0]];
@@ -512,19 +513,24 @@ float count = 0;//timer
     
     
     
+    
     //アイテム取得判定
     for(int itemCount = 0; itemCount < [ItemArray count] ; itemCount++){
         ItemClass *_item = [ItemArray objectAtIndex:itemCount];
         if([_item getIsAlive]){//アイテムの獲得判定
             int _xItem = [_item getX];
             int _yItem = [_item getY];
-                        
+            
+//            NSLog(@"xI = %d, xM = %d, yI = %d, yM = %d",
+//                  _xItem, [MyMachine getX],
+//                  _yItem, [MyMachine getY]);
             if(
                _xItem >= [MyMachine getX] - [MyMachine getSize] / 2 &&
                _xItem <= [MyMachine getX] + [MyMachine getSize] / 2 &&
-               _yItem >= [MyMachine getY] - [MyMachine getSize] / 2&&
+               _yItem >= [MyMachine getY] - [MyMachine getSize] / 2 &&
                _yItem <= [MyMachine getY] + [MyMachine getSize] / 2){
                 
+//                NSLog(@"Item acquired");
                 [[[ItemArray objectAtIndex:itemCount] getImageView] removeFromSuperview];
                 [[ItemArray objectAtIndex:itemCount] die];
                 
@@ -931,8 +937,8 @@ float count = 0;//timer
         }
     }
 #else
-    //1秒にfreq回発生
-    float freq = 1.0f;
+    //1秒にfreq*10回発生
+    float freq = 0.1f;
     float error = 0.01f;//内部計算誤差
     //freq10:0.1, 0.2, 0.3
     //freq4 :0.25,0.50,0.75
