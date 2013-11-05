@@ -226,7 +226,7 @@ float count = 0;//timer
     EnemyArray = [[NSMutableArray alloc]init];
     
     //背景インスタンス定義
-    BackGround = [[BackGroundClass alloc]init:WorldTypeDesert//森
+    BackGround = [[BackGroundClass alloc]init:WorldTypeForest
                                         width:self.view.bounds.size.width
                                        height:self.view.bounds.size.height];
     

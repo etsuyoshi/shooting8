@@ -14,6 +14,7 @@
 @implementation BackGroundClass
 @synthesize wType;
 
+int imageMargin;
 -(id)init{
     self = [self init:0 width:320 height:480];
     
@@ -21,9 +22,13 @@
 }
 -(id)init:(WorldType)_type width:(int)width height:(int)height{
     self = [super init];
+    imageMargin = 5;
     originalFrameSize = height;//フレーム縦サイズ
-    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, width, originalFrameSize + 10)];
-    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0, -originalFrameSize, width, originalFrameSize + 10)];
+//    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, width, originalFrameSize)];
+//    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0, -originalFrameSize, width, originalFrameSize + imageMargin)];
+    
+    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, -originalFrameSize/2, width, originalFrameSize)];
+    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0,  originalFrameSize/2, width, originalFrameSize)];
 //    y_loc1 = iv_background1.bounds.origin.y;
 //    y_loc2 = iv_background2.bounds.origin.y;
     y_loc1 = ((CALayer *)[iv_background1.layer presentationLayer]).position.y;//center = 240
@@ -93,6 +98,7 @@
     y_loc1 = ((CALayer *)[iv_background1.layer presentationLayer]).position.y;//center = 240
     y_loc2 = ((CALayer *)[iv_background2.layer presentationLayer]).position.y;//center = -240
     
+    /*
     if(y_loc1 < 0){//通常ルーチン:y_loc1==-iv_background1.bounds.size.height/2
         [iv_background1 moveTo:CGPointMake(0, originalFrameSize)//origin
                       duration:10.0f
@@ -108,20 +114,21 @@
                         option:UIViewAnimationOptionCurveLinear];
     }
     
-    if(y_loc1 >= iv_background1.bounds.size.height * 3 / 2){//最後まで描画されたら
+    if(y_loc1 >= originalFrameSize * 3 / 2){//最後まで描画されたら
         
         iv_background1.frame = CGRectMake(0, -originalFrameSize,
                                           iv_background1.bounds.size.width,
-                                          originalFrameSize + 10);
+                                          originalFrameSize + imageMargin);
         
     }
     
-    if(y_loc2 >= iv_background2.bounds.size.height * 3 / 2){//最後まで描画されたら
+    if(y_loc2 >= originalFrameSize * 3 / 2){//最後まで描画されたら
         iv_background2.frame = CGRectMake(0, -originalFrameSize,
-                                          iv_background2.bounds.size.width + 5,
-                                          originalFrameSize + 10);
+                                          iv_background2.bounds.size.width,
+                                          originalFrameSize + imageMargin);
         
     }
+    */
     
 #ifdef TEST
     NSLog(@"y1 = %f", iv_background1.bounds.origin.y);
