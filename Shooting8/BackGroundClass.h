@@ -32,6 +32,7 @@ typedef NS_ENUM(NSInteger, WorldType) {
 
 -(id)init;
 -(id)init:(WorldType)_type width:(int)width height:(int)height;
+-(void)startAnimation:(float)secs;
 -(void)doNext;
 -(UIImageView *)getImageView1;
 -(UIImageView *)getImageView2;

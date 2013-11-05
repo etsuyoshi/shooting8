@@ -310,7 +310,7 @@ float count = 0;//timer
 
     
     //以下実行後、0.1秒間隔でtimerメソッドが呼び出されるが、それと並行してこのメソッド(viewDidLoad)も実行される(マルチスレッドのような感じ)
-    tm = [NSTimer scheduledTimerWithTimeInterval:0.01
+    tm = [NSTimer scheduledTimerWithTimeInterval:0.1
                                           target:self
                                         selector:@selector(time:)//タイマー呼び出し
                                         userInfo:nil
@@ -355,7 +355,7 @@ float count = 0;//timer
     //_/_/_/_/生成_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 //    if([EnemyArray count] < 10){
-        [self yieldEnemy];
+//        [self yieldEnemy];
 //    }
 
     if([MyMachine getIsAlive] && isTouched){
@@ -370,6 +370,8 @@ float count = 0;//timer
     
     //背景部分
     [BackGround doNext];
+    [self.view sendSubviewToBack:[BackGround getImageView1]];
+    [self.view sendSubviewToBack:[BackGround getImageView2]];
     
     
     if([MyMachine getIsAlive] ||
@@ -382,7 +384,7 @@ float count = 0;//timer
         [MyMachine doNext];//設定されたtype、x_loc,y_locプロパティでUIImageViewを作成する
         
         
-        //ダメージを受けたときのイフェクト(画面を揺らす)
+        //ダメージを受けたときのイフェクト(画面を揺らす)=>縦方向に流れるアニメーション中なので難しい？
         
         
         
@@ -833,6 +835,9 @@ float count = 0;//timer
  *一定間隔呼び出しは[tm invalidate];によって停止される
  */
 - (void)time:(NSTimer*)timer{
+    if(count == 0){
+        [BackGround startAnimation:5.0f];
+    }
     if(isGameMode){
         [self ordinaryAnimationStart];
         
@@ -964,6 +969,7 @@ float count = 0;//timer
 #endif
     
     if(isYield){
+        NSLog(@"enemy yield");
         enemyCount ++;
         int x = arc4random() % ((int)self.view.bounds.size.width - OBJECT_SIZE);
         
