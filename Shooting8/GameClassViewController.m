@@ -230,6 +230,7 @@ float count = 0;//timer
                                         width:self.view.bounds.size.width
                                        height:self.view.bounds.size.height];
     
+    
     [self.view addSubview:[BackGround getImageView1]];
     [self.view addSubview:[BackGround getImageView2]];
     
@@ -310,7 +311,7 @@ float count = 0;//timer
 
     
     //以下実行後、0.1秒間隔でtimerメソッドが呼び出されるが、それと並行してこのメソッド(viewDidLoad)も実行される(マルチスレッドのような感じ)
-    tm = [NSTimer scheduledTimerWithTimeInterval:0.1
+    tm = [NSTimer scheduledTimerWithTimeInterval:0.01
                                           target:self
                                         selector:@selector(time:)//タイマー呼び出し
                                         userInfo:nil
@@ -333,30 +334,16 @@ float count = 0;//timer
     //_/_/_/_/前時刻の描画を消去_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     
-#ifdef REMOVE_AND_ADD_VIEW_MODE
-    //removeではなく.center対応できる？
-//    for(int i = 0;i < [EnemyArray count] ; i++){
-//        [[(EnemyClass *)[EnemyArray objectAtIndex:i] getImageView ] removeFromSuperview];
-//    }
-#endif
-    
-//    for(int i = 0; i < [BeamArray count] ;i++){
-//        
-//        [[(BeamClass *)[BeamArray objectAtIndex:i]getImageView] removeFromSuperview];
-//    }
+    //旧形式の方法
     for(int i = 0; i < [MyMachine getBeamCount]; i++){
         [[[MyMachine getBeam:i] getImageView] removeFromSuperview];
     }
-    
-//    [[MyMachine getImageView] removeFromSuperview];
     
     
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/生成_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-//    if([EnemyArray count] < 10){
-//        [self yieldEnemy];
-//    }
+    [self yieldEnemy];
 
     if([MyMachine getIsAlive] && isTouched){
         [MyMachine yieldBeam:0 init_x:[MyMachine getX] init_y:[MyMachine getY]];
@@ -368,10 +355,6 @@ float count = 0;//timer
     //_/_/_/_/進行:各オブジェクトのdoNext_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     
-    //背景部分
-    [BackGround doNext];
-    [self.view sendSubviewToBack:[BackGround getImageView1]];
-    [self.view sendSubviewToBack:[BackGround getImageView2]];
     
     
     if([MyMachine getIsAlive] ||
@@ -484,38 +467,7 @@ float count = 0;//timer
     //_/_/_/_/表示_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     
-#ifdef REMOVE_AND_ADD_VIEW_MODE
-//    for(int i = 0; i < [EnemyArray count] ;i++){
-//        //ビューにメインイメージを貼り付ける
-//        [self.view addSubview:[(EnemyClass *)[EnemyArray objectAtIndex:i] getImageView]];
-//    }
-#endif
-    float x_enemy = 0;
-    float y_enemy = 0;
-    for(int i = 0; i < [EnemyArray count] ; i++){
-        if([(EnemyClass *)[EnemyArray objectAtIndex:i] getIsAlive]){
-            x_enemy = [[EnemyArray objectAtIndex:i] getX];
-            y_enemy = [[EnemyArray objectAtIndex:i] getY];
-            CGPoint movedPoint = CGPointMake(x_enemy, y_enemy);
-            ((UIImageView *)[[EnemyArray objectAtIndex:i] getImageView]).center = movedPoint;
-//            NSLog(@"enemy %d move to %f, %f",i, x_enemy, y_enemy);
-        }
-    }
-    
-    
-    
-//    if([MyMachine getIsAlive]){
-//        [MyMachine setType:(int)(count * 10) % 7];
-//        [self.view addSubview:[MyMachine getImageView]];
-//    }
-    
-    
-//    for(int i = 0; i < [BeamArray count] ; i++){
-//        if([(BeamClass *)[BeamArray objectAtIndex:i] getIsAlive]){
-//            //ビューにメインイメージを貼り付ける
-//            [self.view addSubview:[(BeamClass *)[BeamArray objectAtIndex:i] getImageView]];
-//        }
-//    }
+    //旧形式
     for(int i = 0 ; i < [MyMachine getBeamCount]; i++){
         if([[MyMachine getBeam:i]getIsAlive]){
             //ビューに自機イメージを貼り付ける
@@ -526,7 +478,7 @@ float count = 0;//timer
     
     
     
-    //アイテム取得判定
+    //アイテム取得判定：前倒しに取得させる
     for(int itemCount = 0; itemCount < [ItemArray count] ; itemCount++){
         ItemClass *_item = [ItemArray objectAtIndex:itemCount];
         if([_item getIsAlive]){//アイテムの獲得判定
@@ -537,10 +489,10 @@ float count = 0;//timer
 //                  _xItem, [MyMachine getX],
 //                  _yItem, [MyMachine getY]);
             if(
-               _xItem >= [MyMachine getX] - [MyMachine getSize] / 2 &&
-               _xItem <= [MyMachine getX] + [MyMachine getSize] / 2 &&
-               _yItem >= [MyMachine getY] - [MyMachine getSize] / 2 &&
-               _yItem <= [MyMachine getY] + [MyMachine getSize] / 2){
+               _xItem >= [MyMachine getX] - [MyMachine getSize] &&
+               _xItem <= [MyMachine getX] + [MyMachine getSize] &&
+               _yItem >= [MyMachine getY] - [MyMachine getSize] &&
+               _yItem <= [MyMachine getY] + [MyMachine getSize]){
                 
 //                NSLog(@"Item acquired");
                 [[[ItemArray objectAtIndex:itemCount] getImageView] removeFromSuperview];
@@ -836,7 +788,7 @@ float count = 0;//timer
  */
 - (void)time:(NSTimer*)timer{
     if(count == 0){
-        [BackGround startAnimation:5.0f];
+        [BackGround startAnimation:3.0f];//3sec-Round
     }
     if(isGameMode){
         [self ordinaryAnimationStart];
@@ -967,9 +919,12 @@ float count = 0;//timer
         }
     }
 #endif
-    
+    if(arc4random() % 10 == 0){
+        isYield = true;
+    }else{
+        isYield = false;
+    }
     if(isYield){
-        NSLog(@"enemy yield");
         enemyCount ++;
         int x = arc4random() % ((int)self.view.bounds.size.width - OBJECT_SIZE);
         

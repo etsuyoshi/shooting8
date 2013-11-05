@@ -119,13 +119,13 @@
             iv.image = [UIImage imageNamed:@"coin001_32.png"];
             break;
         }
-            
         case ItemTypeSweep:{
             
             break;
         }
     }
-    
+    //中心座標にする
+    iv.center = CGPointMake(x_loc, y_loc);
     [iv moveBoundDuration:0 option:0];
     
     return self;
@@ -154,8 +154,8 @@
     
     //ivはmoveBoundDurationによって自動アニメーション：各時刻の値をパラメータに格納
     CALayer *mLayer = [iv.layer presentationLayer];
-    x_loc = mLayer.position.x;
-    y_loc = mLayer.position.y;
+    x_loc = mLayer.position.x;//中心座標
+    y_loc = mLayer.position.y;//中心座標
     
     
     //動線上に新規キラキラ発生

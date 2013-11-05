@@ -23,11 +23,11 @@ int imageMargin;
     imageMargin = 20;
     originalFrameSize = height;//フレーム縦サイズ
     
-    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, width, originalFrameSize + imageMargin)];
+    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, width, originalFrameSize)];
     iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0, -originalFrameSize,
-                                                                  width, originalFrameSize + imageMargin)];
+                                                                  width, originalFrameSize)];
     
-    //つなぎ目Check@静止画
+    //つなぎ目Check@静止画:テスト用
 //    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, -originalFrameSize/2, width, originalFrameSize)];
 //    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0,  originalFrameSize/2, width, originalFrameSize)];
 //    y_loc1 = iv_background1.bounds.origin.y;
@@ -90,73 +90,32 @@ int imageMargin;
 
 -(void)startAnimation:(float)secs{
     
-    if(y_loc1 > 0){//最初の状態
-        [UIView animateWithDuration:secs/2
-                              delay:0.0f
-                            options:UIViewAnimationOptionCurveLinear//一定速度
-                         animations:^{
-                             iv_background1.frame =
-                             CGRectMake(0, originalFrameSize,
-                                        iv_background1.bounds.size.width,
-                                        iv_background1.bounds.size.height);
-                             
-                             iv_background2.frame =
-                             CGRectMake(0, originalFrameSize,
-                                        iv_background2.bounds.size.width,
-                                        iv_background2.bounds.size.height);
+    [UIView animateWithDuration:secs
+                          delay:0.0f
+                        options:UIViewAnimationOptionCurveLinear//constant-speed
+                     animations:^{
+                         iv_background1.center =
+                            CGPointMake(iv_background1.bounds.size.width/2,
+                                        iv_background1.center.y + originalFrameSize);
+                         iv_background2.center =
+                            CGPointMake(iv_background2.bounds.size.width/2,
+                                        iv_background2.center.y + originalFrameSize);
+                     }
+                     completion:^(BOOL finished){
+                         //初期化
+                         if(iv_background1.center.y > originalFrameSize){
+                             iv_background1.center =
+                                CGPointMake(iv_background1.bounds.size.width/2,
+                                            -originalFrameSize/2);
                          }
-                         completion:^(BOOL finished){
-                             //初期化
-                             iv_background1.frame =
-                                CGRectMake(0, -originalFrameSize,
-                                           iv_background1.bounds.size.width,
-                                           iv_background1.bounds.size.height);
-                             
-                                [self startAnimation:secs*2];
-                         }];
-    }
-    
-    
-    //    if(y_loc1 <= 0){//通常ルーチン:y_loc1==-iv_background1.bounds.size.height/2
-//    if(y_loc1 == -((float)originalFrameSize - imageMargin)/2){
-//        [iv_background1 moveTo:CGPointMake(0, originalFrameSize)//origin
-//                      duration:10.0f
-//                        option:UIViewAnimationOptionCurveLinear];
-//    }else if(y_loc1 == ((float)originalFrameSize - imageMargin) /2){//初期状態では１の中心が画面の中心に位置しているので速さは半分
-//        [iv_background1 moveTo:CGPointMake(0, originalFrameSize)//origin
-//                      duration:5.0f
-//                        option:UIViewAnimationOptionCurveLinear];
-//    }else{
-//        NSLog(@"y_loc1 = %d", y_loc1);
-//    }
-//    //    if(y_loc2 <= 0){//y_loc2==-iv_background2.bounds.size.height/2){
-//    if(y_loc2 == -((float)originalFrameSize - imageMargin)/2){//通常ルーチン
-//        [iv_background2 moveTo:CGPointMake(0, originalFrameSize)//origin
-//                      duration:10.0f
-//                        option:UIViewAnimationOptionCurveLinear];
-//    }else if(y_loc2 == -((float) originalFrameSize - imageMargin)/2){//初期状態では２の中心が画面上部外側
-//        [iv_background2 moveTo:CGPointMake(0, originalFrameSize)//origin
-//                      duration:10.0f
-//                        option:UIViewAnimationOptionCurveLinear];
-//    }
-//    
-//    //初期化
-//    if(y_loc1 >= (float)originalFrameSize * 3 / 2){//最後まで描画されたら
-//        
-//        //        iv_background1.frame = CGRectMake(0, -(originalFrameSize),// + imageMargin),下margin部分は被らせる
-//        //                                          iv_background1.bounds.size.width,
-//        //                                          originalFrameSize + imageMargin);
-//        iv_background1.center = CGPointMake(iv_background1.bounds.size.width /2,
-//                                            -originalFrameSize/2);
-//    }
-//    if(y_loc2 >= (float)originalFrameSize * 3 / 2){//最後まで描画されたら
-//        //        iv_background2.frame = CGRectMake(0, -(originalFrameSize),// + imageMargin),下部分のimageMarginは被らせる
-//        //                                          iv_background2.bounds.size.width,
-//        //                                          originalFrameSize + imageMargin);
-//        iv_background2.center = CGPointMake(iv_background2.bounds.size.width / 2,
-//                                            -originalFrameSize/2);
-//        
-//    }
+                         if(iv_background2.center.y > originalFrameSize){
+                             iv_background2.center =
+                                CGPointMake(iv_background2.bounds.size.width/2,
+                                            -originalFrameSize/2);
+                         }
+                         
+                         [self startAnimation:secs];
+                     }];
 }
 
 

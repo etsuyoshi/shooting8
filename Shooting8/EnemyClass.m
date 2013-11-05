@@ -18,7 +18,7 @@ int unique_id;
     unique_id++;
     hitPoint = 50;
     mySize = size;
-    y_loc = -mySize;//画面の外から発生させる
+    y_loc = 0;//-mySize;//画面の外から発生させる
     x_loc = x_init;
     
     lifetime_count = 0;
@@ -106,8 +106,8 @@ int unique_id;
 }
 -(void)doNext{
     //初動：最初に呼び出される時のみ
-    if(y_loc == -mySize){
-        [iv moveTo:CGPointMake(x_loc - mySize/2, 10000)
+    if(lifetime_count == 0){
+        [iv moveTo:CGPointMake(x_loc - mySize/2, 500)
           duration:5.0f
             option:UIViewAnimationOptionCurveLinear];
     }
@@ -122,8 +122,11 @@ int unique_id;
         dead_time ++;
         return;
     }
-//    y_loc += mySize/6;
-    y_loc = iv.center.y;
+//    y_loc += mySize/6;//旧形式
+//    y_loc = iv.center.y;
+//    CALayer *mLayer = [iv.layer presentationLayer];
+    //現在中心座標
+    y_loc = ((CALayer *)[iv.layer presentationLayer]).position.y;//center = 240
     
     
 //    iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc, y_loc, mySize, mySize)];
