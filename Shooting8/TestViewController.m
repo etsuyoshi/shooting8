@@ -5,11 +5,12 @@
 //  Created by 遠藤 豪 on 2013/10/27.
 //  Copyright (c) 2013年 endo.tuyo. All rights reserved.
 //
-
+#define MODE1
 #define TEST
 #import "EnemyClass.h"
 #import "CreateComponentClass.h"
 #import "TestViewController.h"
+#import "UIView+Animation.h"
 
 @interface TestViewController ()
 
@@ -20,6 +21,7 @@
 UIView *uiv;
 NSTimer *tm;
 NSMutableArray *uiArray;
+int counter;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -47,6 +49,8 @@ NSMutableArray *uiArray;
                                                           action:@selector(onFlickedFrame:)];
     
     [uiv addGestureRecognizer:flick_frame];
+    
+
     
     uiArray = [[NSMutableArray alloc]init];
     tm = [NSTimer scheduledTimerWithTimeInterval:0.1
@@ -77,8 +81,17 @@ NSMutableArray *uiArray;
 }
 
 - (void)time:(NSTimer*)timer{
+    counter ++;
+#ifdef MODE1
+    if(counter > 10){
+        [uiv moveTo:CGPointMake(0, 300)
+           duration:3.0f
+             option:0];
+    }
+#else
     [self createBox];
     [self moveBox];
+#endif
 }
 -(void)createBox{
     
@@ -119,11 +132,16 @@ NSMutableArray *uiArray;
     CGPoint movedPoint = CGPointMake(uiv.center.x + 10, uiv.center.y + 10);
     uiv.center = movedPoint;//CGPointMake(uiv.center.x, uiv.center.y + 100);
 #else
+    
+#ifdef MODE1
+    
+#else
     for(int i = 0; i < [uiArray count] ;i++){
         ((UIView *)[[uiArray objectAtIndex:i] getImageView]).center =
         CGPointMake(((UIView *)[[uiArray objectAtIndex:i] getImageView]).center.x,
                     ((UIView *)[[uiArray objectAtIndex:i] getImageView]).center.y + 30);
     }
+#endif
     
 #endif
 }

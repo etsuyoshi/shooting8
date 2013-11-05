@@ -50,7 +50,7 @@
 #import "GoldBoardClass.h"
 #import "UIView+Animation.h"
 #import <QuartzCore/QuartzCore.h>
-#define TIMEOVER_SECOND 100
+#define TIMEOVER_SECOND 1000
 #define OBJECT_SIZE 70//自機と敵機のサイズ
 
 
@@ -226,13 +226,17 @@ float count = 0;//timer
     EnemyArray = [[NSMutableArray alloc]init];
     
     //背景インスタンス定義
-    BackGround = [[BackGroundClass alloc]init:WorldTypeForest//森
+    BackGround = [[BackGroundClass alloc]init:WorldTypeDesert//森
                                         width:self.view.bounds.size.width
                                        height:self.view.bounds.size.height];
     
     [self.view addSubview:[BackGround getImageView1]];
     [self.view addSubview:[BackGround getImageView2]];
     
+    
+//    [(UIImageView *)[BackGround getImageView1] moveTo:CGPointMake(0, 400)
+//                                             duration:200.0f
+//                                               option:UIViewAnimationOptionCurveLinear];//一定速度
     
     //自機定義
     MyMachine = [[MyMachineClass alloc] init:x_frame/2 size:OBJECT_SIZE];
@@ -351,7 +355,7 @@ float count = 0;//timer
     //_/_/_/_/生成_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 //    if([EnemyArray count] < 10){
-        [self yieldEnemy];
+/*        [self yieldEnemy];*/
 //    }
 
     if([MyMachine getIsAlive] && isTouched){

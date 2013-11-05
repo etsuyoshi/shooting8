@@ -21,7 +21,9 @@ typedef NS_ENUM(NSInteger, WorldType) {
 
 @interface BackGroundClass : NSObject{
     
-    int y_loc;
+    int y_loc1;
+    int y_loc2;
+    int originalFrameSize;
     NSString *imageName;
     UIImageView *iv_background1;
     UIImageView *iv_background2;
