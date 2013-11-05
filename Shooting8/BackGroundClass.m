@@ -8,8 +8,6 @@
 #define TEST
 #import "BackGroundClass.h"
 #import "UIView+Animation.h"
-#import <UIKit/UIKit.h>
-#import <QuartzCore/QuartzCore.h>
 
 @implementation BackGroundClass
 @synthesize wType;
@@ -24,11 +22,12 @@ int imageMargin;
     self = [super init];
     imageMargin = 5;
     originalFrameSize = height;//フレーム縦サイズ
-//    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, width, originalFrameSize)];
-//    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0, -originalFrameSize, width, originalFrameSize + imageMargin)];
+    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, width, originalFrameSize)];
+    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0, -originalFrameSize, width, originalFrameSize + imageMargin)];
     
-    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, -originalFrameSize/2, width, originalFrameSize)];
-    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0,  originalFrameSize/2, width, originalFrameSize)];
+    //つなぎ目Check
+//    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, -originalFrameSize/2, width, originalFrameSize)];
+//    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0,  originalFrameSize/2, width, originalFrameSize)];
 //    y_loc1 = iv_background1.bounds.origin.y;
 //    y_loc2 = iv_background2.bounds.origin.y;
     y_loc1 = ((CALayer *)[iv_background1.layer presentationLayer]).position.y;//center = 240
@@ -98,7 +97,6 @@ int imageMargin;
     y_loc1 = ((CALayer *)[iv_background1.layer presentationLayer]).position.y;//center = 240
     y_loc2 = ((CALayer *)[iv_background2.layer presentationLayer]).position.y;//center = -240
     
-    /*
     if(y_loc1 < 0){//通常ルーチン:y_loc1==-iv_background1.bounds.size.height/2
         [iv_background1 moveTo:CGPointMake(0, originalFrameSize)//origin
                       duration:10.0f
@@ -128,7 +126,6 @@ int imageMargin;
                                           originalFrameSize + imageMargin);
         
     }
-    */
     
 #ifdef TEST
     NSLog(@"y1 = %f", iv_background1.bounds.origin.y);

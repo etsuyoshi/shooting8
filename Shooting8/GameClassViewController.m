@@ -355,7 +355,7 @@ float count = 0;//timer
     //_/_/_/_/生成_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 //    if([EnemyArray count] < 10){
-/*        [self yieldEnemy];*/
+        [self yieldEnemy];
 //    }
 
     if([MyMachine getIsAlive] && isTouched){

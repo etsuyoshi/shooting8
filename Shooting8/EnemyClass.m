@@ -8,6 +8,7 @@
 
 
 #import "EnemyClass.h"
+#import "UIView+Animation.h"
 
 @implementation EnemyClass
 @synthesize enemyType;
@@ -15,10 +16,11 @@
 int unique_id;
 -(id) init:(int)x_init size:(int)size{
     unique_id++;
-    y_loc = 0;
-    x_loc = x_init;
     hitPoint = 50;
     mySize = size;
+    y_loc = -mySize;//画面の外から発生させる
+    x_loc = x_init;
+    
     lifetime_count = 0;
     dead_time = -1;//死亡したら0にして一秒後にparticleを消去する
     isAlive = true;
@@ -27,6 +29,7 @@ int unique_id;
     damageParticle  = nil;
     rect = CGRectMake(x_loc, y_loc, mySize, mySize);
     iv = [[UIImageView alloc]initWithFrame:rect];
+    iv.center = CGPointMake(x_loc, y_loc);//位置を修正
     enemyType = arc4random() % 5;
     switch(enemyType){
         case EnemyTypeZou:{
@@ -102,6 +105,12 @@ int unique_id;
     isDamaged = _isDamaged;
 }
 -(void)doNext{
+    //初動：最初に呼び出される時のみ
+    if(y_loc == -mySize){
+        [iv moveTo:CGPointMake(x_loc - mySize/2, 10000)
+          duration:5.0f
+            option:UIViewAnimationOptionCurveLinear];
+    }
 //    [self doNext:false];
 //}
 //-(void)doNext:(Boolean)isDamaged{
@@ -113,8 +122,8 @@ int unique_id;
         dead_time ++;
         return;
     }
-    
-    y_loc += mySize/6;
+//    y_loc += mySize/6;
+    y_loc = iv.center.y;
     
     
 //    iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc, y_loc, mySize, mySize)];
