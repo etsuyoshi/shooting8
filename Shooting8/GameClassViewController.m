@@ -610,7 +610,7 @@ float count = 0;//timer
                         //                            [self drawBomb:(CGPointMake((float)_xBeam, (float)_yBeam))];
 
                         
-                        //ダメージパーティクル表示
+                        //ダメージパーティクル表示：処理が間に合わない可能性があるので、配列に格納して数カウントで消去
                         [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setUserInteractionEnabled: NO];//インタラクション拒否
                         
                         [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setIsEmitting:YES];//消去するには数秒後にNOに
