@@ -64,6 +64,17 @@ int unique_id;
 
 -(void)setDamage:(int)damage location:(CGPoint)location{
     damageParticle = [[DamageParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, damage, damage)];
+    [UIView animateWithDuration:0.5f
+                     animations:^{
+                         [damageParticle setAlpha:0.0f];//徐々に薄く
+                     }
+                     completion:^(BOOL finished){
+                         //終了時処理
+                         [damageParticle setIsEmitting:NO];
+                         [damageParticle removeFromSuperview];
+                     }];
+    
+    
     
     if(defensePower >= 0){
         if(hitPoint > 0){
@@ -82,6 +93,15 @@ int unique_id;
 -(void) die:(CGPoint) location{
     //爆発用パーティクルの初期化
     explodeParticle = [[ExplodeParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, bomb_size, bomb_size)];
+    [UIView animateWithDuration:0.5f
+                     animations:^{
+                         [explodeParticle setAlpha:0.0f];//徐々に薄く
+                     }
+                     completion:^(BOOL finished){
+                         //終了時処理
+                         [explodeParticle setIsEmitting:NO];
+                         [explodeParticle removeFromSuperview];
+                     }];
     isAlive = false;
     dead_time ++;
 }

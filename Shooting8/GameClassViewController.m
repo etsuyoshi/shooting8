@@ -69,7 +69,7 @@ int world_no;
 
 //NSMutableArray *iv_arr_tokuten;
 int y_background1, y_background2;
-const int explosionCycle = 3;//爆発時間
+const int explosionCycle = 300;//爆発時間
 int max_enemy_in_frame;
 int x_frame, y_frame;
 //int x_myMachine, x_enemyMachine, x_beam;
@@ -253,6 +253,7 @@ float count = 0;//timer
     //アイテム生成時、移動時、消滅時のパーティクル格納用配列
     KiraArray = [[NSMutableArray alloc]init];
     
+    
     //スコアボードの初期化
     ScoreBoard = [[ScoreBoardClass alloc]init:0 x_init:0 y_init:0 ketasu:10];
     
@@ -363,6 +364,7 @@ float count = 0;//timer
         
         //生きている間か、爆死してから一定時間内においてはダメージパーティクルの消去
         [[MyMachine getDamageParticle] setIsEmitting:NO];
+        
         
         [MyMachine doNext];//設定されたtype、x_loc,y_locプロパティでUIImageViewを作成する
         
