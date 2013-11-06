@@ -13,14 +13,15 @@
     
     y_loc = y_init;
     x_loc = x_init;
-    power = 10;//衝突対象に対するダメージ
+    power = 4;//衝突対象に対するダメージ
     width = w;
     height = h;
     isAlive = true;
     rect = CGRectMake(x_loc - w/2, y_loc - h/2, w, h);
     iv = [[UIImageView alloc]initWithFrame:rect];
 //    iv.image = [UIImage imageNamed:@"beam.png"];
-    iv.image = [UIImage imageNamed:@"bullet_level1.png"];
+//    iv.image = [UIImage imageNamed:@"bullet_level1.png"];
+    iv.image = [UIImage imageNamed:@"09.png"];
     return self;
 }
 -(id) init{
@@ -40,7 +41,8 @@
     x_loc += 0;//mySize/10 * (int)pow(-1, arc4random()%2) % 200;//単位時間当たりに左右3個体分の移動距離を進む
     iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc - width/2, y_loc - height/2, width, height)];
 //    iv.image = [UIImage imageNamed:@"beam.png"];
-    iv.image = [UIImage imageNamed:@"bullet_level1.png"];
+//    iv.image = [UIImage imageNamed:@"bullet_level1.png"];
+    iv.image = [UIImage imageNamed:@"09.png"];
     
     //    NSLog(@"更新後 y = %d", y_loc);
     //    rect = CGRectMake(x_loc, y_loc, mySize, mySize);

@@ -47,7 +47,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 }
 
 @property(nonatomic) ItemType type;
-
+-(id)init:(ItemType)type x_init:(int)x_init y_init:(int)y width:(int)w height:(int)h;
 -(id)init:(int)x_init y_init:(int)y width:(int)w height:(int)h;
 -(id)init;
 

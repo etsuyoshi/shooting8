@@ -15,6 +15,20 @@
 @synthesize type;
 
 -(id) init:(int)x_init y_init:(int)y_init width:(int)w height:(int)h{
+    type = arc4random() % 10;//[NSNumber numberWithInt:arc4random()];
+    if(type <= 2){
+        type = ItemTypeYellowGold;
+    }else{
+        type = arc4random() % 16;
+    }
+    
+    
+    
+    //polymophysm
+    return [self init:type x_init:(int)x_init y_init:(int)y_init width:(int)w height:(int)h];
+}
+-(id) init:(ItemType)_type x_init:(int)x_init y_init:(int)y_init width:(int)w height:(int)h{
+    
     
     y_loc = y_init;
     x_loc = x_init;
@@ -31,12 +45,7 @@
     kiraMovingArray = [[NSMutableArray alloc]init];
     
 //    http://stackoverflow.com/questions/9395914/switch-with-typedef-enum-type-from-string
-    type = arc4random() % 10;//[NSNumber numberWithInt:arc4random()];
-    if(type <= 2){
-        type = ItemTypeYellowGold;
-    }else{
-        type = arc4random() % 16;
-    }
+    type = _type;
     switch(type){
         case ItemTypeWeapon0:{//青：攻撃力上昇
 //            rect = CGRectMake(x_loc, y_loc, w, h);
@@ -138,7 +147,7 @@
         case ItemTypeSmall:{
             rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"small.png"];
+            iv.image = [UIImage imageNamed:@"small_cookie.png"];
             break;
         }
         case ItemTypeTransparency:{

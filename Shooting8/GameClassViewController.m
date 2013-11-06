@@ -107,6 +107,7 @@ int x_pg, y_pg, width_pg, height_pg;
 NSTimer *tm;
 BGMClass *bgmClass;
 float count = 0;//timer
+int tempCount = 0;//テスト用
 
 @interface GameClassViewController ()
 
@@ -303,8 +304,8 @@ float count = 0;//timer
     
     
     //一時停止ボタン
-    int size_pause = 70;
-    CGRect rect_pause = CGRectMake(rect_frame.size.width / 2 - size_pause / 2,30 , size_pause, size_pause);
+    int size_pause = 20;
+    CGRect rect_pause = CGRectMake(rect_frame.size.width - size_pause,30 , size_pause, size_pause);
 //    UIImageView *iv_pause = [[UIImageView alloc]initWithFrame:CGRectMake(rect_frame.size.width / 2 - size_pause / 2,0 , size_pause, size_pause)];
     UIImageView *iv_pause = [CreateComponentClass createImageView:rect_pause image:@"close.png" tag:0 target:self selector:@"onClickedStopButton"];
     [iv_frame bringSubviewToFront:iv_pause];//iv_frameの上にボタン配置
@@ -659,7 +660,8 @@ float count = 0;//timer
                             //アイテム出現
                             if(true){//arc4random() % 2 == 0){
 //                                NSLog(@"アイテム出現");
-                                ItemClass *_item = [[ItemClass alloc] init:[_enemy getX] y_init:[_enemy getY] width:50 height:50];
+//                                ItemClass *_item = [[ItemClass alloc] init:[_enemy getX] y_init:[_enemy getY] width:50 height:50];
+                                ItemClass *_item = [[ItemClass alloc] init:(tempCount++) % 15 x_init:[_enemy getX] y_init:[_enemy getY] width:50 height:50];
 
 //                                [ItemArray addObject:_item];
                                 [ItemArray insertObject:_item atIndex:0];
@@ -921,7 +923,7 @@ float count = 0;//timer
         }
     }
 #endif
-    if(arc4random() % 10 == 0){
+    if(arc4random() % 80 == 0){
         isYield = true;
     }else{
         isYield = false;

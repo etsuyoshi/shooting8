@@ -53,7 +53,7 @@
                          
                          if(finished){
 //                             NSLog(@"stard    up from bound Method");
-                             [self moveDownDuration:secs
+                             [self moveDownDuration:1.5f
                                            option:option];
 //                             NSLog(@"complete up from bound Method");
                          }
@@ -87,10 +87,10 @@
                 option:(UIViewAnimationOptions)option{
 
     float destination_y =self.superview.bounds.size.height + 50;
-    float _secs = destination_y * 0.002f;//1px = 0.002sec(2msec)
+//    float _secs = destination_y * 0.002f;//1px = 0.002sec(2msec) => 500px = 1sec:少し速い
 //    NSLog(@"%f, %f", destination_y, _secs);
 //    NSLog(@"moveDownDuration:%f option:%d", secs, option);
-    [UIView animateWithDuration:_secs
+    [UIView animateWithDuration:secs
                           delay:0.0f
                         options:UIViewAnimationOptionCurveEaseIn//ゆっくりから早く(突然停止)
                      animations:^{
