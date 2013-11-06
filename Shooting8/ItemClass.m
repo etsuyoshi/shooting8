@@ -31,40 +31,44 @@
     kiraMovingArray = [[NSMutableArray alloc]init];
     
 //    http://stackoverflow.com/questions/9395914/switch-with-typedef-enum-type-from-string
-    type = arc4random() % 1;//[NSNumber numberWithInt:arc4random()];
+    type = arc4random() % 10;//[NSNumber numberWithInt:arc4random()];
+    if(type <= 2){
+        type = ItemTypeYellowGold;
+    }else{
+        type = arc4random() % 16;
+    }
     switch(type){
         case ItemTypeWeapon0:{//青：攻撃力上昇
 //            rect = CGRectMake(x_loc, y_loc, w, h);
             rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"tool_bomb.png"];
-//            iv.image = [UIImage imageNamed:@"coin001_32.png"];
+            iv.image = [UIImage imageNamed:@"weapon_bomb.png"];
             break;
         }
         case ItemTypeWeapon1:{
             rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"blue_item_yuri_big2.png"];
+            iv.image = [UIImage imageNamed:@"weapon_diffuse.png"];
             
             break;
         }
         case ItemTypeWeapon2:{
             rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"blue_item_yuri_big2.png"];
+            iv.image = [UIImage imageNamed:@"weapon_laser.png"];
             break;
         }
         case ItemTypeDeffense0:{
             rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"blue_item_yuri_big2.png"];
+            iv.image = [UIImage imageNamed:@"defense_barrier.png"];
             
             break;
         }
         case ItemTypeDeffense1:{
             rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"blue_item_yuri_big2.png"];
+            iv.image = [UIImage imageNamed:@"defense_shield.png"];
             
             break;
         }
@@ -74,53 +78,73 @@
             rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
 //            iv.image = [UIImage imageNamed:@"yellow_item_thunder2.png"];
-            iv.image = [UIImage imageNamed:@"yellow_item_thunder.png"];
+            iv.image = [UIImage imageNamed:@"tool_bomb.png"];
             break;
         }
         case ItemTypeHeal://赤：回復
         {
             rect = CGRectMake(x_loc, y_loc, w, h);
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"red.png"];
+            iv.image = [UIImage imageNamed:@"heal.png"];
             break;
         }
         case ItemTypeYellowGold:
         {
-            rect = CGRectMake(x_loc, y_loc, w*1/2, h*1/2);//コインは解像度が低いのでサイズを小さくして表示する
+            rect = CGRectMake(x_loc, y_loc, (float)w*2/3, (float)h*2/3);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"coin001_32.png"];
+            iv.image = [UIImage imageNamed:@"coin_yellow.png"];
             break;
         }
         case ItemTypeGreenGold:
         {
-            rect = CGRectMake(x_loc, y_loc, w*1/2, h*1/2);//コインは解像度が低いのでサイズを小さくして表示する
+            rect = CGRectMake(x_loc, y_loc, (float)w*2/3, (float)h*2/3);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"coin001_32.png"];
+            iv.image = [UIImage imageNamed:@"coin_green.png"];
             break;
         }
         case ItemTypeBlueGold:
         {
-            rect = CGRectMake(x_loc, y_loc, w*1/2, h*1/2);//コインは解像度が低いのでサイズを小さくして表示する
+            rect = CGRectMake(x_loc, y_loc, (float)w*2/3, (float)h*2/3);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"coin001_32.png"];
+            iv.image = [UIImage imageNamed:@"coin_blue.png"];
             break;
         }
         case ItemTypePurpleGold:
         {
-            rect = CGRectMake(x_loc, y_loc, w*1/2, h*1/2);//コインは解像度が低いのでサイズを小さくして表示する
+            rect = CGRectMake(x_loc, y_loc, (float)w*2/3, (float)h*2/3);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"coin001_32.png"];
+            iv.image = [UIImage imageNamed:@"coin_purple.png"];
             break;
         }
         case ItemTypeRedGold:
         {
-            rect = CGRectMake(x_loc, y_loc, w*1/2, h*1/2);//コインは解像度が低いのでサイズを小さくして表示する
+            rect = CGRectMake(x_loc, y_loc, (float)w*2/3, (float)h*2/3);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"coin001_32.png"];
+            iv.image = [UIImage imageNamed:@"coin_red.png"];
             break;
         }
-        case ItemTypeSweep:{
-            
+        case ItemTypeMagnet:{
+            rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
+            iv = [[UIImageView alloc]initWithFrame:rect];
+            iv.image = [UIImage imageNamed:@"magnet.png"];
+            break;
+        }
+        case ItemTypeBig:{
+            rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
+            iv = [[UIImageView alloc]initWithFrame:rect];
+            iv.image = [UIImage imageNamed:@"big.png"];
+            break;
+        }
+        case ItemTypeSmall:{
+            rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
+            iv = [[UIImageView alloc]initWithFrame:rect];
+            iv.image = [UIImage imageNamed:@"small.png"];
+            break;
+        }
+        case ItemTypeTransparency:{
+            rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
+            iv = [[UIImageView alloc]initWithFrame:rect];
+            iv.image = [UIImage imageNamed:@"transparency.png"];
             break;
         }
     }
@@ -134,6 +158,12 @@
 //    NSLog(@"call enemy class initialization");
     return [self init:0 y_init:0 width:10 height:10];
 }
+-(ItemType)getType{
+    return type;
+    
+}
+
+
 
 -(Boolean) getIsAlive{
     return isAlive;
@@ -159,7 +189,7 @@
     
     
     //動線上に新規キラキラ発生
-    if(arc4random() % 3 ==0){
+    if(arc4random() % 1 ==0){
         KiraParticleView *movingParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)
                                                                      particleType:ParticleTypeMoving];
 //        [movingParticle setParticleType:ParticleTypeMoving];
@@ -176,6 +206,30 @@
 
 
 -(void) die{
+    //アイテム消滅時(プレイヤーによる取得時)のパーティクルの初期化
+    killedParticle = [[KiraParticleView alloc] initWithFrame:CGRectMake(x_loc, y_loc-1, 40, 40)
+                                                                  particleType:ParticleTypeKilled];
+//    [killedParticle setIsEmitting:1];
+    [UIView animateWithDuration:0.5f
+                     animations:^{
+                         [killedParticle setAlpha:1.0f];//最初は濃く
+                     }
+                     completion:^(BOOL finished){
+                         
+                         [UIView animateWithDuration:3.5f//次に徐々に薄く
+                                          animations:^{
+                                              [killedParticle setAlpha:0.0f];
+                                          }
+                                          completion:^(BOOL finished){
+                                              //終了時処理
+                                              [killedParticle setIsEmitting:NO];
+                                              [killedParticle removeFromSuperview];
+
+                                          }];
+                         
+                     }];
+    
+    
     isAlive = false;
 }
 -(void) setLocation:(CGPoint)loc{
@@ -224,10 +278,7 @@
     return occurredParticle;
 }
 
--(KiraParticleView *)getKilledParticle:(CGPoint)point{//アイテムが消滅した時のパーティクル
-    //アイテム消滅時(プレイヤーによる取得時)のパーティクルの初期化
-    killedParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(point.x, point.y, 10, 10)];
-    [killedParticle setLifeSpan:10];
+-(KiraParticleView *)getKilledParticle{//アイテムが消滅した時のパーティクル
     
     return killedParticle;
 }

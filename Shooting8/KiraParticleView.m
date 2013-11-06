@@ -61,21 +61,6 @@
         
         //github
         CAEmitterCell *particle = [CAEmitterCell emitterCell];
-        //origin
-        //        particle.birthRate = 200;
-        //        particle.lifetime = 2.0;
-        //        particle.lifetimeRange = 1.5;
-        //        particle.color = [[UIColor colorWithRed: 0.2 green: 0.4 blue: 0.8 alpha: 0.1] CGColor];
-        //        particle.contents = (id) [[UIImage imageNamed: @"kira.png"] CGImage];
-        //        particle.name = @"particle";
-        //        particle.velocity = 150;
-        //        particle.velocityRange = 100;
-        //        particle.emissionRange = M_PI_2;
-        //        particle.emissionLongitude = 0.025 * 180 / M_PI;
-        //        particle.scale = 0.3f;
-        //        particle.scaleRange = 0;
-        //        particle.scaleSpeed = 0;
-        //        particle.spin = 0.5;
         
         particle.name = @"snow";
         particle.enabled = YES;
@@ -87,20 +72,30 @@
         particle.minificationFilterBias = 0.00;
         
         particle.color = [[UIColor colorWithRed:0.77 green:0.55 blue:0.60 alpha:0.55] CGColor];
-        //        particle.redRange = 0.09;
-        //        particle.greenRange = 0.08;
-        //        particle.blueRange = 0.07;
-        //        particle.alphaRange = 0.08;
         particle.redRange = 0.9;
         particle.greenRange = 0.8;
         particle.blueRange = 0.7;
         particle.alphaRange = 0.8;
         
+        particle.lifetimeRange = 3.5f;//2.37;
+        
+        particle.velocityRange = 5.00;
+        particle.xAcceleration = 1.00;
+        particle.yAcceleration = -10.00;
+        particle.zAcceleration = 12.00;
+        
+        // these values are in radians, in the UI they are in degrees
+        particle.spin = 0.384;
+        particle.spinRange = 0.925;
+        particle.emissionLatitude = 1.745;
+        particle.emissionLongitude = 1.745;
+        particle.emissionRange = 3.491;
+        
         switch(_particleType){
                 
             case ParticleTypeOccurred:{
                 
-                particle.contents = (id) [[UIImage imageNamed: @"kira2.png"] CGImage];
+                particle.contents = (id) [[UIImage imageNamed: @"kira2.png"] CGImage];//円形
                 
                 //色を残す
                 particle.redSpeed = 0.2;
@@ -123,13 +118,14 @@
                 break;
             }
             case ParticleTypeMoving:{
-                particle.contents = (id) [[UIImage imageNamed: @"snow.png"] CGImage];
+                particle.contents = (id) [[UIImage imageNamed: @"snow.png"] CGImage];//菱形：小
                 
                 //すぐに白くする場合
                 particle.redSpeed = 0.92;//赤増加速度
                 particle.greenSpeed = 0.84;
                 particle.blueSpeed = 0.74;
                 particle.alphaSpeed = 0.55;
+                
                 
                 //大きさを小さく
                 particle.scale = 0.3;
@@ -146,24 +142,47 @@
                 break;
             }
             case ParticleTypeKilled:{
+                particle.contents = (id) [[UIImage imageNamed: @"snow.png"] CGImage];//菱形：小
+                
+                //すぐに白くする場合
+                particle.color = [[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0f] CGColor];
+                particle.redSpeed = 0.92;//赤増加速度
+                particle.greenSpeed = 0.84;
+                particle.blueSpeed = 0.74;
+                particle.alphaSpeed = 0.55;
+                
+                particle.redRange = 0;
+                particle.greenRange = 0;
+                particle.blueRange = 0;
+                particle.alphaRange = 0;
+                
+                particle.spin = 0.384;
+                particle.spinRange = 0;
+                particle.emissionLatitude = 0;
+                particle.emissionLongitude = 0;
+                particle.emissionRange = 0;
+                
+                //大きさを小さく
+                particle.scale = 1.5f;
+                particle.scaleRange = 0;
+                particle.scaleSpeed = -0.5;
+                
+                //拡散しないように
+                particle.velocity = 0.00;
+                particle.velocityRange = 0;
+                
+                //発生個数は1つ
+                if(arc4random() % 2 == 0){
+                    birthRate = 1;
+                }else{
+                    birthRate = 3;
+                }
+                
+                particle.birthRate = birthRate;
                 
                 break;
             }
         }
-        
-        particle.lifetimeRange = 3.5f;//2.37;
-        
-        particle.velocityRange = 5.00;
-        particle.xAcceleration = 1.00;
-        particle.yAcceleration = -10.00;
-        particle.zAcceleration = 12.00;
-        
-        // these values are in radians, in the UI they are in degrees
-        particle.spin = 0.384;
-        particle.spinRange = 0.925;
-        particle.emissionLatitude = 1.745;
-        particle.emissionLongitude = 1.745;
-        particle.emissionRange = 3.491;
         
         particleEmitter.emitterCells = [NSArray arrayWithObject: particle];
     }
@@ -209,6 +228,7 @@
                    forKeyPath:@"emitterCells.snow.birthRate"];
 }
 
+//使用していない？
 -(void)setParticleType:(ParticleType)_type{
     
 //    int pattern = arc4random() % 5;

@@ -15,9 +15,12 @@ typedef NS_ENUM(NSInteger, ItemType) {
     ItemTypeWeapon2,
     ItemTypeDeffense0,
     ItemTypeDeffense1,
-    ItemTypeSweep,
+    ItemTypeMagnet,
     ItemTypeBomb,
     ItemTypeHeal,
+    ItemTypeBig,
+    ItemTypeSmall,
+    ItemTypeTransparency,
     ItemTypeYellowGold,
     ItemTypeGreenGold,
     ItemTypeBlueGold,
@@ -61,9 +64,11 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(int) getX;
 -(int) getY;
 -(UIImageView *)getImageView;
+-(ItemType)getType;
+-(void)setType:(ItemType)type;
 -(KiraParticleView *)getMovingParticle:(int)kiraNo;
 -(KiraParticleView *)getOccurredParticle;
--(KiraParticleView *)getKilledParticle:(CGPoint)point;
+-(KiraParticleView *)getKilledParticle;
 
 
 @end

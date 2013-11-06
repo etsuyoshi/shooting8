@@ -472,7 +472,7 @@ float count = 0;//timer
     //旧形式
     for(int i = 0 ; i < [MyMachine getBeamCount]; i++){
         if([[MyMachine getBeam:i]getIsAlive]){
-            //ビューに自機イメージを貼り付ける
+            //ビューに自機ビームイメージを貼り付ける
             [self.view addSubview:[[MyMachine getBeam:i] getImageView]];
         }
     }
@@ -496,9 +496,12 @@ float count = 0;//timer
                _yItem >= [MyMachine getY] - [MyMachine getSize] &&
                _yItem <= [MyMachine getY] + [MyMachine getSize]){
                 
+                
 //                NSLog(@"Item acquired");
                 [[[ItemArray objectAtIndex:itemCount] getImageView] removeFromSuperview];
                 [[ItemArray objectAtIndex:itemCount] die];
+                //アイテム取得時のパーティクル表示
+                [self.view addSubview:[[ItemArray objectAtIndex:itemCount] getKilledParticle]];
                 
                 /*
                  _/_/_/_/_/_/_/_/_/_/_/_/
@@ -508,9 +511,6 @@ float count = 0;//timer
                  体力回復？？
                  _/_/_/_/_/_/_/_/_/_/_/_/
                  */
-                
-                //アイテム消滅時のパーティクル表示
-                
                 
                 //ゴールドを加算if item == gold
                 [GoldBoard setScore:[GoldBoard getScore] + 1];
