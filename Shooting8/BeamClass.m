@@ -7,6 +7,7 @@
 //
 
 #import "BeamClass.h"
+//#import "UIView+Animation.h"
 
 @implementation BeamClass
 -(id) init:(int)x_init y_init:(int)y_init width:(int)w height:(int)h{
@@ -22,6 +23,20 @@
 //    iv.image = [UIImage imageNamed:@"beam.png"];
 //    iv.image = [UIImage imageNamed:@"bullet_level1.png"];
     iv.image = [UIImage imageNamed:@"09.png"];
+    
+    iv.center = CGPointMake(x_loc, y_loc);
+    
+    [UIView animateWithDuration:0.3f
+                          delay:0.0f
+                        options:UIViewAnimationOptionCurveLinear
+                     animations:^{
+                         iv.center = CGPointMake(x_loc,
+                                                 y_loc - 500);//iv.superview.bounds.size.height);
+                         
+                     }
+                     completion:^(BOOL finished){
+                         [iv removeFromSuperview];
+                     }];
     return self;
 }
 -(id) init{
@@ -37,12 +52,17 @@
     
     //    [iv removeFromSuperview];
     //    NSLog(@"更新前 y = %d", y_loc);
-    y_loc -= height;
-    x_loc += 0;//mySize/10 * (int)pow(-1, arc4random()%2) % 200;//単位時間当たりに左右3個体分の移動距離を進む
-    iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc - width/2, y_loc - height/2, width, height)];
+//    y_loc = iv.center.y;
+//    x_loc = iv.center.x;
+    CALayer *mLayer = [iv.layer presentationLayer];
+    x_loc = mLayer.position.x;//中心座標
+    y_loc = mLayer.position.y;//中心座標
+//    y_loc -= height;
+//    x_loc += 0;//mySize/10 * (int)pow(-1, arc4random()%2) % 200;//単位時間当たりに左右3個体分の移動距離を進む
+//    iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc - width/2, y_loc - height/2, width, height)];
 //    iv.image = [UIImage imageNamed:@"beam.png"];
 //    iv.image = [UIImage imageNamed:@"bullet_level1.png"];
-    iv.image = [UIImage imageNamed:@"09.png"];
+//    iv.image = [UIImage imageNamed:@"09.png"];
     
     //    NSLog(@"更新後 y = %d", y_loc);
     //    rect = CGRectMake(x_loc, y_loc, mySize, mySize);

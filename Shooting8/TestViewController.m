@@ -5,7 +5,8 @@
 //  Created by 遠藤 豪 on 2013/10/27.
 //  Copyright (c) 2013年 endo.tuyo. All rights reserved.
 //
-#define MODE1
+//#define MODE1
+//#define MODE2
 #define TEST
 #import "EnemyClass.h"
 #import "CreateComponentClass.h"
@@ -88,6 +89,9 @@ int counter;
            duration:3.0f
              option:0];
     }
+#elif defined MODE2
+    NSLog(@"aaa");
+    //nothing
 #else
     [self createBox];
     [self moveBox];

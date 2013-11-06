@@ -336,10 +336,11 @@ int tempCount = 0;//テスト用
     //_/_/_/_/前時刻の描画を消去_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     
-    //旧形式の方法
+    /*旧形式の方法
     for(int i = 0; i < [MyMachine getBeamCount]; i++){
         [[[MyMachine getBeam:i] getImageView] removeFromSuperview];
     }
+     */
     
     
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
@@ -349,6 +350,8 @@ int tempCount = 0;//テスト用
 
     if([MyMachine getIsAlive] && isTouched){
         [MyMachine yieldBeam:0 init_x:[MyMachine getX] init_y:[MyMachine getY]];
+        //ビームはFIFOなので削除
+        [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
     }
 
     
@@ -426,11 +429,13 @@ int tempCount = 0;//テスト用
 //        }
 //    }
     //自機の進行
+    /*旧形式
     for(int i = 0; i < [MyMachine getBeamCount];i++){
         if([[MyMachine getBeam:i] getIsAlive]){
             [[MyMachine getBeam:i] doNext];
         }
     }
+     */
     
     //アイテムの進行=[アイテム自体の移動 & 生成したパーティクルの時間経過:寿命判定は別途]
     for(int i = 0 ; i< [ItemArray count]; i ++){
@@ -470,14 +475,14 @@ int tempCount = 0;//テスト用
     //_/_/_/_/表示_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     
-    //旧形式
+    /*旧形式
     for(int i = 0 ; i < [MyMachine getBeamCount]; i++){
         if([[MyMachine getBeam:i]getIsAlive]){
             //ビューに自機ビームイメージを貼り付ける
             [self.view addSubview:[[MyMachine getBeam:i] getImageView]];
         }
     }
-    
+    */
     
     
     
@@ -576,10 +581,8 @@ int tempCount = 0;//テスト用
             BeamClass *_beam;
             for(int j = 0 ; j < [MyMachine getBeamCount];j++){
                 _beam = [MyMachine getBeam:j];
-                //                    NSLog(@"ビーム衝突判定:%d", j);
+                
                 if([_beam getIsAlive]){
-                    //                        NSLog(@"ビーム発射確認完了");
-                    
                     //左上位置
                     int _xBeam = [_beam getX];
                     int _yBeam = [_beam getY];
@@ -591,7 +594,6 @@ int tempCount = 0;//テスト用
                        _xBeam <= [_enemy getX] + [_enemy getSize] * 1.3 &&
                        [_enemy getY] - [_enemy getSize] * 0 <= _yBeam &&
                        [_enemy getY] + [_enemy getSize] * 1>= _yBeam){
-                        
                         
                         
 //                        NSLog(@"hit!!");
@@ -607,11 +609,6 @@ int tempCount = 0;//テスト用
                         //ビームが衝突した位置にdamageParticle表示
                         [(EnemyClass *)[EnemyArray objectAtIndex:i] setDamage:damage location:CGPointMake(_xBeam, _yBeam)];
                         
-                        //上記setDamageでdieメソッドも包含実行
-                        //                        [(EnemyClass *)[EnemyArray objectAtIndex:i] die:CGPointMake(_xBeam, _yBeam)];
-                        
-                        //                            [self drawBomb:(CGPointMake((float)_xBeam, (float)_yBeam))];
-
                         
                         //ダメージパーティクル表示：処理が間に合わない可能性があるので、配列に格納して数カウントで消去
                         [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setUserInteractionEnabled: NO];//インタラクション拒否
@@ -697,6 +694,10 @@ int tempCount = 0;//テスト用
                             }
 
                         }
+                        
+                        
+                        //他の(近くの)敵に当たらないようにビームを殺す
+                        [[MyMachine getBeam:j] die];
                         
                         break;//ビームループ脱出
                     }
@@ -828,26 +829,16 @@ int tempCount = 0;//テスト用
     CGPoint point = [gr translationInView:[MyMachine getImageView]];
     CGPoint movedPoint = CGPointMake([MyMachine getImageView].center.x + point.x,
                                      [MyMachine getImageView].center.y + point.y);
-    [MyMachine setX:movedPoint.x];
-    [MyMachine setY:movedPoint.y];
+//    [MyMachine setX:movedPoint.x];
+//    [MyMachine setY:movedPoint.y];
+    [MyMachine setLocation:CGPointMake(movedPoint.x, movedPoint.y)];
     [MyMachine getImageView].center = movedPoint;
     [gr setTranslation:CGPointZero inView:[MyMachine getImageView]];
     
     
-    
-//    CGPoint point = [gr translationInView:iv_frame];
-//    CGPoint movedPoint = CGPointMake(iv_frame.center.x + point.x,
-//                                     iv_frame.center.y + point.y);
-//    [MyMachine setX:movedPoint.x];
-//    [MyMachine setY:movedPoint.y];
-//    iv_frame.center = movedPoint;
-//    [gr setTranslation:CGPointZero inView:iv_frame];//ここでself.viewを指定するのではなく、myMachineをセットする
-//    [[MyMachine getImageView] bringSubviewToFront:self.view];
-    
     // 指が移動したとき、上下方向にビューをスライドさせる
     if (gr.state == UIGestureRecognizerStateChanged) {//移動中
         isTouched = true;
-        //        NSLog(@"x = %d, y = %d", (int)[gr translationInView:self.view].x, (int)[gr translationInView:self.view].y);
     }
     // 指が離されたとき、ビューを元に位置に戻して、ラベルの文字列を変更する
     else if (gr.state == UIGestureRecognizerStateEnded) {//指を離した時
@@ -923,7 +914,7 @@ int tempCount = 0;//テスト用
         }
     }
 #endif
-    if(arc4random() % 80 == 0){
+    if(arc4random() % 40 == 0){
         isYield = true;
     }else{
         isYield = false;
