@@ -14,7 +14,7 @@
     
     y_loc = y_init;
     x_loc = x_init;
-    power = 4;//衝突対象に対するダメージ
+    power = 3;//衝突対象に対するダメージ
     width = w;
     height = h;
     isAlive = true;
@@ -26,22 +26,22 @@
     
     iv.center = CGPointMake(x_loc, y_loc);
     
-    [UIView animateWithDuration:1.0f
-                          delay:0.0f
-                        options:UIViewAnimationOptionCurveLinear
-                     animations:^{
-                         iv.center = CGPointMake(x_loc,
-                                                 y_loc - 500);//iv.superview.bounds.size.height);
-                         
-                     }
-                     completion:^(BOOL finished){
-                         [iv removeFromSuperview];
-                         iv=nil;
-                     }];
+//    [UIView animateWithDuration:1.0f
+//                          delay:0.0f
+//                        options:UIViewAnimationOptionCurveLinear
+//                     animations:^{
+//                         iv.center = CGPointMake(x_loc,
+//                                                 y_loc - 500);//iv.superview.bounds.size.height);
+//                         
+//                     }
+//                     completion:^(BOOL finished){
+//                         [iv removeFromSuperview];
+//                         iv=nil;
+//                     }];
     return self;
 }
 -(id) init{
-    NSLog(@"call enemy class initialization");
+//    NSLog(@"call enemy class initialization");
     return [self init:0 y_init:0 width:10 height:10];
 }
 
@@ -51,14 +51,12 @@
 
 -(void)doNext{
     
-    //    [iv removeFromSuperview];
-    //    NSLog(@"更新前 y = %d", y_loc);
-
-    CALayer *mLayer = [iv.layer presentationLayer];
+//    CALayer *mLayer = [iv.layer presentationLayer];
 //    x_loc = mLayer.position.x;//中心座標
-    y_loc = mLayer.position.y;//中心座標
+//    y_loc = mLayer.position.y;//中心座標
 //    NSLog(@"yBeam = %d", y_loc);
-//    y_loc -= height;
+    y_loc -= height * 0.8;
+    iv.center = CGPointMake(x_loc, y_loc);
 //    x_loc += 0;//mySize/10 * (int)pow(-1, arc4random()%2) % 200;//単位時間当たりに左右3個体分の移動距離を進む
 //    iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc - width/2, y_loc - height/2, width, height)];
 //    iv.image = [UIImage imageNamed:@"beam.png"];
@@ -68,6 +66,10 @@
     //    NSLog(@"更新後 y = %d", y_loc);
     //    rect = CGRectMake(x_loc, y_loc, mySize, mySize);
     //    iv = [[UIImageView alloc]initWithFrame:rect];
+    if(y_loc <= -height/2){
+        [self die];
+        [iv removeFromSuperview];
+    }
 }
 
 -(int)getPower{

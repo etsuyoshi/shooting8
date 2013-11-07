@@ -1,10 +1,5 @@
-//自分のダメージが恒常的に表示される？：毎回削除(最悪配列に入れる？！)
-//画面がカクカク：メモリ削除により改善？
-//敵機が画面外に外れた場合、生死に関わらず削除
-//enemy addsubview => .center
-//敵機撃破時に画面停止
 //全てanimationに置き換える：progressViewも確認
-//ビームを削除＆表示はなくす：現状は[[[MyMachine getBeam:i] getImageView] removeFromSuperview];で毎回表示
+
 
 //line等のソーシャルプラットフォームがないため、PCエミュレータ上ではプロンプト上に警告が表示される(端末では問題ないので無視)
 //
@@ -28,6 +23,7 @@
  ・敵機倒した時にアイテムを生成：済、アイテムを精密に→CW
  ・敵機の描画を精密に？！→クラウドワークス
  ・画面タッチ時にビーム発射：済
+ ・ビームは単体で削除表示を繰り返す：対象物への接触判定がサンプリング間隔以内で行えないので、単体で進ませていく
 
  ・敵機をもっと頑丈に(typeによって爆発hit数を変更する):済
  ・自機からのビームはタップ時常時発射:済
@@ -53,7 +49,6 @@
 #define TIMEOVER_SECOND 1000
 #define OBJECT_SIZE 70//自機と敵機のサイズ
 
-
 CGRect rect_frame, rect_myMachine, rect_enemyBeam, rect_beam_launch;
 UIImageView *iv_frame, *iv_myMachine, *iv_enemyBeam, *iv_beam_launch;//, *iv_background1, *iv_background2;
 
@@ -69,7 +64,7 @@ int world_no;
 
 //NSMutableArray *iv_arr_tokuten;
 int y_background1, y_background2;
-const int explosionCycle = 300;//爆発時間
+const int explosionCycle = 30;//爆発時間
 int max_enemy_in_frame;
 int x_frame, y_frame;
 //int x_myMachine, x_enemyMachine, x_beam;
@@ -118,8 +113,8 @@ int tempCount = 0;//テスト用
 
 @implementation GameClassViewController
 
-@synthesize soundURL;
-@synthesize soundID;
+@synthesize sound_hit_URL;
+@synthesize sound_hit_ID;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -138,6 +133,16 @@ int tempCount = 0;//テスト用
 {
     [super viewDidLoad];
     
+    
+    
+    //sound effect
+    
+    //ビームヒット音
+    CFBundleRef mainBundle;
+    mainBundle = CFBundleGetMainBundle ();
+    sound_hit_URL  = CFBundleCopyResourceURL (mainBundle,CFSTR ("flinging"),CFSTR ("mp3"),NULL);
+    AudioServicesCreateSystemSoundID (sound_hit_URL, &sound_hit_ID);
+    CFRelease (sound_hit_URL);
     
 #ifdef TEST
     //テスト用
@@ -194,10 +199,9 @@ int tempCount = 0;//テスト用
     
     //タッチ用パネル(タップ＆フリックで自機移動、タップしている間はビーム発射)
     rect_frame = [[UIScreen mainScreen] bounds];
-    NSLog(@"%d", (int)[iv_frame center].x);
     x_frame = rect_frame.size.width;
     y_frame = rect_frame.size.height;
-    NSLog(@"%d, %d", x_frame, y_frame);
+    NSLog(@"frame-size : %d, %d", x_frame, y_frame);
     iv_frame = [[UIImageView alloc]initWithFrame:rect_frame];
 //    iv_frame.image =[UIImage imageNamed:@"gameover.png"];
     iv_frame.userInteractionEnabled = YES;
@@ -348,13 +352,12 @@ int tempCount = 0;//テスト用
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     [self yieldEnemy];
 
+    //ビーム生成はタッチ検出場所で実行
     if([MyMachine getIsAlive] && isTouched){
         [MyMachine yieldBeam:0 init_x:[MyMachine getX] init_y:[MyMachine getY]];
-        //ビームはFIFOなので削除
+        //ビームはFIFOなので最初のもののみを表示
         [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
     }
-
-    
     
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/進行:各オブジェクトのdoNext_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
@@ -365,9 +368,6 @@ int tempCount = 0;//テスト用
     if([MyMachine getIsAlive] ||
        [MyMachine getDeadTime] < explosionCycle){
         
-        
-        //生きている間か、爆死してから一定時間内においてはダメージパーティクルの消去
-        [[MyMachine getDamageParticle] setIsEmitting:NO];
         
         
         [MyMachine doNext];//設定されたtype、x_loc,y_locプロパティでUIImageViewを作成する
@@ -381,7 +381,6 @@ int tempCount = 0;//テスト用
         //爆発から所定時間が経過しているか判定＝＞爆発パーティクルの消去
         if([MyMachine getDeadTime] >= explosionCycle){
             NSLog(@"mymachine : set emitting no");
-            [[MyMachine getExplodeParticle] setIsEmitting:NO];//消去するには数秒後にNOに
             
             isGameMode = false;
             [self exitProcess];///////////////////////
@@ -403,9 +402,6 @@ int tempCount = 0;//テスト用
             
 //            NSLog(@"%d番目敵：y=%d", i, [(EnemyClass *)[EnemyArray objectAtIndex:i] getY]);
             
-            //ダメージパーティクルの消去:1countで消去するため配列化する必要ない？
-            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setIsEmitting:NO];
-            
             //爆発してから時間が所定時間が経過してる場合 or 画面外に移動した場合、削除
             if([(EnemyClass *)[EnemyArray objectAtIndex: i] getDeadTime] >= explosionCycle ||
                [[EnemyArray objectAtIndex:i] getY] >= self.view.bounds.size.height + OBJECT_SIZE){
@@ -413,10 +409,7 @@ int tempCount = 0;//テスト用
 #ifdef TEST
                 NSLog(@"enemy remove at at %d", i);
 #endif
-                [[(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle] setIsEmitting:NO];//消去するには数秒後にNOに
-                [[[EnemyArray objectAtIndex:i] getExplodeParticle]removeFromSuperview];
-                [[[EnemyArray objectAtIndex:i] getDamageParticle]removeFromSuperview];
-                [[[EnemyArray objectAtIndex:i] getImageView]removeFromSuperview];//既に爆発パーティクルが発生している場合、削除済
+                //explodeした場合は既に画面から消去されている
                 [EnemyArray removeObjectAtIndex:i];
             }
         }
@@ -469,16 +462,6 @@ int tempCount = 0;//テスト用
     //_/_/_/_/表示_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     
-    /*旧形式
-    for(int i = 0 ; i < [MyMachine getBeamCount]; i++){
-        if([[MyMachine getBeam:i]getIsAlive]){
-            //ビューに自機ビームイメージを貼り付ける
-            [self.view addSubview:[[MyMachine getBeam:i] getImageView]];
-        }
-    }
-    */
-    
-    
     
     //アイテム取得判定：前倒しに取得させる
     for(int itemCount = 0; itemCount < [ItemArray count] ; itemCount++){
@@ -491,10 +474,10 @@ int tempCount = 0;//テスト用
 //                  _xItem, [MyMachine getX],
 //                  _yItem, [MyMachine getY]);
             if(
-               _xItem >= [MyMachine getX] - [MyMachine getSize] &&
-               _xItem <= [MyMachine getX] + [MyMachine getSize] &&
-               _yItem >= [MyMachine getY] - [MyMachine getSize] &&
-               _yItem <= [MyMachine getY] + [MyMachine getSize]){
+               _xItem >= [MyMachine getX] - [MyMachine getSize] * 1.5 &&
+               _xItem <= [MyMachine getX] + [MyMachine getSize] * 1.5 &&
+               _yItem >= [MyMachine getY] - [MyMachine getSize] * 1.5 &&
+               _yItem <= [MyMachine getY] + [MyMachine getSize] * 1.5){
                 
                 
 //                NSLog(@"Item acquired");
@@ -503,6 +486,79 @@ int tempCount = 0;//テスト用
                 //アイテム取得時のパーティクル表示
                 [self.view addSubview:[[ItemArray objectAtIndex:itemCount] getKilledParticle]];
                 
+                
+                //取得したアイテムを判定
+                ItemType itemType = [[ItemArray objectAtIndex:itemCount] getType];
+                NSLog(@"%d", itemType);
+                switch ((ItemType)itemType) {
+                    case ItemTypeYellowGold:{
+                        [GoldBoard setScore:[GoldBoard getScore] + 1];
+                        [self displayScore:GoldBoard];
+                        break;
+                    }
+                    case ItemTypeGreenGold:{
+                        [GoldBoard setScore:[GoldBoard getScore] + 2];
+                        [self displayScore:GoldBoard];
+                        break;
+                    }
+                    case ItemTypeBlueGold:{
+                        [GoldBoard setScore:[GoldBoard getScore] + 3];
+                        [self displayScore:GoldBoard];
+                        break;
+                    }
+                    case ItemTypePurpleGold:{
+                        [GoldBoard setScore:[GoldBoard getScore] + 5];
+                        [self displayScore:GoldBoard];
+                        break;
+                    }
+                    case ItemTypeRedGold:{
+                        [GoldBoard setScore:[GoldBoard getScore] + 10];
+                        [self displayScore:GoldBoard];
+                        break;
+                    }
+                    case ItemTypeMagnet:{
+                        
+                        break;
+                    }
+                    case ItemTypeBig:{
+                        break;
+                    }
+                    case ItemTypeBomb:{
+                        break;
+                    }
+                    case ItemTypeDeffense0:{
+                        break;
+                    }
+                    case ItemTypeDeffense1:{
+                        break;
+                    }
+                    case ItemTypeHeal:{
+                        
+                        break;
+                    }
+                    case ItemTypeSmall:{
+                        break;
+                    }
+                    case ItemTypeTransparency:{
+                        break;
+                        
+                    }
+                    case ItemTypeWeapon0:{
+                        
+                        break;
+                    }
+                    case ItemTypeWeapon1:{
+                        
+                        break;
+                    }
+                    case ItemTypeWeapon2:{
+                        
+                        break;
+                    }
+                    default:
+                        break;
+                }
+
                 /*
                  _/_/_/_/_/_/_/_/_/_/_/_/
                  得点を加算
@@ -513,8 +569,7 @@ int tempCount = 0;//テスト用
                  */
                 
                 //ゴールドを加算if item == gold
-                [GoldBoard setScore:[GoldBoard getScore] + 1];
-                [self displayScore:GoldBoard];
+                
             }
         }
     }
@@ -532,10 +587,10 @@ int tempCount = 0;//テスト用
             
             //自機と敵機の衝突判定
             if(
-               [MyMachine getX] >= [_enemy getX] - [_enemy getSize] * 0.6 &&
-               [MyMachine getX] <= [_enemy getX] + [_enemy getSize] * 0.6 &&
-               [_enemy getY] - [_enemy getSize] * 0 <= [MyMachine getY] &&
-               [_enemy getY] + [_enemy getSize] * 0.5 >= [MyMachine getY]){
+               [MyMachine getX] >= [_enemy getX] - [_enemy getSize] * 0.4 &&
+               [MyMachine getX] <= [_enemy getX] + [_enemy getSize] * 0.4 &&
+               [_enemy getY] - [_enemy getSize] * 0.4 <= [MyMachine getY] &&
+               [_enemy getY] + [_enemy getSize] * 0.4 >= [MyMachine getY]){
                 
                 NSLog(@"自機と敵機との衝突");
                 //ダメージの設定
@@ -568,10 +623,10 @@ int tempCount = 0;//テスト用
                     [self.view addSubview: [MyMachine getExplodeParticle]];//表示する
                 }
             }
-            
+        
+        
             
             //敵機とビームの衝突判定
-//            for(int j = 0; j < [BeamArray count] ;j++){//発射した全てのビームに対して
             BeamClass *_beam;
             for(int j = 0 ; j < [MyMachine getBeamCount];j++){
                 _beam = [MyMachine getBeam:j];
@@ -580,64 +635,51 @@ int tempCount = 0;//テスト用
                     //左上位置
                     int _xBeam = [_beam getX];
                     int _yBeam = [_beam getY];
-//                    int _sBeam = [_beam getSize];
+                    int _sBeam = [_beam getSize];
+                    
+                    
+                    //ビームは前方のみ進行するのでビーム位置より後方の敵は判定しないようにする必要
+                    //敵の付番はfifo:0先30後
+                    //若い番号の敵がビーム位置より後方ならば遅い番号の敵は判定しなくて良い
                     
                     //敵機とビームの衝突判定
                     if(
-                       _xBeam >= [_enemy getX] - [_enemy getSize] * 0.3 &&
-                       _xBeam <= [_enemy getX] + [_enemy getSize] * 1.3 &&
-                       [_enemy getY] - [_enemy getSize] * 0 <= _yBeam &&
-                       [_enemy getY] + [_enemy getSize] * 1>= _yBeam){
+                       _xBeam + _sBeam >= [_enemy getX] - [_enemy getSize] * 0.7 &&
+                       _xBeam - _sBeam <= [_enemy getX] + [_enemy getSize] * 0.7 &&
+                       _yBeam + _sBeam >= [_enemy getY] - [_enemy getSize] * 0.7 &&
+                       _yBeam - _sBeam <= [_enemy getY] + [_enemy getSize] * 0.7 ){
                         
                         
-//                        NSLog(@"hit!!");
-//                        NSLog(@"beam location[x = %d, y = %d], enemy location[x = %d, y = %d]",
-//                              _xBeam, _yBeam, [_enemy getX], [_enemy getY]);
+                        //レーザーでない場合
+                        [[MyMachine getBeam:j] die];//衝突したらビームは消去
+                        [[[MyMachine getBeam:j] getImageView] removeFromSuperview];//画面削除
                         
-                        //            bl_enemyAlive = false;
+                        
                         int damage = [_beam getPower];
                         
                         //ダメージ負荷モード(フラグ立て)に切り替える
-                        [[EnemyArray objectAtIndex:i] setIsDamaged:true];
+//                        [[EnemyArray objectAtIndex:i] setIsDamaged:true];
                         
                         //ビームが衝突した位置にdamageParticle表示
                         [(EnemyClass *)[EnemyArray objectAtIndex:i] setDamage:damage location:CGPointMake(_xBeam, _yBeam)];
                         
-                        
-                        //ダメージパーティクル表示：処理が間に合わない可能性があるので、配列に格納して数カウントで消去
-                        [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setUserInteractionEnabled: NO];//インタラクション拒否
-                        
-                        [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setIsEmitting:YES];//消去するには数秒後にNOに
-                        
-                        [self.view bringSubviewToFront: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//最前面に
-                        
-                        [self.view addSubview: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//表示する:次のcountで消去
-                        
-                        
-                        
-                        //爆発パーティクル
-//                        NSLog(@"パーティクル = %@", [(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle]);
-                        [[MyMachine getBeam:j] die];//衝突したらビームは消去
+
                         
                         
                         //敵を倒したら
                         if(![[EnemyArray objectAtIndex:i] getIsAlive]){
                             
-                            //imageViewを消去(爆発パーティクルが描画するためインスタンス自体は残しておく)
+                            //imageViewだけを消去(爆発パーティクルが描画するためインスタンス自体は残しておく)
                             [[[EnemyArray objectAtIndex:i] getImageView] removeFromSuperview];
                             
-                            //効果音=>別クラスに格納してstatic method化して簡潔に！
-                            CFBundleRef mainBundle;
-                            mainBundle = CFBundleGetMainBundle ();
-                            soundURL  = CFBundleCopyResourceURL (mainBundle,CFSTR ("flinging"),CFSTR ("mp3"),NULL);
-                            AudioServicesCreateSystemSoundID (soundURL, &soundID);
-                            CFRelease (soundURL);
-                            AudioServicesPlaySystemSound (soundID);
                             
-//                            NSLog(@"パーティクル = %@", [(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle]);
+                            //効果音=>別クラスに格納してstatic method化して簡潔に！
+                            AudioServicesPlaySystemSound (sound_hit_ID);
+
+////                            NSLog(@"パーティクル = %@", [(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle]);
                             //爆発パーティクル表示
-                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle] setUserInteractionEnabled: NO];//インタラクション拒否
-                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle] setIsEmitting:YES];//消去するには数秒後にNOに
+//                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle] setUserInteractionEnabled: NO];//インタラクション拒否
+//                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle] setIsEmitting:YES];//消去するには数秒後にNOに
                             [self.view bringSubviewToFront: [(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle]];//最前面に
                             [self.view addSubview: [(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle]];//表示する
                             
@@ -663,19 +705,6 @@ int tempCount = 0;//テスト用
                                 [self.view bringSubviewToFront:[[ItemArray objectAtIndex:0] getImageView]];
                                 [self.view addSubview:[[ItemArray objectAtIndex:0] getImageView]];
                                 
-                                
-                                //重なった時に被らないように最前面に
-//                                [self.view bringSubviewToFront: [[ItemArray objectAtIndex:([ItemArray count]-1)] getImageView]];
-//                                [self.view addSubview:[[ItemArray objectAtIndex:([ItemArray count]-1)] getImageView]];
-                                
-                                //発生時のキラキラ
-                                /**
-                                 *形も複数用意し、色も七色にする。
-                                 *発生時は沢山表示
-                                 * 動線上には一定間隔（ランダム）で表示
-                                 *プレイヤー取得時にも沢山表示
-                                 */
-                                
                                 //donextで寿命判定をして消滅させるので、配列化して別の所で消滅させる。
                                 [KiraArray insertObject:[[ItemArray objectAtIndex:0] getOccurredParticle] atIndex:0];
                                 [[KiraArray objectAtIndex:0] setUserInteractionEnabled: NO];//インタラクション拒否
@@ -687,18 +716,26 @@ int tempCount = 0;//テスト用
                                 NSLog(@"アイテムなし");
                             }
 
+                        }else{//敵が倒されなければダメージパーティクルのみ表示
+                            
+                            //ダメージパーティクル表示：処理が間に合わない可能性があるので、配列に格納して数カウントで消去
+                            //                        [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setUserInteractionEnabled: NO];//インタラクション拒否
+                            
+                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setIsEmitting:YES];//消去するには数秒後にNOに
+                            
+                            [self.view bringSubviewToFront: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//最前面に
+                            
+                            [self.view addSubview: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//表示する:次のcountで消去
+
                         }
                         
                         
-                        //他の(近くの)敵に当たらないようにビームを殺す
-                        [[MyMachine getBeam:j] die];
-                        
-                        break;//ビームループ脱出
-                    }
-                }
-            }
-        }
-    }
+                        break;//ビーム[j]ループ脱出
+                    }//ビーム衝突判定(位置判定)
+                }//if(_beam isAlive)
+            }//for(int j = 0 ; j < [MyMachine getBeamCount];j++)
+        }//if([(EnemyClass *)[EnemyArray objectAtIndex:i] getIsAlive])
+    }//for(int i = 0; i < [EnemyArray count] ;i++ )
     
     
     
@@ -838,6 +875,15 @@ int tempCount = 0;//テスト用
     else if (gr.state == UIGestureRecognizerStateEnded) {//指を離した時
         isTouched = false;
     }
+    
+    //ビーム生成
+    if([MyMachine getIsAlive] && isTouched){
+        [MyMachine yieldBeam:0 init_x:[MyMachine getX] init_y:[MyMachine getY]];
+        //ビームはFIFOなので最初のもののみを表示
+        [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
+    }
+    
+//    NSLog(@"touched");
 
     
 }
@@ -899,7 +945,6 @@ int tempCount = 0;//テスト用
     //freq4 :0.25,0.50,0.75
     //freq3 :0.33,0.66,0.99
 //    if(1.0f / freq == count){
-    NSLog(@"");
     for(int i = 0;i < 100000;i++){
         if((1.0f / freq * (float)i >= count - error) &&
            (1.0f / freq * (float)i <= count + error)){
@@ -908,7 +953,7 @@ int tempCount = 0;//テスト用
         }
     }
 #endif
-    if(arc4random() % 40 == 0){
+    if(arc4random() % 10 == 0){
         isYield = true;
     }else{
         isYield = false;

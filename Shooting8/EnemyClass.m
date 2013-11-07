@@ -69,6 +69,7 @@ int unique_id;
 }
 
 -(void)setDamage:(int)damage location:(CGPoint)location{
+    isDamaged = YES;
     damageParticle = [[DamageParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, damage, damage)];
     [UIView animateWithDuration:0.5f
                      animations:^{
@@ -98,6 +99,9 @@ int unique_id;
                          //終了時処理
                          [explodeParticle setIsEmitting:NO];
                          [explodeParticle removeFromSuperview];
+                         
+                         //自分自身も削除
+                         [iv removeFromSuperview];
                      }];
     
 //    explodeParticle.center = CGPointMake(x_loc, y_loc);
@@ -121,15 +125,26 @@ int unique_id;
 -(int)getSize{
     return mySize;
 }
+//done at setDamage method
 -(void)setIsDamaged:(Boolean)_isDamaged{
     isDamaged = _isDamaged;
 }
 -(void)doNext{
     //初動：最初に呼び出される時のみ
     if(lifetime_count == 0){
-        [iv moveTo:CGPointMake(x_loc - mySize/2, 500)
-          duration:5.0f
-            option:UIViewAnimationOptionCurveLinear];
+//        [iv moveTo:CGPointMake(x_loc - mySize/2, iv.superview.bounds.size.height)
+//          duration:5.0f
+//            option:UIViewAnimationOptionCurveLinear];
+        [UIView animateWithDuration:5.0f
+                              delay:0.0
+                             options:UIViewAnimationOptionCurveLinear
+                         animations:^{
+                             iv.center = CGPointMake(x_loc - mySize/2, iv.superview.bounds.size.height);
+                         }
+                         completion:^(BOOL finished){
+                             [self die];
+                             [iv removeFromSuperview];
+                         }];
     }
 //    [self doNext:false];
 //}
@@ -137,17 +152,12 @@ int unique_id;
 
 //    [iv removeFromSuperview];
 //    NSLog(@"更新前 y = %d", y_loc);
-    lifetime_count ++;//need to animate
-    if(!isAlive){
-        dead_time ++;
-        return;
-    }
+    
 //    y_loc += mySize/6;//旧形式
 //    y_loc = iv.center.y;
 //    CALayer *mLayer = [iv.layer presentationLayer];
     //現在中心座標
     y_loc = ((CALayer *)[iv.layer presentationLayer]).position.y;//center = 240
-    
     
 //    iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc, y_loc, mySize, mySize)];
 
@@ -198,6 +208,12 @@ int unique_id;
             }
             break;
         }
+    }
+    
+    lifetime_count ++;//need to animate
+    if(!isAlive){
+        dead_time ++;
+        return;
     }
     
     //最後にisDamagedを通常時に戻してあげる

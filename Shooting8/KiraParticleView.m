@@ -156,6 +156,10 @@
                 particle.blueRange = 0;
                 particle.alphaRange = 0;
                 
+                particle.xAcceleration = 0;
+                particle.yAcceleration = 0;
+                particle.zAcceleration = 0;
+                
                 particle.spin = 0.384;
                 particle.spinRange = 0;
                 particle.emissionLatitude = 0;

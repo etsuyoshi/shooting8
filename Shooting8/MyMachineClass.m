@@ -9,11 +9,12 @@
 #import "MyMachineClass.h"
 
 @implementation MyMachineClass
+@synthesize status;
 
 int unique_id;
 -(id) init:(int)x_init size:(int)size{
     unique_id++;
-    y_loc = 300;
+    y_loc = 350;
     x_loc = x_init;
     hitPoint = 100;
     offensePower = 1;
@@ -92,8 +93,8 @@ int unique_id;
 
 -(void) die:(CGPoint) location{
     //爆発用パーティクルの初期化
-    explodeParticle = [[ExplodeParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, bomb_size, bomb_size)];
-    [UIView animateWithDuration:0.5f
+    explodeParticle = [[ExplodeParticleView alloc] initWithFrame:CGRectMake(x_loc, y_loc, bomb_size, bomb_size)];
+    [UIView animateWithDuration:3.5f
                      animations:^{
                          [explodeParticle setAlpha:0.0f];//徐々に薄く
                      }
@@ -101,6 +102,8 @@ int unique_id;
                          //終了時処理
                          [explodeParticle setIsEmitting:NO];
                          [explodeParticle removeFromSuperview];
+                         
+                         [iv removeFromSuperview];
                      }];
     isAlive = false;
     dead_time ++;
@@ -130,11 +133,14 @@ int unique_id;
         dead_time ++;
     }
     
+//    NSLog(@"%d" , lifetime_count);
+    
 //            NSLog(@"machine iv generated");    
 //    iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc-mySize/2, y_loc-mySize/2, mySize, mySize)];
     
     
-    switch(machine_type){
+    switch(machine_type){//lifetime_count%8を引数に取る？
+//    switch (lifetime_count % 20){//タイマーの間隔による
         case 0:
             iv.image = [UIImage imageNamed:@"player.png"];
             break;
@@ -209,10 +215,10 @@ int unique_id;
     BeamClass *beam = [[BeamClass alloc] init:x y_init:y width:50 height:50];
     //ビーム配列は先入先出(FIFO)
     [beamArray insertObject:beam atIndex:0];
-    if([beamArray count] < 30){
-//        [beamArray addObject:beam];
-    }else{
+//    [beamArray addObject:beam];
+    if([beamArray count] > 20){
 //        最後のビームを削除
+        [[[beamArray lastObject] getImageView] removeFromSuperview];
         [beamArray removeLastObject];
 //        [beamArray addObject:beam];
     }

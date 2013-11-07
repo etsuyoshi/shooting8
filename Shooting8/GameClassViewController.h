@@ -12,8 +12,8 @@
 
 
 @interface GameClassViewController : UIViewController{
-    CFURLRef soundURL;
-    SystemSoundID soundID;
+    CFURLRef sound_hit_URL;
+    SystemSoundID sound_hit_ID;
     int enemyCount;//発生した敵の数
     int enemyDown;//倒した敵の数
 
@@ -23,7 +23,7 @@
 
 
 //se
-@property(readwrite) CFURLRef soundURL;
-@property(readonly) SystemSoundID soundID;
+@property(readwrite) CFURLRef sound_hit_URL;
+@property(readonly) SystemSoundID sound_hit_ID;
 
 @end

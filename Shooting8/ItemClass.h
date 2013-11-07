@@ -28,7 +28,6 @@ typedef NS_ENUM(NSInteger, ItemType) {
     ItemTypeRedGold
 };
 
-
 @interface ItemClass : NSObject{
 
     int x_loc;

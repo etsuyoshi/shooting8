@@ -11,6 +11,12 @@
 #import "DamageParticleView.h"
 #import "BeamClass.h"
 
+typedef NS_ENUM(NSInteger, Status) {
+    StatusTransparancy,
+    StatusBig,
+    StatusMagnet
+};
+
 @interface MyMachineClass : NSObject{
     
     int x_loc;
@@ -31,7 +37,7 @@
     DamageParticleView *damageParticle;
 }
 
-
+@property(nonatomic) Status status;
 -(id)init:(int)x_init size:(int)size;
 -(id)init;
 -(void)setType:(int)_type;

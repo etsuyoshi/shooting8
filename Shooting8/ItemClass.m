@@ -216,16 +216,16 @@
 
 -(void) die{
     //アイテム消滅時(プレイヤーによる取得時)のパーティクルの初期化
-    killedParticle = [[KiraParticleView alloc] initWithFrame:CGRectMake(x_loc, y_loc-1, 40, 40)
+    killedParticle = [[KiraParticleView alloc] initWithFrame:CGRectMake(x_loc, y_loc, 40, 40)
                                                                   particleType:ParticleTypeKilled];
 //    [killedParticle setIsEmitting:1];
     [UIView animateWithDuration:0.5f
                      animations:^{
-                         [killedParticle setAlpha:1.0f];//最初は濃く
+                         [killedParticle setAlpha:3.0f];//最初は濃く
                      }
                      completion:^(BOOL finished){
                          
-                         [UIView animateWithDuration:3.5f//次に徐々に薄く
+                         [UIView animateWithDuration:0.5f//次に徐々に薄く
                                           animations:^{
                                               [killedParticle setAlpha:0.0f];
                                           }

@@ -27,7 +27,7 @@
         particleEmitter.renderMode = kCAEmitterLayerAdditive;
         
         CAEmitterCell *particle = [CAEmitterCell emitterCell];
-        particle.birthRate = 300;//火や水に見せるためには数百が必要
+        particle.birthRate = 30;//火や水に見せるためには数百が必要
         particle.lifetime = 0.5;
         particle.lifetimeRange = 0.5;
         particle.color = [[UIColor colorWithRed: 0.2 green: 0.4 blue: 0.8 alpha: 0.1] CGColor];
@@ -127,7 +127,7 @@
     }
     
     
-    [particleEmitter setValue:[NSNumber numberWithInt:isEmitting?100:0]
+    [particleEmitter setValue:[NSNumber numberWithInt:isEmitting?30:0]
                    forKeyPath:@"emitterCells.fire.birthRate"];
 
 //    [particleEmitter setValue:[NSNumber numberWithInt:isEmitting?30:0] forKeyPath:@"emitterCells.particle.birthRate"];
