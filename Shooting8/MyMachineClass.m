@@ -209,7 +209,7 @@ int unique_id;
     BeamClass *beam = [[BeamClass alloc] init:x y_init:y width:50 height:50];
     //ビーム配列は先入先出(FIFO)
     [beamArray insertObject:beam atIndex:0];
-    if([beamArray count] < 50){
+    if([beamArray count] < 30){
 //        [beamArray addObject:beam];
     }else{
 //        最後のビームを削除

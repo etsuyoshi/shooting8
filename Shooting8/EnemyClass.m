@@ -137,7 +137,7 @@ int unique_id;
 
 //    [iv removeFromSuperview];
 //    NSLog(@"更新前 y = %d", y_loc);
-    lifetime_count ++;//不要？
+    lifetime_count ++;//need to animate
     if(!isAlive){
         dead_time ++;
         return;

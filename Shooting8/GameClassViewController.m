@@ -422,20 +422,14 @@ int tempCount = 0;//テスト用
         }
     }
     
-    //ビーム進行=>出来ればMyMachineの保有オブジェクトにする
-//    for(int i = 0; i < [BeamArray count] ; i++){
-//        if([(BeamClass *)[BeamArray objectAtIndex:i] getIsAlive]) {
-//            [(BeamClass *)[BeamArray objectAtIndex:i ] doNext];
-//        }
-//    }
-    //自機の進行
-    /*旧形式
+    //自機ビームの進行
+    //旧形式
     for(int i = 0; i < [MyMachine getBeamCount];i++){
         if([[MyMachine getBeam:i] getIsAlive]){
             [[MyMachine getBeam:i] doNext];
         }
     }
-     */
+     
     
     //アイテムの進行=[アイテム自体の移動 & 生成したパーティクルの時間経過:寿命判定は別途]
     for(int i = 0 ; i< [ItemArray count]; i ++){
