@@ -6,7 +6,7 @@
 //  Copyright (c) 2013年 endo.tuyo. All rights reserved.
 //
 
-//#define TEST
+//#define TEST//TestViewController-transition
 
 #import "BGMClass.h"
 #import "MenuViewController.h"

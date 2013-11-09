@@ -27,7 +27,7 @@ int imageMargin;
     iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0, -originalFrameSize,
                                                                   width, originalFrameSize)];
     
-    //つなぎ目Check@静止画:テスト用
+    //つなぎ目Check@静止画:テスト用=>startAnimationの内容をコメントアウトして停止
 //    iv_background1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, -originalFrameSize/2, width, originalFrameSize)];
 //    iv_background2 = [[UIImageView alloc]initWithFrame:CGRectMake(0,  originalFrameSize/2, width, originalFrameSize)];
 //    y_loc1 = iv_background1.bounds.origin.y;
@@ -78,8 +78,8 @@ int imageMargin;
         }
         case WorldTypeForest:{
             //森バージョン
-            iv_background1.image = [UIImage imageNamed:@"back_forest.png"];
-            iv_background2.image = [UIImage imageNamed:@"back_forest.png"];
+            iv_background1.image = [UIImage imageNamed:@"back_forest2.png"];
+            iv_background2.image = [UIImage imageNamed:@"back_forest2.png"];
             break;
         }
     }

@@ -169,7 +169,7 @@
                 //大きさを小さく
                 particle.scale = 1.5f;
                 particle.scaleRange = 0;
-                particle.scaleSpeed = -0.5;
+                particle.scaleSpeed = -1.0f;
                 
                 //拡散しないように
                 particle.velocity = 0.00;

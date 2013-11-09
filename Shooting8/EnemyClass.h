@@ -62,4 +62,5 @@ typedef NS_ENUM(NSInteger, EnemyType) {
 -(UIImageView *)getImageView;
 -(ExplodeParticleView *)getExplodeParticle;
 -(DamageParticleView *)getDamageParticle;
+-(UIView*)getSmokeEffect;
 @end

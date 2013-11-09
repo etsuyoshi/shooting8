@@ -9,7 +9,12 @@
 //　同期通信の場合はサブスレッド立てるhttp://www.yoheim.net/blog.php?q=20130206
 
 
-#define TEST
+#define NoConnectTEST
+//#define TestView
+#ifdef TestView
+    #import "TestViewController.h"
+#endif
+
 
 //DB側でログイン回数をカウントする(カラム追加、値取得して１を足す)
 //#define FONTTEST YES
@@ -72,11 +77,14 @@ UIActivityIndicatorView *_indicator;
     [self.view addSubview:iv_frame];
     
     
-#ifndef TEST
+#ifndef NoConnectTEST
     // インジケーター表示
     [self showActivityIndicator];
     //サーバー通信
     [self performSelector:@selector(sendRequestToServer) withObject:nil afterDelay:0.1];
+#elif defined TestView
+    TestViewController *tvc = [[TestViewController alloc]init];
+    [self presentViewController: tvc animated:YES completion: nil];
 #else
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
     UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"ItemSelectViewController"];
@@ -107,11 +115,10 @@ UIActivityIndicatorView *_indicator;
         
         // インジケーター非表示
         [self hideActivityIndicator];
-
         
+        //StoryboardでのID：ItemSelectViewControllerはMenuViewControllerを示す
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
         UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"ItemSelectViewController"];
-        //    NSLog(@"%@", vc);
         [self presentViewController: vc animated:YES completion: nil];
         
         

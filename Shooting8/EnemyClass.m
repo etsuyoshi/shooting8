@@ -70,44 +70,44 @@ int unique_id;
 
 -(void)setDamage:(int)damage location:(CGPoint)location{
     isDamaged = YES;
-    damageParticle = [[DamageParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, damage, damage)];
-    [UIView animateWithDuration:0.5f
-                     animations:^{
-                         [damageParticle setAlpha:0.0f];//徐々に薄く
-                     }
-                     completion:^(BOOL finished){
-                         //終了時処理
-                         [damageParticle setIsEmitting:NO];
-                         [damageParticle removeFromSuperview];
-                     }];
+    //particleを表示すると動作が重くなる
+//    damageParticle = [[DamageParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, damage, damage)];
+//    [UIView animateWithDuration:0.5f
+//                     animations:^{
+//                         [damageParticle setAlpha:0.0f];//徐々に薄く
+//                     }
+//                     completion:^(BOOL finished){
+//                         //終了時処理
+//                         [damageParticle setIsEmitting:NO];
+//                         [damageParticle removeFromSuperview];
+//                         
+//                     }];
     
 //    damageParticle.center = CGPointMake(x_loc, y_loc);
     hitPoint -= damage;
-    if(hitPoint < 0){
+    if(hitPoint < 0){//爆発用パーティクルの初期化
+//        explodeParticle = [[ExplodeParticleView alloc] initWithFrame:CGRectMake(x_loc, y_loc, bomb_size, bomb_size)];
+//        [UIView animateWithDuration:0.5f
+//                         animations:^{
+//                             [explodeParticle setAlpha:0.0f];//徐々に薄く
+//                         }
+//                         completion:^(BOOL finished){
+//                             //終了時処理
+//                             [explodeParticle setIsEmitting:NO];
+//                             [explodeParticle removeFromSuperview];
+//                             
+//                             //自分自身も削除
+//                             [iv removeFromSuperview];
+//                         }];
         [self die];
     }
 }
 
 -(void) die{
-    //爆発用パーティクルの初期化
-    explodeParticle = [[ExplodeParticleView alloc] initWithFrame:CGRectMake(x_loc, y_loc, bomb_size, bomb_size)];
-    [UIView animateWithDuration:0.5f
-                     animations:^{
-                         [explodeParticle setAlpha:0.0f];//徐々に薄く
-                     }
-                     completion:^(BOOL finished){
-                         //終了時処理
-                         [explodeParticle setIsEmitting:NO];
-                         [explodeParticle removeFromSuperview];
-                         
-                         //自分自身も削除
-                         [iv removeFromSuperview];
-                     }];
+    
     
 //    explodeParticle.center = CGPointMake(x_loc, y_loc);
     isAlive = false;
-    dead_time ++;
-//    NSLog(@"die exit");
 }
 
 
@@ -260,6 +260,103 @@ int unique_id;
 -(DamageParticleView *)getDamageParticle{//被弾イフェクト
     //dieしていれば爆発用particleは初期化されているはず=>描画用クラスで描画(self.view addSubview:particle);
     return damageParticle;
+}
+
+-(UIView*)getSmokeEffect{
+    
+    int trans = 50;//移動範囲
+    //最初に移動する距離：-trans/2〜+trans/2=>ポンと移動させたい
+    int transX1 = arc4random() % trans - trans/2;//移動位置x
+    int transY1 = arc4random() % trans - trans;//移動位置y
+    int transX2 = arc4random() % trans - trans/2;//移動位置x
+    int transY2 = arc4random() % trans - trans;//移動位置y
+    int transX3 = arc4random() % trans - trans/2;//移動位置x
+    int transY3 = arc4random() % trans - trans;//移動位置y
+    
+    
+    int size_max = 30;
+    int size_init = 40;
+    int size1 = arc4random() % size_max;
+    int size2 = arc4random() % size_max;
+    int size3 = arc4random() % size_max;
+    size1 = MAX(size1, 10);
+    size2 = MAX(size2, 10);
+    size3 = MAX(size3, 10);
+    
+    UIImageView *smoke1;
+    UIImageView *smoke2;
+    UIImageView *smoke3;
+    
+    
+    UIView *sv = [[UIView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 1,1)];//描画しないのでサイズは関係ない
+    sv.center = CGPointMake(x_loc, y_loc);
+    
+    smoke1 = [[UIImageView alloc]initWithFrame:CGRectMake(0,0,
+                                                          size_init, size_init)];//初期スモークサイズ
+    smoke2 = [[UIImageView alloc]initWithFrame:CGRectMake(0,0,
+                                                          size_init, size_init)];//初期スモークサイズ
+    smoke3 = [[UIImageView alloc]initWithFrame:CGRectMake(0,0,
+                                                          size_init, size_init)];//初期スモークサイズ
+    
+    smoke1.center = CGPointMake(arc4random() % mySize, arc4random() % mySize);//sv上での位置：左上
+    smoke2.center = CGPointMake(arc4random() % mySize, arc4random() % mySize);//sv上での位置：左上
+    smoke3.center = CGPointMake(arc4random() % mySize, arc4random() % mySize);//sv上での位置：左上
+    [smoke1 setAlpha:1.0f];//init:0
+    [smoke2 setAlpha:1.0f];//init:0
+    [smoke3 setAlpha:1.0f];//init:0
+    
+    smoke1.image = [UIImage imageNamed:@"smoke.png"];
+    smoke2.image = [UIImage imageNamed:@"smoke.png"];
+    smoke3.image = [UIImage imageNamed:@"smoke.png"];
+    
+    [UIView animateWithDuration:0.3f
+                          delay:0.0
+                        options:UIViewAnimationOptionCurveEaseOut//early-slow-stop
+                     animations:^{
+                         smoke1.frame = CGRectMake(0,0,size1/2, size1);//resize
+                         smoke1.center = CGPointMake(smoke1.center.x + transX1,
+                                                     smoke1.center.y + transY1);//center
+                         
+                         smoke2.frame = CGRectMake(0,0,size2/1.5, size2);//resize
+                         smoke2.center = CGPointMake(smoke2.center.x + transX2,
+                                                     smoke2.center.y + transY2);//center
+                         
+                         
+                         smoke3.frame = CGRectMake(0,0,size3/1.2, size3);//resize
+                         smoke3.center = CGPointMake(smoke3.center.x + transX3,
+                                                     smoke3.center.y + transY3);//center
+                         
+                         
+                         [smoke1 setAlpha:0.8f];
+                         [smoke2 setAlpha:0.7f];
+                         [smoke3 setAlpha:0.5f];
+                         
+                     }
+                     completion:^(BOOL finished){
+                         [UIView animateWithDuration:0.2f
+                                               delay:0.0f
+                                             options:UIViewAnimationOptionCurveEaseIn
+                                          animations:^{
+                                              smoke1.center = CGPointMake(smoke1.center.x, smoke1.center.y - (arc4random() % 30));
+                                              [smoke1 setAlpha:0.0f];
+                                              smoke2.center = CGPointMake(smoke1.center.x, smoke2.center.y - (arc4random() % 30));
+                                              [smoke2 setAlpha:0.0f];
+                                              smoke3.center = CGPointMake(smoke3.center.x, smoke3.center.y - (arc4random() % 30));
+                                              [smoke3 setAlpha:0.0f];
+                                          }
+                                          completion:^(BOOL finished){
+                                              [smoke1 removeFromSuperview];
+                                              [smoke2 removeFromSuperview];
+                                              [smoke3 removeFromSuperview];
+                                              [sv removeFromSuperview];
+                                          }];
+                     }];
+
+    [sv addSubview:smoke1];
+    [sv addSubview:smoke2];
+    [sv addSubview:smoke3];
+    
+    return sv;
 }
 
 @end
