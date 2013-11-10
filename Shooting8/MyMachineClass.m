@@ -12,9 +12,11 @@
 
 int unique_id;
 int wingStatus;
+int effectDuration;
 CGPoint _center;
 NSString *imageName;
 -(id) init:(int)x_init size:(int)size{
+    effectDuration = 10;//10回アニメーション
     wingStatus = 0;//翼の状態
     unique_id++;
     y_loc = 350;
@@ -85,29 +87,7 @@ NSString *imageName;
     
 }
 
--(UIView *)createEffect{//statusに応じたイフェクト
-    CGRect rectEffect = CGRectMake(x_loc, y_loc, 100, 100);
-    UIImageView *viewEffect = [[UIImageView alloc]initWithFrame:rectEffect];
-    viewEffect.image = [UIImage imageNamed:@"powerGauge2.png"];
-    viewEffect.center = CGPointMake(x_loc, y_loc);
-    [UIView animateWithDuration:0.5f
-                     animations:^{
-                         viewEffect.frame = CGRectMake(x_loc, y_loc,
-                                                      1, 1);
-                         viewEffect.center = CGPointMake(x_loc, y_loc);
-                         //image.frame = smaller
-                     }
-                     completion:^(BOOL finished){
-                         
-//                         [self createEffect];
-                         //if(counter++ < 5){//repeat count
-                         //[self createEffect];
-                         //endif
-                         [viewEffect removeFromSuperview];
-                     }];
-    
-    return viewEffect;
-}
+
 
 -(void)setType:(int)_type{
     

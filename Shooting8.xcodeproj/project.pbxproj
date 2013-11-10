@@ -164,6 +164,7 @@
 		34E216C8181BF64F00B939E6 /* mahotoshi_hmix.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34E216C7181BF64F00B939E6 /* mahotoshi_hmix.mp3 */; };
 		34E216CA181BF74300B939E6 /* kinpaku_hmix.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34E216C9181BF74300B939E6 /* kinpaku_hmix.mp3 */; };
 		34EB7ACB182F28220079B0EB /* powerGauge2.png in Resources */ = {isa = PBXBuildFile; fileRef = 34EB7ACA182F28220079B0EB /* powerGauge2.png */; };
+		34EB7ACE182F2E850079B0EB /* Effect.m in Sources */ = {isa = PBXBuildFile; fileRef = 34EB7ACD182F2E850079B0EB /* Effect.m */; };
 		34F30067182161A30082DCBC /* kira.png in Resources */ = {isa = PBXBuildFile; fileRef = 34F30065182161A30082DCBC /* kira.png */; };
 		34F30068182161A30082DCBC /* kira2.png in Resources */ = {isa = PBXBuildFile; fileRef = 34F30066182161A30082DCBC /* kira2.png */; };
 		34F3006F182162660082DCBC /* KiraParticleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 34F3006E182162660082DCBC /* KiraParticleView.m */; };
@@ -380,6 +381,8 @@
 		34E216C7181BF64F00B939E6 /* mahotoshi_hmix.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mahotoshi_hmix.mp3; sourceTree = "<group>"; };
 		34E216C9181BF74300B939E6 /* kinpaku_hmix.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = kinpaku_hmix.mp3; sourceTree = "<group>"; };
 		34EB7ACA182F28220079B0EB /* powerGauge2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = powerGauge2.png; sourceTree = "<group>"; };
+		34EB7ACC182F2E850079B0EB /* Effect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Effect.h; sourceTree = "<group>"; };
+		34EB7ACD182F2E850079B0EB /* Effect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Effect.m; sourceTree = "<group>"; };
 		34F30065182161A30082DCBC /* kira.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = kira.png; sourceTree = "<group>"; };
 		34F30066182161A30082DCBC /* kira2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = kira2.png; sourceTree = "<group>"; };
 		34F3006D182162660082DCBC /* KiraParticleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KiraParticleView.h; sourceTree = "<group>"; };
@@ -799,6 +802,8 @@
 				34043A5917FA0FE50000E338 /* ExplodeParticleView.m */,
 				34F3006D182162660082DCBC /* KiraParticleView.h */,
 				34F3006E182162660082DCBC /* KiraParticleView.m */,
+				34EB7ACC182F2E850079B0EB /* Effect.h */,
+				34EB7ACD182F2E850079B0EB /* Effect.m */,
 			);
 			name = Particle;
 			sourceTree = "<group>";
@@ -1091,6 +1096,7 @@
 				342057FA17F2B8810084E99D /* GameClassViewController.m in Sources */,
 				3400396F17F408070093E07E /* EnemyClass.m in Sources */,
 				3424020117F6E8A100E06902 /* BeamClass.m in Sources */,
+				34EB7ACE182F2E850079B0EB /* Effect.m in Sources */,
 				34043A5A17FA0FE50000E338 /* ExplodeParticleView.m in Sources */,
 				34FA999E17FBCEF000317D83 /* ItemClass.m in Sources */,
 				342ECBC517FC5AF900123886 /* DamageParticleView.m in Sources */,

@@ -39,7 +39,6 @@
 -(void)setType:(int)_type;
 -(void)setDamage:(int)damage location:(CGPoint)location;
 -(void)setStatus:(NSString *)statusValue key:(NSString *)statusKey;
--(UIView *)createEffect;
 -(void)die:(CGPoint)loc;
 -(int)getHitPoint;
 -(Boolean)getIsAlive;

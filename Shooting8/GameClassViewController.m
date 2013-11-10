@@ -2,11 +2,21 @@
 //アイテム動線上のパーティクル表示
 //アイテム取得時のエフェクト
 /*
- ・スイープ:周りから円半径変更(イメージは後で追加:setbackground)
- ・武器、防具取得：powerGauge2
+ ・m:viewMyEffectにのせる系
+ ・m-:MyMachine getImageViewに変更
+ ・o:周りに影響する系
+ ->各アイテムに対応するpowerGauge2.pngを用意する必要あり
+ 
+ mスイープ:周りから円半径変更：一定時間ずっと(イメージは後で追加:setbackground)
+ m武器、防具取得：powerGauge2(色はわけた方が良い)
+    武器：beamのiv.imageフィールド変更
+    防具：viewMyEffectにanimated-Viewを追加
+ mコイン取得時：kira.png->小さいものを4つ
+ o爆発時対応:for([EnemyArray count])die
+ m回復；kiraを複数animate
+ m-拡大、縮小[MyMachine setSize:xxx];
+ m-透明：[[MyMachine getimageview] setAlpha:0.3f]
  ・
- 
- 
  */
 
 //line等のソーシャルプラットフォームがないため、PCエミュレータ上ではプロンプト上に警告が表示される(端末では問題ないので無視)
@@ -54,6 +64,7 @@
 #import "ScoreBoardClass.h"
 #import "GoldBoardClass.h"
 #import "UIView+Animation.h"
+#import "Effect.h"
 #import <QuartzCore/QuartzCore.h>
 #define TIMEOVER_SECOND 1000
 #define OBJECT_SIZE 70//自機と敵機のサイズ
@@ -81,6 +92,7 @@ int x_frame, y_frame;
 int size_machine;
 int length_beam, thick_beam;//ビームの長さと太さ
 Boolean isGameMode;
+Boolean flagItemTrigger;
 
 
 UIPanGestureRecognizer *panGesture;
@@ -160,7 +172,7 @@ UIView *viewMyEffect;
 {
     [super viewDidLoad];
     
-    
+    flagItemTrigger = false;
     
     //sound effect
     
@@ -277,8 +289,7 @@ UIView *viewMyEffect;
     
     //自機エフェクトを描画するビュー
     viewMyEffect = [[UIView alloc] initWithFrame:[MyMachine getImageView].frame];
-    [viewMyEffect setBackgroundColor:[UIColor blueColor]];
-    [viewMyEffect setAlpha:0.1f];
+//    [viewMyEffect setBackgroundColor:[[UIColor blueColor] colorWithAlphaComponent:0.2f]];
     [self.view addSubview:viewMyEffect];
     [self.view bringSubviewToFront:viewMyEffect];
     
@@ -490,6 +501,8 @@ UIView *viewMyEffect;
                _yItem >= [MyMachine getY] - OBJECT_SIZE * 0.5 &&
                _yItem <= [MyMachine getY] + OBJECT_SIZE * 0.5){
                 
+                flagItemTrigger = true;
+                
                 
 //                NSLog(@"Item acquired");
                 [[[ItemArray objectAtIndex:itemCount] getImageView] removeFromSuperview];
@@ -497,6 +510,10 @@ UIView *viewMyEffect;
                 //アイテム取得時のパーティクル表示
                 [self.view addSubview:[[ItemArray objectAtIndex:itemCount] getKilledParticle]];
                 
+//                Effect *effect = [[Effect alloc]initWithFrame:[MyMachine getImageView].frame];
+//                UIView *viewMagnetEffect = [effect getEffectView:EffectTypeStandard];
+////                [viewMyEffect addSubview:viewMagnetEffect];
+//                [self.view addSubview:viewMagnetEffect];
                 
                 //取得したアイテムを判定
                 itemType = [_item getType];
@@ -528,8 +545,8 @@ UIView *viewMyEffect;
                         break;
                     }
                     case ItemTypeMagnet:{
-                        UIView *viewMagnetEffect = [MyMachine createEffect];
-                        [viewMyEffect addSubview:viewMagnetEffect];
+//                        UIView *viewMagnetEffect = [MyMachine createEffect];
+////                        [viewMyEffect addSubview:viewMagnetEffect];
 //                        [self.view addSubview:viewMagnetEffect];
                         break;
                     }
@@ -928,6 +945,7 @@ UIView *viewMyEffect;
     [gr setTranslation:CGPointZero inView:viewMyEffect];
     
     
+    
     // 指が移動したとき、上下方向にビューをスライドさせる
     if (gr.state == UIGestureRecognizerStateChanged) {//移動中
         isTouched = true;
@@ -943,6 +961,72 @@ UIView *viewMyEffect;
         //ビームはFIFOなので最初のもののみを表示
         [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
     }
+    
+    if(flagItemTrigger){
+        flagItemTrigger = false;
+        
+        int diameter = 100;
+        int duration = 3;//repeat-count
+        int finishRadius = 20;
+        CGFloat animationDuration = 0.5f; // Your duration
+        CGFloat animationDelay = 0; // Your delay (if any)
+        UIImageView *circle = [[UIImageView alloc] initWithFrame:CGRectMake(30, 30,
+                                                                            diameter,
+                                                                            diameter)];
+        circle.center = CGPointMake(viewMyEffect.frame.size.width/2,
+                                    viewMyEffect.frame.size.height/2);
+        circle.layer.cornerRadius=diameter/2;
+        
+        //cyan
+        UIColor *itemColor =[UIColor colorWithRed:0 green:1 blue:1 alpha:0.3f];
+        circle.layer.borderColor=[itemColor CGColor];
+        circle.layer.borderWidth = 1.0f;
+        circle.layer.backgroundColor = [itemColor CGColor];
+
+        
+        CABasicAnimation *cornerRadiusAnimation = [CABasicAnimation animationWithKeyPath:@"cornerRadius"];
+        [cornerRadiusAnimation setFromValue:[NSNumber numberWithFloat:diameter/2]]; // The current value
+        [cornerRadiusAnimation setToValue:[NSNumber numberWithFloat:10.0]]; // The new value
+        [cornerRadiusAnimation setDuration:animationDuration];
+        [cornerRadiusAnimation setBeginTime:CACurrentMediaTime() + animationDelay];
+        [cornerRadiusAnimation setRepeatCount:duration];
+        
+        // If your UIView animation uses a timing funcition then your basic animation needs the same one
+        [cornerRadiusAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+        
+        // This will keep make the animation look as the "from" and "to" values before and after the animation
+        [cornerRadiusAnimation setFillMode:kCAFillModeBoth];
+        [circle.layer addAnimation:cornerRadiusAnimation forKey:@"keepAsCircle"];
+//        [circle.layer setCornerRadius:10.0]; // Core Animation doesn't change the real value so we have to.
+        
+        [UIView animateWithDuration:animationDuration
+                              delay:animationDelay
+                            options:UIViewAnimationOptionCurveEaseInOut
+         //                                |UIViewAnimationOptionRepeat
+                         animations:^{
+                             [UIView setAnimationRepeatCount: duration];
+                             [circle.layer setFrame:CGRectMake(viewMyEffect.frame.size.width/2-finishRadius/2,
+                                                               viewMyEffect.frame.size.height/2-finishRadius/2,
+                                                               finishRadius,
+                                                               finishRadius)]; // Arbitrary frame ...
+                             [circle.layer setBackgroundColor:[[UIColor colorWithRed:0
+                                                                               green:1
+                                                                                blue:1
+                                                                               alpha:0.5f] CGColor]];
+                             circle.center = CGPointMake(viewMyEffect.frame.size.width/2,
+                                                         viewMyEffect.frame.size.height/2);//viewEffect.center;//
+                             // You other UIView animations in here...
+                         } completion:^(BOOL finished) {
+                             // Maybe you have your completion in here...
+                             [circle removeFromSuperview];
+                             //                         [viewMyEffect removeFromSuperview];
+                         }];
+        
+        [viewMyEffect addSubview:circle];
+    
+    }
+    
+    
     
 //    NSLog(@"touched");
 
