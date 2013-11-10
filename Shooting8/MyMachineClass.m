@@ -88,7 +88,7 @@ NSString *imageName;
 -(UIView *)createEffect{//statusに応じたイフェクト
     CGRect rectEffect = CGRectMake(x_loc, y_loc, 100, 100);
     UIImageView *viewEffect = [[UIImageView alloc]initWithFrame:rectEffect];
-    viewEffect.image = [UIImage imageNamed:@"circle_2w_rSmall_128.png"];
+    viewEffect.image = [UIImage imageNamed:@"powerGauge2.png"];
     viewEffect.center = CGPointMake(x_loc, y_loc);
     [UIView animateWithDuration:0.5f
                      animations:^{

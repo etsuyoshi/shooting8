@@ -1,5 +1,13 @@
 //全てanimationに置き換える：progressViewも確認
-
+//アイテム動線上のパーティクル表示
+//アイテム取得時のエフェクト
+/*
+ ・スイープ:周りから円半径変更(イメージは後で追加:setbackground)
+ ・武器、防具取得：powerGauge2
+ ・
+ 
+ 
+ */
 
 //line等のソーシャルプラットフォームがないため、PCエミュレータ上ではプロンプト上に警告が表示される(端末では問題ないので無視)
 //
@@ -119,6 +127,8 @@ int _sItem;
 int _xBeam;
 int _yBeam;
 int _sBeam;
+
+UIView *viewMyEffect;
 
 
 @interface GameClassViewController ()
@@ -240,7 +250,6 @@ int _sBeam;
     [self.view addSubview:iv_frame];
 
     
-    
     length_beam = 20;
     thick_beam = 5;
     
@@ -265,6 +274,13 @@ int _sBeam;
     MyMachine = [[MyMachineClass alloc] init:x_frame/2 size:OBJECT_SIZE];
     [self.view addSubview:[MyMachine getImageView]];
     [self.view bringSubviewToFront:[MyMachine getImageView]];
+    
+    //自機エフェクトを描画するビュー
+    viewMyEffect = [[UIView alloc] initWithFrame:[MyMachine getImageView].frame];
+    [viewMyEffect setBackgroundColor:[UIColor blueColor]];
+    [viewMyEffect setAlpha:0.1f];
+    [self.view addSubview:viewMyEffect];
+    [self.view bringSubviewToFront:viewMyEffect];
     
     //自機が発射したビームを格納する配列初期化=>MyMachineクラス内に実装
 //    BeamArray = [[NSMutableArray alloc] init];
@@ -513,7 +529,8 @@ int _sBeam;
                     }
                     case ItemTypeMagnet:{
                         UIView *viewMagnetEffect = [MyMachine createEffect];
-                        [self.view addSubview:viewMagnetEffect];
+                        [viewMyEffect addSubview:viewMagnetEffect];
+//                        [self.view addSubview:viewMagnetEffect];
                         break;
                     }
                     case ItemTypeBig:{
@@ -741,7 +758,7 @@ int _sBeam;
                         }else{//敵が倒されなければダメージパーティクルのみ表示
                             //処理が重くなるので実施見送り
                             //ダメージパーティクル表示：処理が間に合わない可能性があるので、配列に格納して数カウントで消去
-                            //                        [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setUserInteractionEnabled: NO];//インタラクション拒否
+//                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setUserInteractionEnabled: NO];//インタラクション拒否
 //                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setIsEmitting:YES];//消去するには数秒後にNOに
 //                            [self.view bringSubviewToFront: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//最前面に
 //                            [self.view addSubview: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//表示する:次のcountで消去
@@ -905,6 +922,10 @@ int _sBeam;
     [MyMachine setLocation:CGPointMake(movedPoint.x, movedPoint.y)];
     [MyMachine getImageView].center = movedPoint;
     [gr setTranslation:CGPointZero inView:[MyMachine getImageView]];
+    
+    
+    viewMyEffect.center = movedPoint;
+    [gr setTranslation:CGPointZero inView:viewMyEffect];
     
     
     // 指が移動したとき、上下方向にビューをスライドさせる

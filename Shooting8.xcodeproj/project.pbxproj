@@ -110,7 +110,6 @@
 		348AD7F5180ACD52007226EC /* back_nangoku.png in Resources */ = {isa = PBXBuildFile; fileRef = 348AD7F0180ACD52007226EC /* back_nangoku.png */; };
 		348AD7F6180ACD52007226EC /* back_snow.png in Resources */ = {isa = PBXBuildFile; fileRef = 348AD7F1180ACD52007226EC /* back_snow.png */; };
 		348AD7F7180ACD52007226EC /* back_univ.png in Resources */ = {isa = PBXBuildFile; fileRef = 348AD7F2180ACD52007226EC /* back_univ.png */; };
-		348D634C17FD963100A3049B /* powerGauge2.png in Resources */ = {isa = PBXBuildFile; fileRef = 348D634B17FD963100A3049B /* powerGauge2.png */; };
 		348D635017FE11EF00A3049B /* circle_7w_128.png in Resources */ = {isa = PBXBuildFile; fileRef = 348D634F17FE11EF00A3049B /* circle_7w_128.png */; };
 		348D635417FE13DF00A3049B /* circle_2w_128.png in Resources */ = {isa = PBXBuildFile; fileRef = 348D635317FE13DF00A3049B /* circle_2w_128.png */; };
 		348D635617FE14B000A3049B /* circle_2w_rSmall_128.png in Resources */ = {isa = PBXBuildFile; fileRef = 348D635517FE14B000A3049B /* circle_2w_rSmall_128.png */; };
@@ -164,6 +163,7 @@
 		34E216C6181BF62F00B939E6 /* bgm_game_687.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34E216C5181BF62F00B939E6 /* bgm_game_687.mp3 */; };
 		34E216C8181BF64F00B939E6 /* mahotoshi_hmix.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34E216C7181BF64F00B939E6 /* mahotoshi_hmix.mp3 */; };
 		34E216CA181BF74300B939E6 /* kinpaku_hmix.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34E216C9181BF74300B939E6 /* kinpaku_hmix.mp3 */; };
+		34EB7ACB182F28220079B0EB /* powerGauge2.png in Resources */ = {isa = PBXBuildFile; fileRef = 34EB7ACA182F28220079B0EB /* powerGauge2.png */; };
 		34F30067182161A30082DCBC /* kira.png in Resources */ = {isa = PBXBuildFile; fileRef = 34F30065182161A30082DCBC /* kira.png */; };
 		34F30068182161A30082DCBC /* kira2.png in Resources */ = {isa = PBXBuildFile; fileRef = 34F30066182161A30082DCBC /* kira2.png */; };
 		34F3006F182162660082DCBC /* KiraParticleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 34F3006E182162660082DCBC /* KiraParticleView.m */; };
@@ -379,6 +379,7 @@
 		34E216C5181BF62F00B939E6 /* bgm_game_687.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bgm_game_687.mp3; sourceTree = "<group>"; };
 		34E216C7181BF64F00B939E6 /* mahotoshi_hmix.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mahotoshi_hmix.mp3; sourceTree = "<group>"; };
 		34E216C9181BF74300B939E6 /* kinpaku_hmix.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = kinpaku_hmix.mp3; sourceTree = "<group>"; };
+		34EB7ACA182F28220079B0EB /* powerGauge2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = powerGauge2.png; sourceTree = "<group>"; };
 		34F30065182161A30082DCBC /* kira.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = kira.png; sourceTree = "<group>"; };
 		34F30066182161A30082DCBC /* kira2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = kira2.png; sourceTree = "<group>"; };
 		34F3006D182162660082DCBC /* KiraParticleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KiraParticleView.h; sourceTree = "<group>"; };
@@ -658,6 +659,7 @@
 		34A2B1BA181F9DDD00CB97F2 /* gameEffect */ = {
 			isa = PBXGroup;
 			children = (
+				34EB7ACA182F28220079B0EB /* powerGauge2.png */,
 				341D9C67182DE67E009B904E /* smoke.png */,
 				341D9C65182DDE7C009B904E /* kira_img11.png */,
 				34C84E761822568200E4B074 /* snow.png */,
@@ -894,7 +896,7 @@
 		342057C617F2B34C0084E99D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = endo.tuyo;
 			};
 			buildConfigurationList = 342057C917F2B34C0084E99D /* Build configuration list for PBXProject "Shooting8" */;
@@ -951,7 +953,6 @@
 				3467B71D17FD53AF004EEE94 /* item.png in Resources */,
 				340A4642181E412200D9B005 /* RockBow.png in Resources */,
 				34A1ED42181CCDF20007471C /* WaterBow.png in Resources */,
-				348D634C17FD963100A3049B /* powerGauge2.png in Resources */,
 				348D635017FE11EF00A3049B /* circle_7w_128.png in Resources */,
 				348D635417FE13DF00A3049B /* circle_2w_128.png in Resources */,
 				34A1ED3E181CCDF20007471C /* BugBow.png in Resources */,
@@ -991,6 +992,7 @@
 				34C09EDE18009D0300E4A4D8 /* blue_item_yuri_big.png in Resources */,
 				34A0874018034F80005458EF /* chara_test.png in Resources */,
 				3460F9541824FA2700951A99 /* weapon_bomb.png in Resources */,
+				34EB7ACB182F28220079B0EB /* powerGauge2.png in Resources */,
 				3460F9521824FA2700951A99 /* defense_shield.png in Resources */,
 				34A087421803EBBD005458EF /* blue_item_yuri_big2.png in Resources */,
 				34A087441803EC79005458EF /* chara_test2.png in Resources */,
