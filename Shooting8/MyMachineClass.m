@@ -38,13 +38,13 @@ NSString *imageName;
 //    machine_type = arc4random() % 3;
     beamArray = [[NSMutableArray alloc]init];
     
-    //status
+    //status=GameClassのアイテム取得時と対応
     status = [NSDictionary dictionaryWithObjectsAndKeys:
-              @"0",@"StatusWpBomb",
+              @"0",@"StatusWpBomb",//
               @"0",@"StatusWpDiffuse",
               @"0",@"StatusWpLaser",
-              @"0",@"StatusTlBarrier",
-              @"0",@"StatusTlShield",
+              @"0",@"StatusDfBarrier",
+              @"0",@"StatusDfShield",
               @"0",@"StatusTlBomb",
               @"0",@"StatusTlHeal",
               @"0",@"StatusTlMagnet",
@@ -85,6 +85,17 @@ NSString *imageName;
 -(void)setStatus:(NSString *)statusValue key:(NSString *)statusKey{
     [status setValue:statusValue forKey:statusKey];
     
+    
+    
+    iv.alpha = 0.1f;
+//    [UIView animateWithDuration:10.0f
+//                     animations:^{
+//                         iv.alpha = 0.6f;
+//                     }
+//                     completion:^(BOOL finished){
+//                         iv.alpha = 1.0f;
+//                     }];
+
 }
 
 

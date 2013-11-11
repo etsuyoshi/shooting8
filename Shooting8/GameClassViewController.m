@@ -1,4 +1,3 @@
-//全てanimationに置き換える：progressViewも確認
 //アイテム動線上のパーティクル表示
 //アイテム取得時のエフェクト
 /*
@@ -369,6 +368,47 @@ UIView *viewMyEffect;
                                          repeats:YES];
 }
 
+
+//BGM曲をかける
+-(void)playBGM{
+    bgmClass = [[BGMClass alloc]init];
+    switch (world_no) {
+        case 0:
+        {
+            [bgmClass play:@"hisho_hmix"];
+            break;
+        }
+        case 1:
+        {
+            [bgmClass play:@"bgm_game_687"];
+            break;
+        }
+        case 2:
+        {
+            [bgmClass play:@"ones_hmix"];
+            break;
+        }
+        case 3:
+        {
+            [bgmClass play:@"hisho_hmix"];
+            break;
+        }
+        case 4:
+        {
+            [bgmClass play:@"kinpaku_hmix"];
+            break;
+        }
+        case 5:{
+            
+            [bgmClass play:@"sabaki_hmix"];
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+
 - (void)ordinaryAnimationStart{
     //ユーザーインターフェース
     [self.view bringSubviewToFront:iv_frame];
@@ -546,52 +586,49 @@ UIView *viewMyEffect;
                         break;
                     }
                     case ItemTypeMagnet:{
-//                        UIView *viewMagnetEffect = [MyMachine createEffect];
-////                        [viewMyEffect addSubview:viewMagnetEffect];
-//                        [self.view addSubview:viewMagnetEffect];
+                        [MyMachine setStatus:@"StatusTlMagnet" key:@"1"];
                         break;
                     }
                     case ItemTypeBig:{
+                        //bigger
+                        [MyMachine setStatus:@"StatusTlBig" key:@"1"];
                         
                         break;
                     }
                     case ItemTypeBomb:{
+                        [MyMachine setStatus:@"StatusTlBomb" key:@"1"];
                         break;
                     }
                     case ItemTypeDeffense0:{
+                        [MyMachine setStatus:@"StatusTlBarrier" key:@"1"];
                         break;
                     }
                     case ItemTypeDeffense1:{
+                        [MyMachine setStatus:@"StatusDfShield" key:@"1"];
                         break;
                     }
                     case ItemTypeHeal:{
-                        
+                        [MyMachine setStatus:@"StatusTlHeal" key:@"1"];
                         break;
                     }
                     case ItemTypeSmall:{
+                        [MyMachine setStatus:@"StatusTlSmall" key:@"1"];
                         break;
                     }
                     case ItemTypeTransparency:{
-                        [UIView animateWithDuration:10.0f
-                                         animations:^{
-                                             [MyMachine getImageView].alpha = 0.3f;
-                                         }
-                                         completion:^(BOOL finished){
-                                             [MyMachine getImageView].alpha = 1.0f;
-                                         }];
-                        break;
-                        
-                    }
-                    case ItemTypeWeapon0:{
-                        
+                        [MyMachine setStatus:@"StatusTlTransparancy" key:@"1"];
                         break;
                     }
-                    case ItemTypeWeapon1:{
-                        
+                    case ItemTypeWeapon0:{//wpBomb
+                        [MyMachine setStatus:@"StatusWpBomb" key:@"1"];
                         break;
                     }
-                    case ItemTypeWeapon2:{
-                        
+                    case ItemTypeWeapon1:{//wpDiffuse
+                        [MyMachine setStatus:@"StatusWpDiffuse" key:@"1"];
+                        break;
+                    }
+                    case ItemTypeWeapon2:{//wpLaser
+                        [MyMachine setStatus:@"StatusWpLaser" key:@"1"];
                         break;
                     }
                     default:
@@ -754,6 +791,9 @@ UIView *viewMyEffect;
                             if(true){//arc4random() % 2 == 0){
 //                                NSLog(@"アイテム出現");
 //                                ItemClass *_item = [[ItemClass alloc] init:[_enemy getX] y_init:[_enemy getY] width:50 height:50];
+                                
+                                //テスト：順番に作成
+                                NSLog(@"item occur : %d", countItem);
                                 _item = [[ItemClass alloc] init:(countItem++) % 15 x_init:_xEnemy y_init:_yEnemy width:50 height:50];
 
 //                                [ItemArray addObject:_item];
@@ -843,45 +883,6 @@ UIView *viewMyEffect;
     //ユーザーインターフェース
 //    [self.view bringSubviewToFront:iv_frame];
 
-}
-
-//BGM曲をかける
--(void)playBGM{
-    bgmClass = [[BGMClass alloc]init];
-    switch (world_no) {
-        case 0:
-        {
-            [bgmClass play:@"hisho_hmix"];
-            break;
-        }
-        case 1:
-        {
-            [bgmClass play:@"bgm_game_687"];
-            break;
-        }
-        case 2:
-        {
-            [bgmClass play:@"ones_hmix"];
-            break;
-        }
-        case 3:
-        {
-            [bgmClass play:@"hisho_hmix"];
-            break;
-        }
-        case 4:
-        {
-            [bgmClass play:@"kinpaku_hmix"];
-            break;
-        }
-        case 5:{
-            
-            [bgmClass play:@"sabaki_hmix"];
-            break;
-        }
-        default:
-            break;
-    }
 }
 
 
@@ -1249,14 +1250,27 @@ UIView *viewMyEffect;
 //    int go_width = 250;
     int go_height = 50;
     int go_y = 10;//view_go上での相対位置
-    CGRect rect_gameover = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
-                                      go_y,
-                                      go_component_width,
-                                      go_height);
-    [view_go addSubview:[CreateComponentClass createImageView:rect_gameover
-                                                        image:@"gameover.png"]];
+//    CGRect rect_gameover = CGRectMake(view_go.bounds.size.width/2 - go_component_width/2,
+//                                      go_y,
+//                                      go_component_width,
+//                                      go_height);
+//    [view_go addSubview:[CreateComponentClass createImageView:rect_gameover
+//                                                        image:@"gameover.png"]];
+    
+    UILabel *label = [[UILabel alloc] init];
+    label.text = @"game over!";
+    label.backgroundColor = [UIColor clearColor];
+//    label.font = [UIFont fontWithName:@"Chalkduster" size:40];
+    label.font = [UIFont fontWithName:@"Noteworthy-Light" size:40];
+    [label sizeToFit];
+    //最後にview_goに貼付けているのでview_go上での位置
+    label.center = CGPointMake([self.view convertPoint:view_go.center toView:view_go].x,
+                               label.frame.size.height/2 + 5);//5はマージン
+    [view_go addSubview:label];
     
     
+    //[UIFont fontWithName:@"Noteworthy-Light" size:15];
+
     
     //ScoreBoard
     int score_y = go_y + go_height + 5;
@@ -1407,22 +1421,23 @@ UIView *viewMyEffect;
 
             dispatch_async(mainQueue, ^{
                 //経験値
-                if(cnt < loopCount){
+                if(cnt < loopCount-1){//最後のループのみ別処理(誤差修正のため)
                     tv_score.text = [NSString stringWithFormat:@"EXP : %d     level : %d",
-                                     (int)(cnt * unit), level];
+                                     pvScoreValue , level];
                     if(!flagLevelUp){
-                        [pv_score setProgress:(float)pvScoreValue//levelが上がったら一旦初期化
+                        [pv_score setProgress:(float)pvScoreValue/expTilNextLevel//levelが上がったら一旦初期化
                                      animated:NO];
                     }else{//レベルアップ時には一度ゼロに戻してから値を変更
                         [pv_score setProgress:0//levelが上がったら一旦初期化
                                      animated:NO];
-                        [pv_score setProgress:pvScoreValue
+                        [pv_score setProgress:(float)pvScoreValue/expTilNextLevel
                                      animated:YES];
                     }
                     
                 }else{//unitが循環小数の場合(割り切れないので正確な値を示すために最終値をそのまま表示)
+                    //初期値＋今回獲得スコア
                     tv_score.text = [NSString stringWithFormat:@"EXP : %d     level : %d",
-                                         [ScoreBoard getScore], level];
+                                         exp + [ScoreBoard getScore], level];
                 }
                 
                 //gold
@@ -1440,82 +1455,10 @@ UIView *viewMyEffect;
                         tv_complete.text = [NSString stringWithFormat:@"complete : %d%%", 100];
                         pv_complete.progress = 1.0f;
                     }
-//                }else if(enemyCount == 0){
-//                    tv_complete.text = [NSString stringWithFormat:@"complete : 0%%"];//cnt+1にしてしまうと倒してないのに1%
-//                    pv_complete.progress = 0;
                 }
 
             });
         }
-        //スコア表示
-//        for(int cnt = cntInit; cnt < loopCount ;cnt++){//expTilNextLevelを100(unit)分割した時に獲得したスコアがそのユニットの何倍か
-//            //時間のかかる処理
-//            for(int i = 0; i < 50; i++){
-//                NSLog(@"level = %d, cnt = %d, unit = %f, cu = %f, MaxExpAtLevel = %d, pvScoreValue = %d", level, cnt, unit ,cnt*unit, [attr getMaxExpAtTheLevel:level],pvScoreValue);
-//            }
-//            
-//            
-//            //メインスレッドで途中結果表示
-//            dispatch_async(mainQueue, ^{
-//                
-//                tv_score.text = [NSString stringWithFormat:@"EXP : %d     level : %d",(int)(cnt * unit), level];
-//                pv_score.progress = (float)pvScoreValue / 100.0f;
-//            });
-//            
-//            if(pvScoreValue <= 100){
-////            if(cnt * unit < [attr getMaxExpAtTheLevel:level]){
-//                pvScoreValue ++;
-//                
-//            }else{
-//                level++;
-//                expTilNextLevel = [attr getMaxExpAtTheLevel:level];
-//                pvScoreValue = 0;
-//            }
-//        }
-//        
-//        int addComplete = 0;//敵を倒した割合
-//        for(int cnt = 0;cnt < 100;cnt++){
-//            //時間のかかる処理
-//            for(int i = 0; i < 10; i++){
-//                NSLog(@"cnt = %d, enemyCount = %d, enemyDown = %d", cnt, enemyCount, enemyDown);
-//            }
-//            
-//            
-//            //メインスレッドで途中結果表示
-//            dispatch_async(mainQueue, ^{
-//                
-//                tv_complete.text = [NSString stringWithFormat:@"complete : %d%%", cnt];//cnt+1にしてしまうと倒してないのに1%
-//                pv_complete.progress = (float)cnt / 100.0f;
-//
-//                
-//            });
-//            if(enemyCount == 0){
-//                break;
-//            }else if(cnt >= (float)enemyDown / (float)enemyCount * 100.0f){
-//                break;
-//            }
-//        }
-//        
-//        
-//        if(enemyCount == enemyDown){
-//            tv_complete.text = [NSString stringWithFormat:@"complete : 100%%"];
-//        }
-//        
-//        
-//        
-//        //gold
-//        for(int cnt = cntInit; cnt < [GoldBoard getScore] ;cnt++){//expTilNextLevelを100分割した時に獲得したスコアがそのユニットの何倍か
-//            //時間のかかる処理
-//            for(int i = 0; i < 5; i++){
-//                NSLog(@"gold : cnt = %d", cnt);
-//            }
-//            
-//            
-//            //メインスレッドで途中結果表示
-//            dispatch_async(mainQueue, ^{
-//                tv_gold.text = [NSString stringWithFormat:@"GOLD : %d", cnt];
-//            });
-//        }
     });
     
     
