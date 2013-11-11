@@ -31,7 +31,7 @@
     ExplodeParticleView *explodeParticle;
     DamageParticleView *damageParticle;
     
-    NSDictionary *status;
+    NSMutableDictionary *status;//可変ステータス
 }
 
 -(id)init:(int)x_init size:(int)size;

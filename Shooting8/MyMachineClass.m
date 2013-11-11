@@ -39,7 +39,7 @@ NSString *imageName;
     beamArray = [[NSMutableArray alloc]init];
     
     //status=GameClassのアイテム取得時と対応
-    status = [NSDictionary dictionaryWithObjectsAndKeys:
+    status = [NSMutableDictionary dictionaryWithObjectsAndKeys:
               @"0",@"StatusWpBomb",//
               @"0",@"StatusWpDiffuse",
               @"0",@"StatusWpLaser",
@@ -83,7 +83,8 @@ NSString *imageName;
 
 //edit status
 -(void)setStatus:(NSString *)statusValue key:(NSString *)statusKey{
-    [status setValue:statusValue forKey:statusKey];
+    NSLog(@"status: %@, key: %@", statusValue, statusKey);
+    [status setObject:statusValue forKey:statusKey];
     
     
     

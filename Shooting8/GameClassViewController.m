@@ -586,49 +586,49 @@ UIView *viewMyEffect;
                         break;
                     }
                     case ItemTypeMagnet:{
-                        [MyMachine setStatus:@"StatusTlMagnet" key:@"1"];
+                        [MyMachine setStatus:@"1" key:@"StatusTlMagnet"];
                         break;
                     }
                     case ItemTypeBig:{
                         //bigger
-                        [MyMachine setStatus:@"StatusTlBig" key:@"1"];
+                        [MyMachine setStatus:@"1" key:@"StatusTlBig"];
                         
                         break;
                     }
                     case ItemTypeBomb:{
-                        [MyMachine setStatus:@"StatusTlBomb" key:@"1"];
+                        [MyMachine setStatus:@"1" key:@"StatusTlBomb"];
                         break;
                     }
                     case ItemTypeDeffense0:{
-                        [MyMachine setStatus:@"StatusTlBarrier" key:@"1"];
+                        [MyMachine setStatus:@"1" key:@"StatusTlBarrier"];
                         break;
                     }
                     case ItemTypeDeffense1:{
-                        [MyMachine setStatus:@"StatusDfShield" key:@"1"];
+                        [MyMachine setStatus:@"1" key:@"StatusDfShield"];
                         break;
                     }
                     case ItemTypeHeal:{
-                        [MyMachine setStatus:@"StatusTlHeal" key:@"1"];
+                        [MyMachine setStatus:@"1" key:@"StatusTlHeal"];
                         break;
                     }
                     case ItemTypeSmall:{
-                        [MyMachine setStatus:@"StatusTlSmall" key:@"1"];
+                        [MyMachine setStatus:@"1" key:@"StatusTlSmall"];
                         break;
                     }
                     case ItemTypeTransparency:{
-                        [MyMachine setStatus:@"StatusTlTransparancy" key:@"1"];
+                        [MyMachine setStatus:@"1" key:@"StatusTlTransparancy"];
                         break;
                     }
                     case ItemTypeWeapon0:{//wpBomb
-                        [MyMachine setStatus:@"StatusWpBomb" key:@"1"];
+                        [MyMachine setStatus:@"1" key:@"StatusWpBomb"];
                         break;
                     }
                     case ItemTypeWeapon1:{//wpDiffuse
-                        [MyMachine setStatus:@"StatusWpDiffuse" key:@"1"];
+                        [MyMachine setStatus:@"1" key:@"StatusWpDiffuse"];
                         break;
                     }
                     case ItemTypeWeapon2:{//wpLaser
-                        [MyMachine setStatus:@"StatusWpLaser" key:@"1"];
+                        [MyMachine setStatus:@"1" key:@"StatusWpLaser"];
                         break;
                     }
                     default:
@@ -794,7 +794,7 @@ UIView *viewMyEffect;
                                 
                                 //テスト：順番に作成
                                 NSLog(@"item occur : %d", countItem);
-                                _item = [[ItemClass alloc] init:(countItem++) % 15 x_init:_xEnemy y_init:_yEnemy width:50 height:50];
+                                _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xEnemy y_init:_yEnemy width:50 height:50];
 
 //                                [ItemArray addObject:_item];
                                 [ItemArray insertObject:_item atIndex:0];
@@ -995,9 +995,9 @@ UIView *viewMyEffect;
                                     viewMyEffect.frame.size.height/2);
         circle.layer.cornerRadius=diameter/2;
         
-        //cyan[0,1,1]
+        //cyan[0,1,1], white[1, 1, 1]
         UIColor *itemColor =[UIColor colorWithRed:1 green:1 blue:1 alpha:0.1f];
-        circle.layer.borderColor=[[itemColor colorWithAlphaComponent:0.75f] CGColor] ;
+        circle.layer.borderColor=[[itemColor colorWithAlphaComponent:0.5f] CGColor] ;
         circle.layer.borderWidth = 4.0f;//4px
         circle.layer.backgroundColor = [itemColor CGColor];
 
