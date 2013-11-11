@@ -92,7 +92,8 @@ int x_frame, y_frame;
 int size_machine;
 int length_beam, thick_beam;//ビームの長さと太さ
 Boolean isGameMode;
-Boolean flagItemTrigger;
+Boolean flagItemTrigger;//エフェクト表示トリガー
+Boolean isEffectDisplaying;//エフェクト表示中フラグ
 
 
 UIPanGestureRecognizer *panGesture;
@@ -615,7 +616,7 @@ UIView *viewMyEffect;
     
     
     //敵機の衝突判定:against自機＆ビーム
-    for(int i = [EnemyArray count] - 1; i >= 0 ;i-- ) {//全ての生存している敵に対して
+    for(int i = [EnemyArray count] - 1; i >= 0 ;i-- ) {//全ての生存している敵に対して発生した順番に衝突判定
 //        NSLog(@"敵衝突判定:%d", i);
         
         if([(EnemyClass *)[EnemyArray objectAtIndex:i] getIsAlive]){//計算時間節約
@@ -693,10 +694,10 @@ UIView *viewMyEffect;
                     //ビーム上端が敵上端より下側
                     //ビーム下端が敵下端より上側
                     if(
-                       _xBeam + _sBeam * 0.7 >= _xEnemy - _sEnemy * 0.7 &&
-                       _xBeam - _sBeam * 0.7 <= _xEnemy + _sEnemy * 0.7 &&
-                       _yBeam - _sBeam * 0.7 >= _yEnemy - _sEnemy * 0.7 &&
-                       _yBeam + _sBeam * 0.7 <= _yEnemy + _sEnemy * 0.7 ){
+                       _xBeam + _sBeam * 0.5 >= _xEnemy - _sEnemy * 0.5 &&
+                       _xBeam - _sBeam * 0.5 <= _xEnemy + _sEnemy * 0.5 &&
+                       _yBeam - _sBeam * 0.5 >= _yEnemy - _sEnemy * 0.5 &&
+                       _yBeam + _sBeam * 0.5 <= _yEnemy + _sEnemy * 0.5 ){
                         
                         
                         //レーザーでない場合
@@ -704,17 +705,14 @@ UIView *viewMyEffect;
                         [[[MyMachine getBeam:j] getImageView] removeFromSuperview];//画面削除
                         
                         
-                        //ダメージ負荷モード(フラグ立て)に切り替える
-//                        [[EnemyArray objectAtIndex:i] setIsDamaged:true];
-                        
                         //ビームが衝突した位置にdamageParticle表示(damageParticle生成のため位置情報を渡す)
                         [(EnemyClass *)[EnemyArray objectAtIndex:i] setDamage:[_beam getPower] location:CGPointMake(_xBeam, _yBeam)];
                         
 
                         
                         
-                        //敵を倒したら
-                        if(![_enemy getIsAlive]){
+                        //ビームに当たる前に生きていた敵が死んだら＝今回のビームで敵を倒したら
+                        if(![[EnemyArray objectAtIndex:i] getIsAlive]){
                             
                             //imageViewだけを消去(爆発パーティクルが描画するためインスタンス自体は残しておく)
                             [[[EnemyArray objectAtIndex:i] getImageView] removeFromSuperview];
@@ -750,7 +748,7 @@ UIView *viewMyEffect;
                             [self displayScore:ScoreBoard];
                             
                             enemyDown++;
-                            
+//                            NSLog(@"enemyDown: %d", enemyDown);
                             
                             //アイテム出現
                             if(true){//arc4random() % 2 == 0){
@@ -771,26 +769,43 @@ UIView *viewMyEffect;
                             }else{
                                 NSLog(@"アイテムなし");
                             }
+                            
+                            
+                            /*
+                             【以下のbreakは極めて重要！】
+                             強いビームパワーの場合、(一発で倒しても)同じ敵に対して何度もhit(＝enemyDown++)してしまう
+                             １つの敵に対して複数の玉があたってenemyDownする
+                             */
+                            break;//その敵への衝突判定は辞めて、次の敵への衝突判定のため最初から最後までビームループを回す＃注意
+                            //＃ちなみに(最初：最後に発生したビームから)「最後：最初に発生したビームまで」の衝突判定をさせるのたは「ある意味」非効率：今回ビームjより(時間的)前に発生したビームが後ろの敵に当たることはあまりない
+                            //#しかし、自機がビームの進行速度を上回って前方に進行した場合や敵機がまっすぐ進行して来なかった場合(曲線を描いて来た場合など)は時間的に後で発生したビームに衝突する場合がある。
+                            //前提：ビームも敵もFIFO配列
 
-                        }else{//敵が倒されなければダメージパーティクルのみ表示
+                        }else{
+                            //敵が倒されなければダメージパーティクルのみ表示
                             //処理が重くなるので実施見送り
                             //ダメージパーティクル表示：処理が間に合わない可能性があるので、配列に格納して数カウントで消去
 //                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setUserInteractionEnabled: NO];//インタラクション拒否
 //                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setIsEmitting:YES];//消去するには数秒後にNOに
 //                            [self.view bringSubviewToFront: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//最前面に
 //                            [self.view addSubview: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//表示する:次のcountで消去
+                            
+                            
+                            
+                            //その敵が生きているならば同じ敵に別のビームへの衝突判定するため(continue)
+                            continue;//次のビームの衝突判定へ(ビームループ内でこの後何もしなければこのcontinueはなくても良い)
 
                         }
                         
+//                        break;//何の判定もせずににビーム[j]ループ脱出すると次以降のビームが敵に当たっている位置にいるのに衝突しないでスルーしてしまう
                         
-//                        break;//ビーム[j]ループ脱出すると次以降のビームが敵に当たっている位置にいるのに衝突しないでスルーしてしまう
                     }//ビーム衝突判定(位置判定)
                 }//if(_beam isAlive)
-            }//for(int j = 0 ; j < [MyMachine getBeamCount];j++)
+            }//for(int j = 0 ; j < [MyMachine getBeamCount];j++)：ビームループ
         }else{//if([(EnemyClass *)[EnemyArray objectAtIndex:i] getIsAlive])
             [EnemyArray removeObjectAtIndex:i];
         }
-    }//for(int i = 0; i < [EnemyArray count] ;i++ )
+    }//for(int i = 0; i < [EnemyArray count] ;i++ )：敵ループ
     
     
     
@@ -962,8 +977,10 @@ UIView *viewMyEffect;
         [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
     }
     
-    if(flagItemTrigger){
+    if(flagItemTrigger && !isEffectDisplaying){//他のエフェクトが表示中でなければ
         flagItemTrigger = false;
+        isEffectDisplaying = true;
+        
         
         int diameter = 100;
         int duration = 3;//repeat-count
@@ -977,10 +994,10 @@ UIView *viewMyEffect;
                                     viewMyEffect.frame.size.height/2);
         circle.layer.cornerRadius=diameter/2;
         
-        //cyan
-        UIColor *itemColor =[UIColor colorWithRed:0 green:1 blue:1 alpha:0.3f];
-        circle.layer.borderColor=[itemColor CGColor];
-        circle.layer.borderWidth = 1.0f;
+        //cyan[0,1,1]
+        UIColor *itemColor =[UIColor colorWithRed:1 green:1 blue:1 alpha:0.1f];
+        circle.layer.borderColor=[[itemColor colorWithAlphaComponent:0.75f] CGColor] ;
+        circle.layer.borderWidth = 4.0f;//4px
         circle.layer.backgroundColor = [itemColor CGColor];
 
         
@@ -1019,6 +1036,7 @@ UIView *viewMyEffect;
                          } completion:^(BOOL finished) {
                              // Maybe you have your completion in here...
                              [circle removeFromSuperview];
+                             isEffectDisplaying = false;
                              //                         [viewMyEffect removeFromSuperview];
                          }];
         
@@ -1105,6 +1123,7 @@ UIView *viewMyEffect;
     }
     if(isYield){
         enemyCount ++;
+//        NSLog(@"enemyCount %d", enemyCount);
         int x = arc4random() % ((int)self.view.bounds.size.width - OBJECT_SIZE);
         
         EnemyClass *enemy = [[EnemyClass alloc]init:x size:OBJECT_SIZE];
@@ -1226,7 +1245,7 @@ UIView *viewMyEffect;
     //tv_complete
     //pv_complete
     
-    //ゲームオーバー表示
+    //ゲームオーバー(go)表示
 //    int go_width = 250;
     int go_height = 50;
     int go_y = 10;//view_go上での相対位置
@@ -1320,105 +1339,183 @@ UIView *viewMyEffect;
     
     
     
-    //リアルタイムに動的に表示
-//    int pvMax = 10000;
+    /*
+     テスト
+     */
+//    [GoldBoard setScore:100];
+//    [ScoreBoard setScore:10000];
+    
     
     //マルチスレッド
     dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_queue_t mainQueue = dispatch_get_main_queue();
     
-    //score:expに獲得したスコアを表示(pvはmaxは次のレベルに必要な値)
+    //score:expに既に獲得したスコアを表示(pvはmaxは次のレベルに必要な値)
     //gold: pvは過去の最高値を横軸最大値とした軸
     //complete:100%を横軸最大値
     //三つとも最大値に達したら初期化してゼロからスタート
     //加えるべき値を別途定義してそれぞれ(pv_score等)に加えていく
-    //上限まで達したら再度ゼロにして足していく
-    
+    //上限まで達したら再度ゼロにして足していくが、次のレベルにおいても上限に達する場合はそこで停止しておく
     dispatch_async(globalQueue, ^{
+        //ここでは情報を取得しておくに留める(更新は別の場所で実施)
         AttrClass *attr = [[AttrClass alloc]init];
         int level = [[attr getValueFromDevice:@"level"] intValue];
         int exp = [[attr getValueFromDevice:@"exp"] intValue];
         int expTilNextLevel = [attr getMaxExpAtTheLevel:level];
         
         
-        float unit = (float)expTilNextLevel / 100.0f;//progressViewの100分割ユニット＝最初のレベルで固定
-        int loopCount = (float)(exp + [ScoreBoard getScore])/unit;
+//        float unit = (float)expTilNextLevel / 100.0f;//progressViewの100分割ユニット＝最初のレベルで固定
+        float unit = (float)[ScoreBoard getScore]/100.0f;
+        
+        
+        //unitは取得スコア[ScoreBoard getScore]の100分割の方がすっきりする(最初のレベルにおけるレベルアップのための必要経験値の100分割にしてしまうと次のレベルに上がった時に１カウント当たりの上昇速度が低下してしまい時間がかかる)
+        int loopCount = 100;//(float)(exp + [ScoreBoard getScore])/unit;
 //        int loopCount = (float)(exp + 1000)/unit;//テスト用
-        int cntInit = (float)exp / unit;
-        int pvScoreValue = cntInit;
+//        int cntInit = 0;//(float)exp / unit;//最初のcntInitの表示はanimateしないようにしたい(現状x)
+        int pvScoreValue = exp;
+//        int goldCnt = 0;
+        
+        Boolean flagLevelUp = false;
+        
+        //exp初期値
+        [pv_score setProgress:(float)pvScoreValue/100.0f
+                     animated:NO];
+        for(int cnt = 0;cnt < loopCount ||
+                        cnt < [GoldBoard getScore]||
+                        cnt < (float)enemyDown/(float)enemyCount*100;cnt++){
+            for(int i = 0; i < 10;i++){
+//                NSLog(@"i = %d", i);//時間経過
+                NSLog(@"cnt = %d, i = %d, before-exp:%d, acquired:%d, after:%d, gold:%d, unit:%f, expUntileNextLevel:%d, level:%d, complete:%f, down:%d, count:%d",
+                      cnt, i, exp, [ScoreBoard getScore], exp + [ScoreBoard getScore], [GoldBoard getScore], unit, expTilNextLevel, level, (float)enemyDown/enemyCount, enemyDown, enemyCount);
+            }
+            if(cnt < 100){
+                if(pvScoreValue + unit < expTilNextLevel){
+                    pvScoreValue += (int)unit;//小数点以下の誤差は発生するが
+                }else{
+//                    pvScoreValue = expTilNextLevel;
+                    //次のレベルに進行
+                    level++;
+                    flagLevelUp = true;
+                    expTilNextLevel = [attr getMaxExpAtTheLevel:level];
+                    pvScoreValue = unit-pvScoreValue;
+                    if(pvScoreValue > expTilNextLevel){//次のレベルのMAXよりも残り経験値が大きい場合
+                        //経験値を沢山取得しても何度もレベル上昇するのは止めて次のレベルで止めておく
+                        pvScoreValue = expTilNextLevel-1;
+                    }
+                }
+            }
+
+            dispatch_async(mainQueue, ^{
+                //経験値
+                if(cnt < loopCount){
+                    tv_score.text = [NSString stringWithFormat:@"EXP : %d     level : %d",
+                                     (int)(cnt * unit), level];
+                    if(!flagLevelUp){
+                        [pv_score setProgress:(float)pvScoreValue//levelが上がったら一旦初期化
+                                     animated:NO];
+                    }else{//レベルアップ時には一度ゼロに戻してから値を変更
+                        [pv_score setProgress:0//levelが上がったら一旦初期化
+                                     animated:NO];
+                        [pv_score setProgress:pvScoreValue
+                                     animated:YES];
+                    }
+                    
+                }else{//unitが循環小数の場合(割り切れないので正確な値を示すために最終値をそのまま表示)
+                    tv_score.text = [NSString stringWithFormat:@"EXP : %d     level : %d",
+                                         [ScoreBoard getScore], level];
+                }
+                
+                //gold
+                if(cnt < [GoldBoard getScore]){
+                    tv_gold.text = [NSString stringWithFormat:@"GOLD : %d", cnt+1];
+                    
+                }
+                
+                //complete
+                if(cnt < (float)enemyDown/(float)enemyCount*100){
+                    if(enemyDown != enemyCount){
+                        tv_complete.text = [NSString stringWithFormat:@"complete : %d%%", cnt];
+                        pv_complete.progress = (float)cnt / 100.0f;
+                    }else{
+                        tv_complete.text = [NSString stringWithFormat:@"complete : %d%%", 100];
+                        pv_complete.progress = 1.0f;
+                    }
+//                }else if(enemyCount == 0){
+//                    tv_complete.text = [NSString stringWithFormat:@"complete : 0%%"];//cnt+1にしてしまうと倒してないのに1%
+//                    pv_complete.progress = 0;
+                }
+
+            });
+        }
         //スコア表示
-        for(int cnt = cntInit; cnt < loopCount ;cnt++){//expTilNextLevelを100分割した時に獲得したスコアがそのユニットの何倍か
-            //時間のかかる処理
-            for(int i = 0; i < 50; i++){
-                NSLog(@"level = %d, cnt = %d, unit = %f, cu = %f, MaxExpAtLevel = %d, pvScoreValue = %d", level, cnt, unit ,cnt*unit, [attr getMaxExpAtTheLevel:level],pvScoreValue);
-            }
-            
-            
-            //メインスレッドで途中結果表示
-            dispatch_async(mainQueue, ^{
-                
-                tv_score.text = [NSString stringWithFormat:@"EXP : %d     level : %d",(int)(cnt * unit), level];
-                pv_score.progress = (float)pvScoreValue / 100.0f;
-            });
-            
-            if(pvScoreValue <= 100){
-//            if(cnt * unit < [attr getMaxExpAtTheLevel:level]){
-                pvScoreValue ++;
-                
-            }else{
-                level++;
-                expTilNextLevel = [attr getMaxExpAtTheLevel:level];
-                pvScoreValue = 0;
-            }
-        }
-        
+//        for(int cnt = cntInit; cnt < loopCount ;cnt++){//expTilNextLevelを100(unit)分割した時に獲得したスコアがそのユニットの何倍か
+//            //時間のかかる処理
+//            for(int i = 0; i < 50; i++){
+//                NSLog(@"level = %d, cnt = %d, unit = %f, cu = %f, MaxExpAtLevel = %d, pvScoreValue = %d", level, cnt, unit ,cnt*unit, [attr getMaxExpAtTheLevel:level],pvScoreValue);
+//            }
+//            
+//            
+//            //メインスレッドで途中結果表示
+//            dispatch_async(mainQueue, ^{
+//                
+//                tv_score.text = [NSString stringWithFormat:@"EXP : %d     level : %d",(int)(cnt * unit), level];
+//                pv_score.progress = (float)pvScoreValue / 100.0f;
+//            });
+//            
+//            if(pvScoreValue <= 100){
+////            if(cnt * unit < [attr getMaxExpAtTheLevel:level]){
+//                pvScoreValue ++;
+//                
+//            }else{
+//                level++;
+//                expTilNextLevel = [attr getMaxExpAtTheLevel:level];
+//                pvScoreValue = 0;
+//            }
+//        }
+//        
 //        int addComplete = 0;//敵を倒した割合
-        for(int cnt = 0;cnt < 100;cnt++){
-            //時間のかかる処理
-            for(int i = 0; i < 10; i++){
-                NSLog(@"cnt = %d, enemyCount = %d, enemyDown = %d", cnt, enemyCount, enemyDown);
-            }
-            
-            
-            //メインスレッドで途中結果表示
-            dispatch_async(mainQueue, ^{
-                
-                tv_complete.text = [NSString stringWithFormat:@"complete : %d%%", cnt];//cnt+1にしてしまうと倒してないのに1%
-                pv_complete.progress = (float)cnt / 100.0f;
-                
-                
-            });
-            if(enemyCount == 0){
-                break;
-            }else if(cnt >= (float)enemyDown / (float)enemyCount * 100.0f){
-                break;
-            }
-        }
-        
-        
-        if(enemyCount == enemyDown){
-            tv_complete.text = [NSString stringWithFormat:@"complete : 100%%"];
-        }
-        
-        
-        
-        //gold
-        for(int cnt = cntInit; cnt < [GoldBoard getScore] ;cnt++){//expTilNextLevelを100分割した時に獲得したスコアがそのユニットの何倍か
-            //時間のかかる処理
-            for(int i = 0; i < 5; i++){
-                NSLog(@"gold : cnt = %d", cnt);
-            }
-            
-            
-            //メインスレッドで途中結果表示
-            dispatch_async(mainQueue, ^{
-                
-                tv_gold.text = [NSString stringWithFormat:@"GOLD : %d", cnt];
-            });
-        }
-        
-        
-        
+//        for(int cnt = 0;cnt < 100;cnt++){
+//            //時間のかかる処理
+//            for(int i = 0; i < 10; i++){
+//                NSLog(@"cnt = %d, enemyCount = %d, enemyDown = %d", cnt, enemyCount, enemyDown);
+//            }
+//            
+//            
+//            //メインスレッドで途中結果表示
+//            dispatch_async(mainQueue, ^{
+//                
+//                tv_complete.text = [NSString stringWithFormat:@"complete : %d%%", cnt];//cnt+1にしてしまうと倒してないのに1%
+//                pv_complete.progress = (float)cnt / 100.0f;
+//
+//                
+//            });
+//            if(enemyCount == 0){
+//                break;
+//            }else if(cnt >= (float)enemyDown / (float)enemyCount * 100.0f){
+//                break;
+//            }
+//        }
+//        
+//        
+//        if(enemyCount == enemyDown){
+//            tv_complete.text = [NSString stringWithFormat:@"complete : 100%%"];
+//        }
+//        
+//        
+//        
+//        //gold
+//        for(int cnt = cntInit; cnt < [GoldBoard getScore] ;cnt++){//expTilNextLevelを100分割した時に獲得したスコアがそのユニットの何倍か
+//            //時間のかかる処理
+//            for(int i = 0; i < 5; i++){
+//                NSLog(@"gold : cnt = %d", cnt);
+//            }
+//            
+//            
+//            //メインスレッドで途中結果表示
+//            dispatch_async(mainQueue, ^{
+//                tv_gold.text = [NSString stringWithFormat:@"GOLD : %d", cnt];
+//            });
+//        }
     });
     
     
