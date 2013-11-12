@@ -7,8 +7,11 @@
 //
 
 #import "MyMachineClass.h"
+#import "ItemClass.h"
 
 @implementation MyMachineClass
+
+@synthesize itemType;
 
 int unique_id;
 int wingStatus;
@@ -24,7 +27,9 @@ NSString *imageName;
     hitPoint = 10000;
     offensePower = 1;
     defensePower = 0;
-    mySize = size;
+    originalSize = size;
+    mySize = originalSize;//モード変更によるサイズ
+    bigSize = mySize * 4;
     lifetime_count = 0;
     dead_time = -1;//死亡したら0にして一秒後にparticleを消去する
     isAlive = true;
@@ -39,19 +44,59 @@ NSString *imageName;
     beamArray = [[NSMutableArray alloc]init];
     
     //status=GameClassのアイテム取得時と対応
+//    status = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+//              @"0",@"StatusWpBomb",//
+//              @"0",@"StatusWpDiffuse",
+//              @"0",@"StatusWpLaser",
+//              @"0",@"StatusDfBarrier",
+//              @"0",@"StatusDfShield",
+//              @"0",@"StatusTlBomb",
+//              @"0",@"StatusTlHeal",
+//              @"0",@"StatusTlMagnet",
+//              @"0",@"StatusTlBig",
+//              @"0",@"StatusTlSmall",
+//              @"0",@"StatusTlTransparancy",
+//              nil];
+    
+//    status = [[NSMutableDictionary alloc]init];
+    /*
+     ItemTypeWeapon0,//0
+     ItemTypeWeapon1,
+     ItemTypeWeapon2,
+     ItemTypeDeffense0,
+     ItemTypeDeffense1,
+     ItemTypeMagnet,
+     ItemTypeBomb,
+     ItemTypeHeal,
+     ItemTypeBig,
+     ItemTypeSmall,
+     ItemTypeTransparency,
+     ItemTypeYellowGold,
+     ItemTypeGreenGold,
+     ItemTypeBlueGold,
+     ItemTypePurpleGold,
+     ItemTypeRedGold
+     */
     status = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-              @"0",@"StatusWpBomb",//
-              @"0",@"StatusWpDiffuse",
-              @"0",@"StatusWpLaser",
-              @"0",@"StatusDfBarrier",
-              @"0",@"StatusDfShield",
-              @"0",@"StatusTlBomb",
-              @"0",@"StatusTlHeal",
-              @"0",@"StatusTlMagnet",
-              @"0",@"StatusTlBig",
-              @"0",@"StatusTlSmall",
-              @"0",@"StatusTlTransparancy",
+              @"0", [NSNumber numberWithInt:ItemTypeWeapon0],//0
+              @"0", [NSNumber numberWithInt:ItemTypeWeapon1],
+              @"0", [NSNumber numberWithInt:ItemTypeWeapon2],
+              @"0", [NSNumber numberWithInt:ItemTypeDeffense0],
+              @"0", [NSNumber numberWithInt:ItemTypeDeffense1],
+              @"0", [NSNumber numberWithInt:ItemTypeMagnet],
+              @"0", [NSNumber numberWithInt:ItemTypeBomb],
+              @"0", [NSNumber numberWithInt:ItemTypeHeal],
+              @"0", [NSNumber numberWithInt:ItemTypeBig],
+              @"0", [NSNumber numberWithInt:ItemTypeSmall],
+              @"0", [NSNumber numberWithInt:ItemTypeTransparency],
+              @"0", [NSNumber numberWithInt:ItemTypeYellowGold],
+              @"0", [NSNumber numberWithInt:ItemTypeGreenGold],
+              @"0", [NSNumber numberWithInt:ItemTypeBlueGold],
+              @"0", [NSNumber numberWithInt:ItemTypePurpleGold],
+              @"0", [NSNumber numberWithInt:ItemTypeRedGold],
               nil];
+    
+    
 
     
 //    switch(machine_type){
@@ -80,25 +125,6 @@ NSString *imageName;
     NSLog(@"call mymachine class ""DEFAULT"" initialization");
     return [self init:0 size:50];
 }
-
-//edit status
--(void)setStatus:(NSString *)statusValue key:(NSString *)statusKey{
-    NSLog(@"status: %@, key: %@", statusValue, statusKey);
-    [status setObject:statusValue forKey:statusKey];
-    
-    
-    
-    iv.alpha = 0.1f;
-//    [UIView animateWithDuration:10.0f
-//                     animations:^{
-//                         iv.alpha = 0.6f;
-//                     }
-//                     completion:^(BOOL finished){
-//                         iv.alpha = 1.0f;
-//                     }];
-
-}
-
 
 
 -(void)setType:(int)_type{
@@ -369,6 +395,77 @@ NSString *imageName;
 -(void)setDefensePow:(int)_power{
     defensePower = _power;
 }
+//edit status
+-(void)setStatus:(NSString *)statusValue key:(ItemType)_statusKey{
+    itemType = _statusKey;
+    NSLog(@"status: %@, key: %d", statusValue, itemType);
+    [status setObject:statusValue forKey:[NSNumber numberWithInt:itemType]];
+    
+    
+    
+    //    iv.alpha = 0.1f;
+    //    [UIView animateWithDuration:10.0f
+    //                     animations:^{
+    //                         iv.alpha = 0.6f;
+    //                     }
+    //                     completion:^(BOOL finished){
+    //                         iv.alpha = 1.0f;
+    //                     }];
+    
+    
+    switch(_statusKey){
+            
+        case ItemTypeMagnet:{
+            
+            break;
+        }
+        case ItemTypeBig:{
+            //bigger
+            mySize = bigSize;
+            iv.frame = CGRectMake(x_loc-mySize/2, y_loc-mySize/2, mySize, mySize);
+            [UIView animateWithDuration:10.0f
+                             animations:^{
+                                 iv.frame = CGRectMake(x_loc-bigSize/2, y_loc-bigSize/2, bigSize, bigSize);
+                             }
+                             completion:^(BOOL finished){
+                                 //original size
+                                 iv.frame = CGRectMake(x_loc-originalSize/2, y_loc-originalSize/2, originalSize, originalSize);
+                             }];
+            break;
+        }
+        case ItemTypeBomb:{
+            break;
+        }
+        case ItemTypeDeffense0:{
+            break;
+        }
+        case ItemTypeDeffense1:{
+            break;
+        }
+        case ItemTypeHeal:{
+            break;
+        }
+        case ItemTypeSmall:{
+            break;
+        }
+        case ItemTypeTransparency:{
+            break;
+        }
+        case ItemTypeWeapon0:{//wpBomb
+            break;
+        }
+        case ItemTypeWeapon1:{//wpDiffuse
+            break;
+        }
+        case ItemTypeWeapon2:{//wpLaser
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+
 
 
 @end

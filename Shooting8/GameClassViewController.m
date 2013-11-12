@@ -586,49 +586,49 @@ UIView *viewMyEffect;
                         break;
                     }
                     case ItemTypeMagnet:{
-                        [MyMachine setStatus:@"1" key:@"StatusTlMagnet"];
+                        [MyMachine setStatus:@"1" key:ItemTypeMagnet];
                         break;
                     }
                     case ItemTypeBig:{
                         //bigger
-                        [MyMachine setStatus:@"1" key:@"StatusTlBig"];
+                        [MyMachine setStatus:@"1" key:ItemTypeBig];
                         
                         break;
                     }
                     case ItemTypeBomb:{
-                        [MyMachine setStatus:@"1" key:@"StatusTlBomb"];
+                        [MyMachine setStatus:@"1" key:ItemTypeBomb];
                         break;
                     }
                     case ItemTypeDeffense0:{
-                        [MyMachine setStatus:@"1" key:@"StatusTlBarrier"];
+                        [MyMachine setStatus:@"1" key:ItemTypeDeffense0];
                         break;
                     }
                     case ItemTypeDeffense1:{
-                        [MyMachine setStatus:@"1" key:@"StatusDfShield"];
+                        [MyMachine setStatus:@"1" key:ItemTypeDeffense1];
                         break;
                     }
                     case ItemTypeHeal:{
-                        [MyMachine setStatus:@"1" key:@"StatusTlHeal"];
+                        [MyMachine setStatus:@"1" key:ItemTypeHeal];
                         break;
                     }
                     case ItemTypeSmall:{
-                        [MyMachine setStatus:@"1" key:@"StatusTlSmall"];
+                        [MyMachine setStatus:@"1" key:ItemTypeSmall];
                         break;
                     }
                     case ItemTypeTransparency:{
-                        [MyMachine setStatus:@"1" key:@"StatusTlTransparancy"];
+                        [MyMachine setStatus:@"1" key:ItemTypeTransparency];
                         break;
                     }
                     case ItemTypeWeapon0:{//wpBomb
-                        [MyMachine setStatus:@"1" key:@"StatusWpBomb"];
+                        [MyMachine setStatus:@"1" key:ItemTypeWeapon0];
                         break;
                     }
                     case ItemTypeWeapon1:{//wpDiffuse
-                        [MyMachine setStatus:@"1" key:@"StatusWpDiffuse"];
+                        [MyMachine setStatus:@"1" key:ItemTypeWeapon1];
                         break;
                     }
                     case ItemTypeWeapon2:{//wpLaser
-                        [MyMachine setStatus:@"1" key:@"StatusWpLaser"];
+                        [MyMachine setStatus:@"1" key:ItemTypeWeapon2];
                         break;
                     }
                     default:
@@ -995,7 +995,7 @@ UIView *viewMyEffect;
                                     viewMyEffect.frame.size.height/2);
         circle.layer.cornerRadius=diameter/2;
         
-        //cyan[0,1,1], white[1, 1, 1]
+        //cyan[0,1,1] or white[1, 1, 1]?
         UIColor *itemColor =[UIColor colorWithRed:1 green:1 blue:1 alpha:0.1f];
         circle.layer.borderColor=[[itemColor colorWithAlphaComponent:0.5f] CGColor] ;
         circle.layer.borderWidth = 4.0f;//4px

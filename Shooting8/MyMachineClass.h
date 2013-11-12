@@ -10,6 +10,7 @@
 #import "ExplodeParticleView.h"
 #import "DamageParticleView.h"
 #import "BeamClass.h"
+#import "ItemClass.h"
 
 
 @interface MyMachineClass : NSObject{
@@ -20,7 +21,7 @@
     int hitPoint;
     int offensePower;//攻撃力
     int defensePower;//守備力：バリアー
-    int mySize;
+    int mySize,bigSize,originalSize;
     int lifetime_count;
     int bomb_size;
     int dead_time;
@@ -34,11 +35,13 @@
     NSMutableDictionary *status;//可変ステータス
 }
 
+@property(nonatomic) ItemType itemType;
+
 -(id)init:(int)x_init size:(int)size;
 -(id)init;
 -(void)setType:(int)_type;
 -(void)setDamage:(int)damage location:(CGPoint)location;
--(void)setStatus:(NSString *)statusValue key:(NSString *)statusKey;
+-(void)setStatus:(NSString *)statusValue key:(ItemType)itemType;
 -(void)die:(CGPoint)loc;
 -(int)getHitPoint;
 -(Boolean)getIsAlive;
