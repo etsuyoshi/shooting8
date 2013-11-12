@@ -6,7 +6,9 @@
  ・o:周りに影響する系
  ->各アイテムに対応するpowerGauge2.pngを用意する必要あり
  
- mスイープ:周りから円半径変更：一定時間ずっと(イメージは後で追加:setbackground)
+ oスイープ:周りから円半径変更：一定時間ずっと(イメージは後で追加:setbackground)
+ ->本来はm系だがアクセス時間節約のためGameClassに実装して判定：マグネットフラグisMagnetMode
+ 
  m武器、防具取得：powerGauge2(色はわけた方が良い)
     武器：beamのiv.imageフィールド変更
     防具：viewMyEffectにanimated-Viewを追加
@@ -93,6 +95,9 @@ int length_beam, thick_beam;//ビームの長さと太さ
 Boolean isGameMode;
 Boolean flagItemTrigger;//エフェクト表示トリガー
 Boolean isEffectDisplaying;//エフェクト表示中フラグ
+Boolean isMagnetMode;//マグネットモード
+int diameterMagnet;//マグネット引力有効範囲
+int countMagnet;//マグネット有効期間
 
 
 UIPanGestureRecognizer *panGesture;
@@ -230,6 +235,8 @@ UIView *viewMyEffect;
     
     isGameMode = true;
     isTouched = false;
+    isMagnetMode = false;
+    diameterMagnet = 50;//引力有効範囲：アイテム購入により変更可能
     self.navigationItem.rightBarButtonItems = @[right_button_stop, right_button_setting];
     self.navigationItem.leftItemsSupplementBackButton = YES; //戻るボタンを有効にする
     
@@ -586,7 +593,17 @@ UIView *viewMyEffect;
                         break;
                     }
                     case ItemTypeMagnet:{
-                        [MyMachine setStatus:@"1" key:ItemTypeMagnet];
+                        //アイテムまでの距離を逐次計算(画面を分割して大体どの位置にいるかで処理を軽くしてもよいかも)
+                        //射程範囲に入ったらアイテムを自分位置に向かわせる
+                        //上記ItemClass:donext実行後にisMagnetModeで判定するが、
+                        //isMagnetModeはcountMagnet>0により判定する。
+                        if(!isMagnetMode){
+                            [MyMachine setStatus:@"1" key:ItemTypeMagnet];//あまり意味ない？
+                            
+                        
+                            isMagnetMode = true;
+                            countMagnet = 1000;//10カウント
+                        }
                         break;
                     }
                     case ItemTypeBig:{
@@ -902,7 +919,7 @@ UIView *viewMyEffect;
     }
     if(isGameMode){
         [self ordinaryAnimationStart];
-        
+        [self statusCount];//全てステータスの有効時間を判定：if(flag1&&flag2&& ...)で時間短縮可能？
         //一定時間経過するとゲームオーバー
 //        if(count >= TIMEOVER_SECOND || ![MyMachine getIsAlive]){
 //            NSLog(@"gameover");
@@ -1722,6 +1739,20 @@ UIView *viewMyEffect;
     [_indicator stopAnimating];
     [_loadingView removeFromSuperview];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
+/*
+ * さまざまなステータスが有効な時間をカウント(ゼロになったら反転)
+ */
+-(void)statusCount{
+    
+    
+    //磁石モード
+    if(countMagnet > 0){
+        countMagnet --;
+    }else{
+        isMagnetMode = false;
+    }
 }
 
 @end
