@@ -157,7 +157,53 @@
     }
     //中心座標にする
     iv.center = CGPointMake(x_loc, y_loc);
-    [iv moveBoundDuration:0 option:0];
+//    [iv moveBoundDuration:0 option:0];
+    [UIView animateWithDuration:0.4f
+                          delay:0.0f
+                        options:UIViewAnimationOptionCurveEaseOut//はじめ早く、段々ゆっくりに停止
+                     animations:^{
+                         iv.center = CGPointMake(iv.center.x,
+                                                 iv.center.y * 0.2f);
+                     }
+                     completion:^(BOOL finished1){
+                         
+                         if(finished1){
+//                             [UIView moveDownDuration:1.5f
+//                                             option:option];
+                             float destination_y =iv.superview.bounds.size.height + height;
+                             //    float _secs = destination_y * 0.002f;//1px = 0.002sec(2msec) => 500px = 1sec:少し速い
+                             
+                             
+                             //GameClassViewCont;isMagnetModeでアイテムを上記アニメーションの途中からでも自動的に呼び出せるようにする方法はCATransaction(以下)
+                             [CATransaction begin];
+                             [CATransaction setAnimationDuration:1.5f];
+                             [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+                             [CATransaction setCompletionBlock:^{
+                                 NSLog(@"die");
+                                 [self die];
+                             }];
+                             iv.layer.position = CGPointMake(iv.center.x,
+                                                             destination_y);
+                             [CATransaction commit];
+                             
+                             
+                             //以下のようにしてしまうとマグネットフラグ時のスムーズなアニメーションの切り替えが出来ない
+//                             [UIView animateWithDuration:1.5f
+//                                                   delay:0.0f
+//                                                 options:UIViewAnimationOptionCurveEaseIn//ゆっくりから早く(突然停止)
+//                                              animations:^{
+//                                                  iv.center = CGPointMake(iv.center.x,
+//                                                                            destination_y);
+//                                              }
+//                                              completion:^(BOOL finished2){
+//                                                  
+//                                                  if(finished2){
+//                                                      //                             NSLog(@"complete down from down2 Method");
+//                                                      [self die];
+//                                                  }
+//                                              }];
+                         }
+                     }];
     
     return self;
 }

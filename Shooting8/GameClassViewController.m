@@ -236,7 +236,7 @@ UIView *viewMyEffect;
     isGameMode = true;
     isTouched = false;
     isMagnetMode = false;
-    diameterMagnet = 50;//引力有効範囲：アイテム購入により変更可能
+    diameterMagnet = 500;//引力有効範囲：アイテム購入により変更可能
     self.navigationItem.rightBarButtonItems = @[right_button_stop, right_button_setting];
     self.navigationItem.leftItemsSupplementBackButton = YES; //戻るボタンを有効にする
     
@@ -523,10 +523,52 @@ UIView *viewMyEffect;
                 [self.view addSubview:[[ItemArray objectAtIndex:i] getMovingParticle:0]] ;//生成したparticleは自動消滅
 //                [KiraArray insertObject:[((ItemClass*)[ItemArray objectAtIndex:i]) getMovingParticle:0] atIndex:0];
 //                [self.view addSubview:[KiraArray objectAtIndex:0]];
-            };
+            }
+            
+            if(isMagnetMode){
+//                NSLog(@"マグネットモード");
+                CGPoint _itemLoc = [[ItemArray objectAtIndex:i] getImageView].center;
+//                NSLog(@"xItem:%f, yItem:%f,", _itemLoc.x, _itemLoc.y);
+                //myMachine and item are neighbor
+                
+                if([self getDistance:_itemLoc.x y:_itemLoc.y] < diameterMagnet){
+//                    NSLog(@"magnet射程範囲->count:%d, i=%d, item:%@",
+//                          [ItemArray count], i,
+//                          [ItemArray objectAtIndex:i]);
+//                    [UIView setAnimationBeginsFromCurrentState:YES];
+//                    NSLog(@"aaa");
+//                    [[ItemArray objectAtIndex:i] getImageView].center =
+////                        CGPointMake([[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer].position.x,
+////                                    [[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer].position.y);
+//                        [[ItemArray objectAtIndex:i]getImageView].center;
+//                    [CATransaction begin];
+//                    [[[ItemArray objectAtIndex:i] getImageView].layer removeAllAnimations];//使えない?：変な所(画面上部)で停止する->上下にCATransaction begin&commitを実装しないから？？(未検証)
+//                    [CATransaction commit];
+//                    [UIView animateWithDuration:1.0f
+//                                     animations:^{
+//                                         [[ItemArray objectAtIndex:i] getImageView].center =
+//                                            [MyMachine getImageView].center;
+//                                     }
+//                                     completion:^(BOOL finished){
+//                                         if(i < [ItemArray count]){
+//                                             
+//                                             if([[ItemArray objectAtIndex:i] getImageView] != nil){
+//                                                 [UIView setAnimationBeginsFromCurrentState:YES];
+//                                                 if([[ItemArray objectAtIndex:i] getIsAlive]){
+//                                                     int x = [[ItemArray objectAtIndex:i] getImageView].center.x;
+//                                                     [[ItemArray objectAtIndex:i] getImageView].center = CGPointMake(x, self.view.bounds.size.height);
+//                                                 }
+//                                             }
+//                                         }
+//                                     }];
+                    
+                    
+                    
+                }
+            }
         }
     }
-    
+
 //    NSLog(@"敵機配列");
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/表示_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
@@ -810,7 +852,7 @@ UIView *viewMyEffect;
 //                                ItemClass *_item = [[ItemClass alloc] init:[_enemy getX] y_init:[_enemy getY] width:50 height:50];
                                 
                                 //テスト：順番に作成
-                                NSLog(@"item occur : %d", countItem);
+//                                NSLog(@"item occur : %d", countItem);
                                 _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xEnemy y_init:_yEnemy width:50 height:50];
 
 //                                [ItemArray addObject:_item];
@@ -974,6 +1016,7 @@ UIView *viewMyEffect;
     [gr setTranslation:CGPointZero inView:[MyMachine getImageView]];
     
     
+    //エフェクト描画用frame
     viewMyEffect.center = movedPoint;
     [gr setTranslation:CGPointZero inView:viewMyEffect];
     
@@ -1753,6 +1796,16 @@ UIView *viewMyEffect;
     }else{
         isMagnetMode = false;
     }
+}
+
+/*
+ *自機と指定した距離を取得する
+ */
+-(float)getDistance:(int)x y:(int)y{
+    int x0 = [MyMachine getImageView].center.x;
+    int y0 = [MyMachine getImageView].center.y;
+//    NSLog(@"distance = %f", sqrtf((x - x0) * (x - x0) + (y - y0) * (y - y0)));
+    return sqrtf((x - x0) * (x - x0) + (y - y0) * (y - y0));
 }
 
 @end

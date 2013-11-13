@@ -217,7 +217,7 @@ NSString *imageName;
                      }
                      completion:^(BOOL finished){
                          if(finished){
-                         NSLog(@"windStatus = %d", wingStatus);
+//                         NSLog(@"windStatus = %d", wingStatus);
                          wingStatus ++;
                          wingStatus %= 8;
                          
@@ -398,7 +398,7 @@ NSString *imageName;
 //edit status
 -(void)setStatus:(NSString *)statusValue key:(ItemType)_statusKey{
     itemType = _statusKey;
-    NSLog(@"status: %@, key: %d", statusValue, itemType);
+//    NSLog(@"status: %@, key: %d", statusValue, itemType);
     [status setObject:statusValue forKey:[NSNumber numberWithInt:itemType]];
     
     
@@ -420,6 +420,9 @@ NSString *imageName;
             break;
         }
         case ItemTypeBig:{
+            /*
+             *未完成
+             */
             //bigger
             mySize = bigSize;
             iv.frame = CGRectMake(x_loc-mySize/2, y_loc-mySize/2, mySize, mySize);
