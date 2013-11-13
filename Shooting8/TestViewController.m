@@ -11,7 +11,7 @@
 //#define MODE3
 //#define MODE4
 
-//#define CATRANSACTION_TEST
+#define CATRANSACTION_TEST
 #define TEST_EFFECT
 
 #define TEST
@@ -88,15 +88,16 @@ int tempCount = 0;
     viewLayerTest = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 50, 50)];
     [viewLayerTest setBackgroundColor:[UIColor purpleColor]];
     [self.view addSubview:viewLayerTest];
-    mylayer = [CALayer layer];
-//    mylayer = (CALayer*)[viewLayerTest.layer presentationLayer];
+//    mylayer = [CALayer layer];
+    mylayer = (CALayer*)(viewLayerTest.layer.presentationLayer);
+//    mylayer = viewLayerTest.layer;
 
 //    mylayer = [CALayer layer]; //mylayer declared in .h file
-    mylayer.bounds = CGRectMake(0, 0, 100, 100);
-    mylayer.position = CGPointMake(100, 100); //In parent coordinate
-    mylayer.backgroundColor = [UIColor redColor].CGColor;
-    mylayer.contents = (id)[UIImage imageNamed:@"glasses"].CGImage;
-    [self.view.layer addSublayer:mylayer];
+//    mylayer.bounds = CGRectMake(0, 0, 100, 100);
+//    mylayer.position = CGPointMake(100, 100); //In parent coordinate
+//    mylayer.backgroundColor = [UIColor redColor].CGColor;
+//    mylayer.contents = (id)[UIImage imageNamed:@"glasses"].CGImage;
+//    [self.view.layer addSublayer:mylayer];
     
     imageName = [NSString stringWithFormat:@"tool_bomb.png"];
     
@@ -112,20 +113,47 @@ int tempCount = 0;
     [super viewDidAppear:animated];
     
     
-    [CATransaction begin]; {
+    [CATransaction begin];
+    [CATransaction setAnimationDuration:0.5f];
+    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+    {
         [CATransaction setAnimationDuration:2];
-        viewLayerTest.layer.position=CGPointMake(200, 200);
-        viewLayerTest.layer.opacity=0.5;
+//        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+
+//        viewLayerTest.layer.position=CGPointMake(200, 200);
+//        viewLayerTest.layer.opacity=0.5;
+        
+        CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"position"];
+        [anim setDuration:0.5f];
+        anim.fromValue = [NSValue valueWithCGPoint:((CALayer *)[viewLayerTest.layer presentationLayer]).position];//現在位置
+        anim.toValue = [NSValue valueWithCGPoint:CGPointMake(0, self.view.bounds.size.height)];
+        
+        anim.removedOnCompletion = NO;
+        anim.fillMode = kCAFillModeForwards;
+        [viewLayerTest.layer addAnimation:anim forKey:@"position"];
+        
+//        mylayer.position=CGPointMake(200, 200);
+//        mylayer.opacity=0.5;
     } [CATransaction commit];
     
     
-//    [CATransaction begin]; {
-//        [CATransaction setAnimationDuration:2];
-//        mylayer.position=CGPointMake(200.0,200.0);
-//        mylayer.zPosition=50.0;
-//        mylayer.opacity=0.5;
-//    } [CATransaction commit];
-    
+//    [CATransaction begin];
+//    [CATransaction setAnimationDuration:0.5f];
+//    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+//    
+//    {
+//        CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"position"];
+//        [anim setDuration:3.0f];
+//        anim.fromValue = [NSValue valueWithCGPoint:CGPointMake(x, y)];
+//        anim.toValue = [NSValue valueWithCGPoint:CGPointMake(0, 420)];//myview.superview.bounds.size.height)];
+//        
+//        anim.removedOnCompletion = NO;
+//        anim.fillMode = kCAFillModeForwards;
+//        [myview.layer addAnimation:anim forKey:@"position"];//uiviewから生成したlayerをanimation
+//        
+//    }
+//    [CATransaction commit];
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -170,7 +198,35 @@ int tempCount = 0;
         [self explodeTest];
     }
 #elif defined CATRANSACTION_TEST
-    if(counter == 0){
+    NSLog(@"y=%f", ((CALayer *)viewLayerTest.layer.presentationLayer).position.y);
+    if(((CALayer *)viewLayerTest.layer.presentationLayer).position.y >= self.view.bounds.size.height - 10){
+        
+        
+        [CATransaction begin];
+//        [CATransaction setAnimationDuration:0.5f];
+        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+        {
+            [CATransaction setAnimationDuration:2];
+            //        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+            
+            //        viewLayerTest.layer.position=CGPointMake(200, 200);
+            //        viewLayerTest.layer.opacity=0.5;
+            
+            CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"position"];
+            [anim setDuration:0.5f];
+            anim.fromValue = [NSValue valueWithCGPoint:((CALayer *)[viewLayerTest.layer presentationLayer]).position];//現在位置
+            anim.toValue = [NSValue valueWithCGPoint:CGPointMake(self.view.bounds.size.width,
+                                                                 self.view.bounds.size.height)];
+            
+            anim.removedOnCompletion = NO;
+            anim.fillMode = kCAFillModeForwards;
+            [viewLayerTest.layer addAnimation:anim forKey:@"position"];
+            
+            //        mylayer.position=CGPointMake(200, 200);
+            //        mylayer.opacity=0.5;
+        } [CATransaction commit];
+        
+        
 //        [CATransaction begin];
 //        [CATransaction setAnimationDuration:1.5f];
 //        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
@@ -196,15 +252,15 @@ int tempCount = 0;
 //        [CATransaction commit];
         
         
-        //http://mm-workmode.blogspot.jp/2011/11/coreanimation-catransaction.html
-        [CATransaction begin];
-        [CATransaction setAnimationDuration:5.0];
-        uiv.frame = CGRectMake(200.0, 340.0, 100.0, 100.0);
-        [CATransaction begin];
-        [CATransaction setAnimationDuration:1.0];
-        uiv.layer.opacity = 1.3;
-        [CATransaction commit];
-        [CATransaction commit];
+//        //http://mm-workmode.blogspot.jp/2011/11/coreanimation-catransaction.html
+//        [CATransaction begin];
+//        [CATransaction setAnimationDuration:5.0];
+//        uiv.frame = CGRectMake(200.0, 340.0, 100.0, 100.0);
+//        [CATransaction begin];
+//        [CATransaction setAnimationDuration:1.0];
+//        uiv.layer.opacity = 1.3;
+//        [CATransaction commit];
+//        [CATransaction commit];
         
     }
 #elif defined TEST_EFFECT

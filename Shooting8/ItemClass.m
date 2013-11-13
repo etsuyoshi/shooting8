@@ -29,7 +29,7 @@
 }
 -(id) init:(ItemType)_type x_init:(int)x_init y_init:(int)y_init width:(int)w height:(int)h{
     
-    
+    isMagnetMode = false;
     y_loc = y_init;
     x_loc = x_init;
     width = w;
@@ -158,52 +158,133 @@
     //中心座標にする
     iv.center = CGPointMake(x_loc, y_loc);
 //    [iv moveBoundDuration:0 option:0];
-    [UIView animateWithDuration:0.4f
-                          delay:0.0f
-                        options:UIViewAnimationOptionCurveEaseOut//はじめ早く、段々ゆっくりに停止
-                     animations:^{
-                         iv.center = CGPointMake(iv.center.x,
-                                                 iv.center.y * 0.2f);
-                     }
-                     completion:^(BOOL finished1){
-                         
-                         if(finished1){
-//                             [UIView moveDownDuration:1.5f
-//                                             option:option];
-                             float destination_y =iv.superview.bounds.size.height + height;
-                             //    float _secs = destination_y * 0.002f;//1px = 0.002sec(2msec) => 500px = 1sec:少し速い
-                             
-                             
-                             //GameClassViewCont;isMagnetModeでアイテムを上記アニメーションの途中からでも自動的に呼び出せるようにする方法はCATransaction(以下)
-                             [CATransaction begin];
-                             [CATransaction setAnimationDuration:1.5f];
-                             [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
-                             [CATransaction setCompletionBlock:^{
-                                 NSLog(@"die");
-                                 [self die];
-                             }];
-                             iv.layer.position = CGPointMake(iv.center.x,
-                                                             destination_y);
-                             [CATransaction commit];
-                             
-                             
-                             //以下のようにしてしまうとマグネットフラグ時のスムーズなアニメーションの切り替えが出来ない
-//                             [UIView animateWithDuration:1.5f
-//                                                   delay:0.0f
-//                                                 options:UIViewAnimationOptionCurveEaseIn//ゆっくりから早く(突然停止)
-//                                              animations:^{
-//                                                  iv.center = CGPointMake(iv.center.x,
-//                                                                            destination_y);
-//                                              }
-//                                              completion:^(BOOL finished2){
-//                                                  
-//                                                  if(finished2){
-//                                                      //                             NSLog(@"complete down from down2 Method");
-//                                                      [self die];
-//                                                  }
-//                                              }];
-                         }
-                     }];
+    
+    
+    
+    [CATransaction begin];
+//    [CATransaction setAnimationDuration:0.5f];
+    [CATransaction setCompletionBlock:^{//up終了処理
+        CAAnimation* animationUp = [iv.layer animationForKey:@"up"];
+        
+//        NSLog(@"item : x = %f, y = %f",
+//              ((CALayer *)[iv.layer presentationLayer]).position.x,
+//              ((CALayer *)[iv.layer presentationLayer]).position.y);
+        if (animationUp) {//終了時処理
+            // -animationDidStop:finished: の finished=YES に相当
+            
+//            [iv.layer removeAnimationForKey:@"up"];   // 後始末：removeすると"up"開始位置に戻ってしまう
+            
+            
+            
+            [CATransaction begin];
+            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+            [CATransaction setCompletionBlock:^{//down終了処理
+                CAAnimation* animationDown = [iv.layer animationForKey:@"down"];
+                
+                if(animationDown){
+                    NSLog(@"die at center:%f, layer.position:%f", iv.center.y,
+                          ((CALayer *)iv.layer.presentationLayer).position.y);
+                    [iv.layer removeAnimationForKey:@"down"];   // 後始末
+//                    [self die];//下まで行ったら処理
+                    
+                }else{
+                    //途中で別のアニメーション等の割り込み等によってdownアニメが終了しても、別のアニメ終了後に再度downアニメが開始されるように残しておく？
+//                    [iv.layer removeAnimationForKey:@"down"];   // 後始末
+                }
+                
+                
+                
+            }];
+            
+            {
+                
+                CABasicAnimation *animDown = [CABasicAnimation animationWithKeyPath:@"position"];
+                [animDown setDuration:1.0f];
+//                animDown.fromValue = [NSValue valueWithCGPoint:((CALayer *)[iv.layer presentationLayer]).position];
+                animDown.toValue = [NSValue valueWithCGPoint:CGPointMake(((CALayer *)[iv.layer presentationLayer]).position.x,
+                                                                         iv.superview.bounds.size.height)];//myview.superview.bounds.size.height)];
+                // completion処理用に、アニメーションが終了しても登録を残しておく
+                animDown.removedOnCompletion = NO;
+                animDown.fillMode = kCAFillModeForwards;
+                
+                [iv.layer addAnimation:animDown forKey:@"down"];//uiviewから生成したlayerをanimation
+            }
+            [CATransaction commit];
+            
+        }
+        else {
+            // -animationDidStop:finished: の finished=NO に相当
+//            [iv.layer removeAnimationForKey:@"up"];   // 後始末
+        }
+        
+    }];
+    
+    
+//    [CATransaction setAnimationDuration:0.5f];
+    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+    
+    {
+        CABasicAnimation *animUp = [CABasicAnimation animationWithKeyPath:@"position"];
+        [animUp setDuration:0.4f];
+        //最初はアニメーションが始まっていないので中心位置はUIView.centerで取得
+//        animUp.fromValue = [NSValue valueWithCGPoint:iv.center];//((CALayer *)[iv.layer presentationLayer]).position];
+        animUp.toValue = [NSValue valueWithCGPoint:CGPointMake(iv.center.x,//((CALayer *)[iv.layer presentationLayer]).position.x,
+                                                               -100)];//iv.center.y * 0.2)];//myview.superview.bounds.size.height)];
+        // completion処理用に、アニメーションが終了しても登録を残しておく
+        animUp.removedOnCompletion = NO;
+        animUp.fillMode = kCAFillModeForwards;
+        [iv.layer addAnimation:animUp forKey:@"up"];//uiviewから生成したlayerをanimation
+        
+    }
+    [CATransaction commit];
+
+    
+//    [UIView animateWithDuration:0.4f
+//                          delay:0.0f
+//                        options:UIViewAnimationOptionCurveEaseOut//はじめ早く、段々ゆっくりに停止
+//                     animations:^{
+//                         iv.center = CGPointMake(iv.center.x,
+//                                                 iv.center.y * 0.2f);
+//                     }
+//                     completion:^(BOOL finished1){
+//                         
+//                         if(finished1){
+////                             [UIView moveDownDuration:1.5f
+////                                             option:option];
+//                             float destination_y =iv.superview.bounds.size.height + height;
+//                             //    float _secs = destination_y * 0.002f;//1px = 0.002sec(2msec) => 500px = 1sec:少し速い
+//                             
+//                             
+//                             //GameClassViewCont;isMagnetModeでアイテムを上記アニメーションの途中からでも自動的に呼び出せるようにする方法はCATransaction(以下)
+//                             [CATransaction begin];
+//                             [CATransaction setAnimationDuration:1.5f];
+//                             [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+//                             [CATransaction setCompletionBlock:^{
+//                                 NSLog(@"die");
+//                                 [self die];
+//                             }];
+//                             iv.layer.position = CGPointMake(iv.center.x,
+//                                                             destination_y);
+//                             [CATransaction commit];
+//                             
+//                             
+//                             //以下のようにしてしまうとマグネットフラグ時のスムーズなアニメーションの切り替えが出来ない
+////                             [UIView animateWithDuration:1.5f
+////                                                   delay:0.0f
+////                                                 options:UIViewAnimationOptionCurveEaseIn//ゆっくりから早く(突然停止)
+////                                              animations:^{
+////                                                  iv.center = CGPointMake(iv.center.x,
+////                                                                            destination_y);
+////                                              }
+////                                              completion:^(BOOL finished2){
+////                                                  
+////                                                  if(finished2){
+////                                                      //                             NSLog(@"complete down from down2 Method");
+////                                                      [self die];
+////                                                  }
+////                                              }];
+//                         }
+//                     }];
     
     return self;
 }
@@ -220,6 +301,14 @@
 
 -(Boolean) getIsAlive{
     return isAlive;
+}
+
+-(Boolean) getIsMagnetMode{
+    return isMagnetMode;
+}
+
+-(void) setIsMagnetMode:(Boolean)_isSweepMode{
+    isMagnetMode = _isSweepMode;
 }
 
 /**
@@ -239,7 +328,8 @@
     CALayer *mLayer = [iv.layer presentationLayer];
     x_loc = mLayer.position.x;//中心座標
     y_loc = mLayer.position.y;//中心座標
-    
+//    NSLog(@"process : %d , %d",
+//          x_loc, y_loc);
     
     //動線上に新規キラキラ発生
 //    if(arc4random() % 3 ==0){//generate every count

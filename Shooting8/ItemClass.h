@@ -35,6 +35,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 //    ItemType *type;
     int width;
     int height;
+    Boolean isMagnetMode;
     Boolean isAlive;
     UIImageView *iv;
     CGRect rect;
@@ -51,6 +52,8 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(id)init;
 
 -(Boolean)getIsAlive;
+-(Boolean)getIsMagnetMode;
+-(void) setIsMagnetMode:(Boolean)_isSweepMode;
 
 -(Boolean)doNext;//particle発生時にtrueを返す
 

@@ -236,7 +236,7 @@ UIView *viewMyEffect;
     isGameMode = true;
     isTouched = false;
     isMagnetMode = false;
-    diameterMagnet = 500;//引力有効範囲：アイテム購入により変更可能
+    diameterMagnet = 300;//引力有効範囲：アイテム購入により変更可能
     self.navigationItem.rightBarButtonItems = @[right_button_stop, right_button_setting];
     self.navigationItem.leftItemsSupplementBackButton = YES; //戻るボタンを有効にする
     
@@ -525,13 +525,73 @@ UIView *viewMyEffect;
 //                [self.view addSubview:[KiraArray objectAtIndex:0]];
             }
             
-            if(isMagnetMode){
+            if(false){
+//            if(isMagnetMode){// && !([[ItemArray objectAtIndex:i] getIsMagnetMode])){//ゲーム自体のmagnetModeかアイテム個体のmagnetModeか
 //                NSLog(@"マグネットモード");
-                CGPoint _itemLoc = [[ItemArray objectAtIndex:i] getImageView].center;
+//                CGPoint _itemLoc = [[ItemArray objectAtIndex:i] getImageView].center;
+                CALayer *_itemLayer = [[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer];
 //                NSLog(@"xItem:%f, yItem:%f,", _itemLoc.x, _itemLoc.y);
                 //myMachine and item are neighbor
                 
-                if([self getDistance:_itemLoc.x y:_itemLoc.y] < diameterMagnet){
+//                if([self getDistance:_itemLoc.x y:_itemLoc.y] < diameterMagnet){
+                if([self getDistance:_itemLayer.position.x y:_itemLayer.position.y] < diameterMagnet){
+                    
+                    [CATransaction begin];
+                    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+                    [CATransaction setCompletionBlock:^{//終了処理
+//                        CAAnimation* animationMag = [[[ItemArray objectAtIndex:i] getImageView].layer animationForKey:@"sweep"];
+                        if(i < [ItemArray count]){
+//                            if([[ItemArray objectAtIndex:i] getIsAlive]){
+                            
+                                NSLog(@"sweep-completion-block at i=%d, %d", i,
+                                      [[ItemArray objectAtIndex:i] getIsAlive]);
+                            
+                            NSLog(@"1");
+                            [[[ItemArray objectAtIndex:i]getImageView].layer.presentationLayer removeAnimationForKey:@"sweep"];   // 後始末
+                            NSLog(@"2");
+//                            [[ItemArray objectAtIndex:i] die];
+                            NSLog(@"3");
+//                            [[[ItemArray objectAtIndex:i]getImageView].layer removeFromSuperlayer];
+                            NSLog(@"4");
+//                            }
+                        }
+                        //        NSLog(@"item : x = %f, y = %f",
+                        //              ((CALayer *)[iv.layer presentationLayer]).position.x,
+                        //              ((CALayer *)[iv.layer presentationLayer]).position.y);
+//                        if (animationUp) {//終了時処理
+//                            // -animationDidStop:finished: の finished=YES に相当
+//                            
+//                        }
+//                        else {
+//                            // -animationDidStop:finished: の finished=NO に相当
+//                        }
+                    }];
+                    
+                    
+                    //    [CATransaction setAnimationDuration:0.5f];
+                    
+                    {
+                        CABasicAnimation *animSweep = [CABasicAnimation animationWithKeyPath:@"position"];
+                        [animSweep setDuration:0.4f];
+                        //最初はアニメーションが始まっていないので中心位置はUIView.centerで取得
+                        //[ItemArray objectAtIndex:i] getImageView]
+                        
+//                        animSweep.fromValue = [NSValue valueWithCGPoint:_itemLayer.position];
+//                        animSweep.fromValue = [NSValue valueWithCGPoint:CGPointMake(
+//                                               [[ItemArray objectAtIndex:i] getX], [[ItemArray objectAtIndex:i] getY]
+//                                               )];
+//                        animSweep.fromValue = [NSValue valueWithCGPoint:[[ItemArray objectAtIndex:i] getImageView].layer.position];
+                        animSweep.toValue = [NSValue valueWithCGPoint:[MyMachine getImageView].center];//myview.superview.bounds.size.height)];
+//                        animSweep.toValue = [NSValue valueWithCGPoint:CGPointZero];//test
+                        // completion処理用に、アニメーションが終了しても登録を残しておく
+                        animSweep.removedOnCompletion = NO;
+                        animSweep.fillMode = kCAFillModeForwards;
+                        [[[ItemArray objectAtIndex:i] getImageView].layer.presentationLayer addAnimation:animSweep forKey:@"sweep"];//uiviewから生成したlayerをanimation
+                        
+                    }
+                    [CATransaction commit];
+                    
+                    
 //                    NSLog(@"magnet射程範囲->count:%d, i=%d, item:%@",
 //                          [ItemArray count], i,
 //                          [ItemArray objectAtIndex:i]);
@@ -598,7 +658,7 @@ UIView *viewMyEffect;
                 [[[ItemArray objectAtIndex:itemCount] getImageView] removeFromSuperview];
                 [[ItemArray objectAtIndex:itemCount] die];
                 //アイテム取得時のパーティクル表示
-                [self.view addSubview:[[ItemArray objectAtIndex:itemCount] getKilledParticle]];
+//                [self.view addSubview:[[ItemArray objectAtIndex:itemCount] getKilledParticle]];
                 
 //                Effect *effect = [[Effect alloc]initWithFrame:[MyMachine getImageView].frame];
 //                UIView *viewMagnetEffect = [effect getEffectView:EffectTypeStandard];
