@@ -50,7 +50,7 @@
  */
 
 //#define TEST
-#define FREQ_ENEMY 10//100カウントに一回発生
+#define FREQ_ENEMY 100//100カウントに一回発生
 
 #import "GameClassViewController.h"
 #import "BGMClass.h"
@@ -641,6 +641,7 @@ UIView *viewMyEffect;
         if([_item getIsAlive]){//アイテムの獲得判定
             _xItem = [_item getX];
             _yItem = [_item getY];
+//            NSLog(@"y=%d", _yItem);
             
 //            NSLog(@"xI = %d, xM = %d, yI = %d, yM = %d",
 //                  _xItem, [MyMachine getX],
@@ -1055,12 +1056,14 @@ UIView *viewMyEffect;
         if([[EnemyArray objectAtIndex:i] getY] >= self.view.bounds.size.height ||
            ![[EnemyArray objectAtIndex:i] getIsAlive]){
 //            NSLog(@"remove at %d, %d", i, [[EnemyArray objectAtIndex:i] getY]);
+            [[[EnemyArray objectAtIndex:i] getImageView] removeFromSuperview];
             [EnemyArray removeObjectAtIndex:i];
         }
     }
     for(int i = 0; i < [ItemArray count]; i++){
         if([[ItemArray objectAtIndex:i] getY] >= self.view.bounds.size.height ||
            ![[ItemArray objectAtIndex:i] getIsAlive]){
+            [[[ItemArray objectAtIndex:i] getImageView] removeFromSuperview];
             [ItemArray removeObjectAtIndex:i];
         }
     }

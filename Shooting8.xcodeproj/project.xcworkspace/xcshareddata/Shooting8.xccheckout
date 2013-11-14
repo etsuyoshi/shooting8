@@ -5,34 +5,34 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>E9339648-4A3C-4B7D-B1E8-E6BDFCD7DFE2</string>
+	<string>BEDD919F-E13B-4629-9F31-6E5F88ED9FB5</string>
 	<key>IDESourceControlProjectName</key>
 	<string>Shooting8</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>85706953-54BD-4B40-BFE9-B6D8D629C651</key>
-		<string>ssh://githbu.com/etusyoshi/shooting8.git</string>
+		<key>5CADF9F9-8C8F-4A30-AD4F-6FCEB0A9C8A2</key>
+		<string>ssh://github.com/etsuyoshi/shooting8.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Shooting8.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>85706953-54BD-4B40-BFE9-B6D8D629C651</key>
+		<key>5CADF9F9-8C8F-4A30-AD4F-6FCEB0A9C8A2</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://githbu.com/etusyoshi/shooting8.git</string>
+	<string>ssh://github.com/etsuyoshi/shooting8.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>85706953-54BD-4B40-BFE9-B6D8D629C651</string>
+	<string>5CADF9F9-8C8F-4A30-AD4F-6FCEB0A9C8A2</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>85706953-54BD-4B40-BFE9-B6D8D629C651</string>
+			<string>5CADF9F9-8C8F-4A30-AD4F-6FCEB0A9C8A2</string>
 			<key>IDESourceControlWCCName</key>
 			<string>Shooting8</string>
 		</dict>

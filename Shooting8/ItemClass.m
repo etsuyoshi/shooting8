@@ -161,7 +161,7 @@
     
     
     
-    [CATransaction begin];
+    [CATransaction begin];//up
 //    [CATransaction setAnimationDuration:0.5f];
     [CATransaction setCompletionBlock:^{//up終了処理
         CAAnimation* animationUp = [iv.layer animationForKey:@"up"];
@@ -176,16 +176,21 @@
             
             
             
-            [CATransaction begin];
+            [CATransaction begin];//down
             [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
             [CATransaction setCompletionBlock:^{//down終了処理
                 CAAnimation* animationDown = [iv.layer animationForKey:@"down"];
                 
                 if(animationDown){
-                    NSLog(@"die at center:%f, layer.position:%f", iv.center.y,
-                          ((CALayer *)iv.layer.presentationLayer).position.y);
-                    [iv.layer removeAnimationForKey:@"down"];   // 後始末
+                    NSLog(@"die at center:%f, layer.position:%f, y_loc:%d, %d",//【緊急！】なぜかup終了後の位置を取得している=y_locも同様！＝＞アイテムが取得できない！！
+                          iv.center.y,
+                          ((CALayer *)iv.layer.presentationLayer).position.y,y_loc,
+                          isAlive);
+//                    [iv.layer removeAnimationForKey:@"down"];   // 後始末
 //                    [self die];//下まで行ったら処理
+                    NSLog(@"die at center:%f, layer.position:%f, y_loc:%d, %d", iv.center.y,
+                          ((CALayer *)iv.layer.presentationLayer).position.y,y_loc,
+                          isAlive);
                     
                 }else{
                     //途中で別のアニメーション等の割り込み等によってdownアニメが終了しても、別のアニメ終了後に再度downアニメが開始されるように残しておく？
@@ -229,7 +234,7 @@
         //最初はアニメーションが始まっていないので中心位置はUIView.centerで取得
 //        animUp.fromValue = [NSValue valueWithCGPoint:iv.center];//((CALayer *)[iv.layer presentationLayer]).position];
         animUp.toValue = [NSValue valueWithCGPoint:CGPointMake(iv.center.x,//((CALayer *)[iv.layer presentationLayer]).position.x,
-                                                               -100)];//iv.center.y * 0.2)];//myview.superview.bounds.size.height)];
+                                                               iv.center.y * 0.2)];//myview.superview.bounds.size.height)];
         // completion処理用に、アニメーションが終了しても登録を残しておく
         animUp.removedOnCompletion = NO;
         animUp.fillMode = kCAFillModeForwards;
