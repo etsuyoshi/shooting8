@@ -12,7 +12,8 @@
 //#define MODE4
 
 #define CATRANSACTION_TEST
-#define TEST_EFFECT
+//#define TEST_EFFECT
+#define ORBITPATH_TEST
 
 #define TEST
 #import "EnemyClass.h"
@@ -98,6 +99,8 @@ int tempCount = 0;
 //    mylayer.backgroundColor = [UIColor redColor].CGColor;
 //    mylayer.contents = (id)[UIImage imageNamed:@"glasses"].CGImage;
 //    [self.view.layer addSublayer:mylayer];
+    
+    
     
     imageName = [NSString stringWithFormat:@"tool_bomb.png"];
     
@@ -267,12 +270,17 @@ int tempCount = 0;
     if(counter == 0){
         [self effectTest];
     }
+
 #else
     NSLog(@"aaa");
     //nothing
 #endif
     
-    
+#ifdef ORBITPATH_TEST
+    if(counter == 0){
+        [self orbitPath];
+    }
+#endif
     counter ++;
 }
 
@@ -519,6 +527,36 @@ int tempCount = 0;
     
 #endif
     
+}
+
+-(void)orbitPath{//任意軌道上をアニメーションする
+    CGPoint kStartPos = ((CALayer *)[uiv.layer presentationLayer]).position;
+    CGPoint kEndPos = CGPointMake(self.view.bounds.size.width,
+                                  kStartPos.y);
+    // CAKeyframeAnimationオブジェクトを生成
+    CAKeyframeAnimation *animation;
+    animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+    animation.fillMode = kCAFillModeForwards;
+    animation.removedOnCompletion = NO;
+    animation.duration = 1.0;
+    
+    // 放物線のパスを生成
+    CGFloat jumpHeight = 80.0;
+    CGMutablePathRef curvedPath = CGPathCreateMutable();
+    CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);
+    CGPathAddCurveToPoint(curvedPath, NULL,
+                          kStartPos.x + jumpHeight/2, kStartPos.y - jumpHeight,
+                          kEndPos.x - jumpHeight/2, kStartPos.y - jumpHeight,
+                          kEndPos.x, kEndPos.y);
+    
+    // パスをCAKeyframeAnimationオブジェクトにセット
+    animation.path = curvedPath;
+    
+    // パスを解放
+    CGPathRelease(curvedPath);
+    
+    // レイヤーにアニメーションを追加
+    [uiv.layer addAnimation:animation forKey:nil];
 }
 
 @end

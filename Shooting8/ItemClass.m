@@ -161,89 +161,121 @@
     
     
     
-    [CATransaction begin];//up
-//    [CATransaction setAnimationDuration:0.5f];
-    [CATransaction setCompletionBlock:^{//up終了処理
-        CAAnimation* animationUp = [iv.layer animationForKey:@"up"];
-        
-//        NSLog(@"item : x = %f, y = %f",
-//              ((CALayer *)[iv.layer presentationLayer]).position.x,
-//              ((CALayer *)[iv.layer presentationLayer]).position.y);
-        if (animationUp) {//終了時処理
-            // -animationDidStop:finished: の finished=YES に相当
-            
-//            [iv.layer removeAnimationForKey:@"up"];   // 後始末：removeすると"up"開始位置に戻ってしまう
-            
-            
-            
-            [CATransaction begin];//down
-            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
-            [CATransaction setCompletionBlock:^{//down終了処理
-                CAAnimation* animationDown = [iv.layer animationForKey:@"down"];
-                
-                if(animationDown){
-                    NSLog(@"die at center:%f, layer.position:%f, y_loc:%d, %d",//【緊急！】なぜかup終了後の位置を取得している=y_locも同様！＝＞アイテムが取得できない！！
-                          iv.center.y,
-                          ((CALayer *)iv.layer.presentationLayer).position.y,y_loc,
-                          isAlive);
-//                    [iv.layer removeAnimationForKey:@"down"];   // 後始末
-//                    [self die];//下まで行ったら処理
-                    NSLog(@"die at center:%f, layer.position:%f, y_loc:%d, %d", iv.center.y,
-                          ((CALayer *)iv.layer.presentationLayer).position.y,y_loc,
-                          isAlive);
-                    
-                }else{
-                    //途中で別のアニメーション等の割り込み等によってdownアニメが終了しても、別のアニメ終了後に再度downアニメが開始されるように残しておく？
-//                    [iv.layer removeAnimationForKey:@"down"];   // 後始末
-                }
-                
-                
-                
-            }];
-            
-            {
-                
-                CABasicAnimation *animDown = [CABasicAnimation animationWithKeyPath:@"position"];
-                [animDown setDuration:1.0f];
-//                animDown.fromValue = [NSValue valueWithCGPoint:((CALayer *)[iv.layer presentationLayer]).position];
-                animDown.toValue = [NSValue valueWithCGPoint:CGPointMake(((CALayer *)[iv.layer presentationLayer]).position.x,
-                                                                         iv.superview.bounds.size.height)];//myview.superview.bounds.size.height)];
-                // completion処理用に、アニメーションが終了しても登録を残しておく
-                animDown.removedOnCompletion = NO;
-                animDown.fillMode = kCAFillModeForwards;
-                
-                [iv.layer addAnimation:animDown forKey:@"down"];//uiviewから生成したlayerをanimation
-            }
-            [CATransaction commit];
-            
-        }
-        else {
-            // -animationDidStop:finished: の finished=NO に相当
-//            [iv.layer removeAnimationForKey:@"up"];   // 後始末
-        }
-        
-    }];
+    CGPoint kStartPos = iv.center;//((CALayer *)[iv.layer presentationLayer]).position;
+    CGPoint kEndPos = CGPointMake(kStartPos.x + arc4random() % 100 - 50,//iv.bounds.size.width,
+                                  500);//iv.superview.bounds.size.height);//480);//
+    // CAKeyframeAnimationオブジェクトを生成
+    CAKeyframeAnimation *animation;
+    animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+    animation.fillMode = kCAFillModeForwards;
+    animation.removedOnCompletion = NO;
+    animation.duration = 1.0;
     
+    // 放物線のパスを生成
+//    CGFloat jumpHeight = kStartPos.y * 0.2;
+    CGPoint peakPos = CGPointMake((kStartPos.x + kEndPos.x)/2, kStartPos.y * 0.05);//test
+    CGMutablePathRef curvedPath = CGPathCreateMutable();
+    CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
+    CGPathAddCurveToPoint(curvedPath, NULL,
+                          peakPos.x, peakPos.y,
+                          (peakPos.x + kEndPos.x)/2, (peakPos.y + kEndPos.y)/2,
+//                          kStartPos.x + jumpHeight/2, kStartPos.y - jumpHeight,
+//                          kEndPos.x - jumpHeight/2, kStartPos.y - jumpHeight,
+                          kEndPos.x, kEndPos.y);
     
-//    [CATransaction setAnimationDuration:0.5f];
-    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+    // パスをCAKeyframeAnimationオブジェクトにセット
+    animation.path = curvedPath;
     
-    {
-        CABasicAnimation *animUp = [CABasicAnimation animationWithKeyPath:@"position"];
-        [animUp setDuration:0.4f];
-        //最初はアニメーションが始まっていないので中心位置はUIView.centerで取得
-//        animUp.fromValue = [NSValue valueWithCGPoint:iv.center];//((CALayer *)[iv.layer presentationLayer]).position];
-        animUp.toValue = [NSValue valueWithCGPoint:CGPointMake(iv.center.x,//((CALayer *)[iv.layer presentationLayer]).position.x,
-                                                               iv.center.y * 0.2)];//myview.superview.bounds.size.height)];
-        // completion処理用に、アニメーションが終了しても登録を残しておく
-        animUp.removedOnCompletion = NO;
-        animUp.fillMode = kCAFillModeForwards;
-        [iv.layer addAnimation:animUp forKey:@"up"];//uiviewから生成したlayerをanimation
-        
-    }
-    [CATransaction commit];
+    // パスを解放
+    CGPathRelease(curvedPath);
+    
+    // レイヤーにアニメーションを追加
+    [iv.layer addAnimation:animation forKey:nil];
+    
+//methodology1
+//    [CATransaction begin];//up
+////    [CATransaction setAnimationDuration:0.5f];
+//    [CATransaction setCompletionBlock:^{//up終了処理
+//        CAAnimation* animationUp = [iv.layer animationForKey:@"up"];
+//        
+////        NSLog(@"item : x = %f, y = %f",
+////              ((CALayer *)[iv.layer presentationLayer]).position.x,
+////              ((CALayer *)[iv.layer presentationLayer]).position.y);
+//        if (animationUp) {//終了時処理
+//            // -animationDidStop:finished: の finished=YES に相当
+//            
+////            [iv.layer removeAnimationForKey:@"up"];   // 後始末：removeすると"up"開始位置に戻ってしまう
+//            
+//            
+//            
+//            [CATransaction begin];//down
+//            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+//            [CATransaction setCompletionBlock:^{//down終了処理
+//                CAAnimation* animationDown = [iv.layer animationForKey:@"down"];
+//                
+//                if(animationDown){
+//                    NSLog(@"die at center:%f, layer.position:%f, y_loc:%d, %d",//【緊急！】なぜかup終了後の位置を取得している=y_locも同様！＝＞アイテムが取得できない！！
+//                          iv.center.y,
+//                          ((CALayer *)iv.layer.presentationLayer).position.y,y_loc,
+//                          isAlive);
+////                    [iv.layer removeAnimationForKey:@"down"];   // 後始末
+////                    [self die];//下まで行ったら処理
+//                    NSLog(@"die at center:%f, layer.position:%f, y_loc:%d, %d", iv.center.y,
+//                          ((CALayer *)iv.layer.presentationLayer).position.y,y_loc,
+//                          isAlive);
+//                    
+//                }else{
+//                    //途中で別のアニメーション等の割り込み等によってdownアニメが終了しても、別のアニメ終了後に再度downアニメが開始されるように残しておく？
+////                    [iv.layer removeAnimationForKey:@"down"];   // 後始末
+//                }
+//                
+//                
+//                
+//            }];
+//            
+//            {
+//                
+//                CABasicAnimation *animDown = [CABasicAnimation animationWithKeyPath:@"position"];
+//                [animDown setDuration:1.0f];
+////                animDown.fromValue = [NSValue valueWithCGPoint:((CALayer *)[iv.layer presentationLayer]).position];
+//                animDown.toValue = [NSValue valueWithCGPoint:CGPointMake(((CALayer *)[iv.layer presentationLayer]).position.x,
+//                                                                         iv.superview.bounds.size.height)];//myview.superview.bounds.size.height)];
+//                // completion処理用に、アニメーションが終了しても登録を残しておく
+//                animDown.removedOnCompletion = NO;
+//                animDown.fillMode = kCAFillModeForwards;
+//                
+//                [iv.layer addAnimation:animDown forKey:@"down"];//uiviewから生成したlayerをanimation
+//            }
+//            [CATransaction commit];
+//            
+//        }
+//        else {
+//            // -animationDidStop:finished: の finished=NO に相当
+////            [iv.layer removeAnimationForKey:@"up"];   // 後始末
+//        }
+//        
+//    }];
+//    
+//    
+////    [CATransaction setAnimationDuration:0.5f];
+//    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+//    
+//    {
+//        CABasicAnimation *animUp = [CABasicAnimation animationWithKeyPath:@"position"];
+//        [animUp setDuration:0.4f];
+//        //最初はアニメーションが始まっていないので中心位置はUIView.centerで取得
+////        animUp.fromValue = [NSValue valueWithCGPoint:iv.center];//((CALayer *)[iv.layer presentationLayer]).position];
+//        animUp.toValue = [NSValue valueWithCGPoint:CGPointMake(iv.center.x,//((CALayer *)[iv.layer presentationLayer]).position.x,
+//                                                               iv.center.y * 0.2)];//myview.superview.bounds.size.height)];
+//        // completion処理用に、アニメーションが終了しても登録を残しておく
+//        animUp.removedOnCompletion = NO;
+//        animUp.fillMode = kCAFillModeForwards;
+//        [iv.layer addAnimation:animUp forKey:@"up"];//uiviewから生成したlayerをanimation
+//        
+//    }
+//    [CATransaction commit];
 
-    
+//methodology2
 //    [UIView animateWithDuration:0.4f
 //                          delay:0.0f
 //                        options:UIViewAnimationOptionCurveEaseOut//はじめ早く、段々ゆっくりに停止
