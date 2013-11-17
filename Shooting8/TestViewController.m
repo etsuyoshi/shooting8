@@ -18,6 +18,7 @@
 
 
 #import "EnemyClass.h"
+#import "ItemClass.h"
 #import "CreateComponentClass.h"
 #import "TestViewController.h"
 #import "UIView+Animation.h"
@@ -38,6 +39,8 @@ NSMutableArray *uiArray;
 
 #ifdef TRACK_TEST
     NSMutableArray *array_uiv;
+    NSMutableArray *array_layer;
+    NSMutableArray *array_item;
 #endif
 
 int counter;
@@ -115,6 +118,8 @@ int tempCount = 0;
     
 #ifdef TRACK_TEST
     array_uiv = [[NSMutableArray alloc] init];
+    array_layer = [[NSMutableArray alloc]init];
+    array_item = [[NSMutableArray alloc]init];
 #endif
     
     
@@ -215,15 +220,16 @@ int tempCount = 0;
     }
 #elif defined TRACK_TEST
     if([array_uiv count] == 0){//最初に100個作成
-        [self createView:100];
+        [self createView:1];
     }
     if(counter % 50 == 0){//uivを動かすとcounterがゼロになるので実行される
         
         //５秒毎に一個作成
-        [self createView:1];
+//        [self createView:1];//これをやらずにoccureAnimFreeOrbitを実行した段階で初期位置に移動する
         //５秒毎に発生したviewとuivのcenterが異なればuiv.centerへの移動アニメーションを実行させる
 //        [self occureAnim];//createViewで生成した全てのビューに対して実行
-        [self occureAnimFreeOrbit];//occureAnimの任意軌道版
+//        [self occureViewAnimFreeOrbit];//array_uiv内のuiviewに対して、occureAnimの任意軌道版
+        [self occureItemAnimFreeOrbit];//array_item内のitemClassのviewに対して、同様にアニメーション
         
         //trackさせる
         
@@ -709,6 +715,19 @@ int tempCount = 0;
     for(int i = 0 ;i < c;i ++){
         [self.view addSubview:viewInArray];
         [array_uiv addObject:viewInArray];
+        
+    }
+    
+    
+    
+    ItemClass *_item = [[ItemClass alloc] init:5
+                                        x_init:30
+                                        y_init:30
+                                         width:70
+                                        height:70];
+    for(int i = 0; i < c;i++){
+        [array_item addObject:_item];
+        [self.view addSubview:[[array_item objectAtIndex:i] getImageView]];
     }
     
     
@@ -772,7 +791,7 @@ int tempCount = 0;
 }
 
 
--(void) occureAnimFreeOrbit{
+-(void) occureViewAnimFreeOrbit{
     
     //createViewで発生させたビューを移動させる
     //NSTimerで毎カウント実行させて、見た目上、uivが動いたタイミングで他のviewInArrayも動かす
@@ -782,24 +801,31 @@ int tempCount = 0;
         viewInArray = (UIView *)[array_uiv objectAtIndex:i];
         //座標位置が異なればアニメーションさせる
         //        NSLog(@"judge at %d, uiv.x = %f, uiv.y = %f, x = %f, y = %f", i, uiv.center.x, uiv.center.y, viewInArray.center.x, viewInArray.center.y);
-        if(uiv.center.x != viewInArray.center.x ||
-           uiv.center.y != viewInArray.center.y){
-            
+//        if(uiv.center.x != viewInArray.center.x ||
+//           uiv.center.y != viewInArray.center.y){
+        
             //            NSLog(@"start anim at i=%d", i);
             
             CGPoint kStartPos = ((CALayer *)[viewInArray.layer presentationLayer]).position;//viewInArray.center;//((CALayer *)[iv.layer presentationLayer]).position;
+//        CGPoint kStartPos = ((CALayer *)[((UIView *)[array_uiv objectAtIndex:i]).layer presentationLayer]).position;
             CGPoint kEndPos = uiv.center;//CGPointMake(kStartPos.x + arc4random() % 100 - 50,//iv.bounds.size.width,
 //                                          500);//iv.superview.bounds.size.height);//480);//
             [CATransaction begin];
             [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
             [CATransaction setCompletionBlock:^{//終了処理
+                
+                
+                
                 CAAnimation* animationKeyFrame = [viewInArray.layer animationForKey:@"position"];
+//                CAAnimation *animationKeyFrame = [((UIView *)[array_uiv objectAtIndex:i]).layer animationForKey:@"position"];
                 if(animationKeyFrame){
-                    //途中で終わらずにアニメーションが全て完了して
+                    //途中で遮られずにアニメーションが全て完了した場合
                     //            [self die];
+//                    [viewInArray removeFromSuperview];
+//                    [viewInArray.layer removeAnimationForKey:@"position"];   // 後始末:これをやるとviewが消える。
                     NSLog(@"animation key frame already exit & die");
                 }else{
-                    //途中で何らかの理由で遮られた場合
+                    //途中で何らかの理由で遮られた場合=>なぜかここに制御が移らない(既に終了している可能性濃厚)
                     NSLog(@"animation key frame not exit");
                 }
                 
@@ -812,7 +838,7 @@ int tempCount = 0;
                 animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
                 animation.fillMode = kCAFillModeForwards;
                 animation.removedOnCompletion = NO;
-                animation.duration = 3.0;
+                animation.duration = 1.0;
                 
                 // 放物線のパスを生成
                 //    CGFloat jumpHeight = kStartPos.y * 0.2;
@@ -822,8 +848,6 @@ int tempCount = 0;
                 CGPathAddCurveToPoint(curvedPath, NULL,
                                       peakPos.x, peakPos.y,
                                       (peakPos.x + kEndPos.x)/2, (peakPos.y + kEndPos.y)/2,
-                                      //                          kStartPos.x + jumpHeight/2, kStartPos.y - jumpHeight,
-                                      //                          kEndPos.x - jumpHeight/2, kStartPos.y - jumpHeight,
                                       kEndPos.x, kEndPos.y);
                 
                 // パスをCAKeyframeAnimationオブジェクトにセット
@@ -834,14 +858,94 @@ int tempCount = 0;
                 
                 // レイヤーにアニメーションを追加
                 [viewInArray.layer addAnimation:animation forKey:@"position"];
+//                [((UIView *)[array_uiv objectAtIndex:i]).layer addAnimation:animation forKey:@"position"];
                 
             }
             [CATransaction commit];
-        }
+//        }
         
     }
     
 }
+
+
+-(void) occureItemAnimFreeOrbit{
+    
+    //createViewで発生させたビューを移動させる
+    //NSTimerで毎カウント実行させて、見た目上、uivが動いたタイミングで他のviewInArrayも動かす
+    UIView *viewInArray;
+    for(int i = 0;i < [array_item count];i++){
+        //        NSLog(@"array count = %d", i);
+        viewInArray = (UIView *)[[array_item objectAtIndex:i] getImageView];
+        //座標位置が異なればアニメーションさせる
+        //        NSLog(@"judge at %d, uiv.x = %f, uiv.y = %f, x = %f, y = %f", i, uiv.center.x, uiv.center.y, viewInArray.center.x, viewInArray.center.y);
+        //        if(uiv.center.x != viewInArray.center.x ||
+        //           uiv.center.y != viewInArray.center.y){
+        
+        //            NSLog(@"start anim at i=%d", i);
+        
+        CGPoint kStartPos = ((CALayer *)[viewInArray.layer presentationLayer]).position;//viewInArray.center;//((CALayer *)[iv.layer presentationLayer]).position;
+        //        CGPoint kStartPos = ((CALayer *)[((UIView *)[array_uiv objectAtIndex:i]).layer presentationLayer]).position;
+        CGPoint kEndPos = uiv.center;//CGPointMake(kStartPos.x + arc4random() % 100 - 50,//iv.bounds.size.width,
+        //                                          500);//iv.superview.bounds.size.height);//480);//
+        [CATransaction begin];
+        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+        [CATransaction setCompletionBlock:^{//終了処理
+            
+            
+            
+            CAAnimation* animationKeyFrame = [viewInArray.layer animationForKey:@"position"];
+            //                CAAnimation *animationKeyFrame = [((UIView *)[array_uiv objectAtIndex:i]).layer animationForKey:@"position"];
+            if(animationKeyFrame){
+                //途中で遮られずにアニメーションが全て完了した場合
+                //            [self die];
+                //                    [viewInArray removeFromSuperview];
+                //                    [viewInArray.layer removeAnimationForKey:@"position"];   // 後始末:これをやるとviewが消える。
+                NSLog(@"animation key frame already exit & die");
+            }else{
+                //途中で何らかの理由で遮られた場合=>なぜかここに制御が移らない(既に終了している可能性濃厚)
+                NSLog(@"animation key frame not exit");
+            }
+            
+        }];
+        
+        {
+            
+            // CAKeyframeAnimationオブジェクトを生成
+            CAKeyframeAnimation *animation;
+            animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+            animation.fillMode = kCAFillModeForwards;
+            animation.removedOnCompletion = NO;
+            animation.duration = 1.0;
+            
+            // 放物線のパスを生成
+            //    CGFloat jumpHeight = kStartPos.y * 0.2;
+            CGPoint peakPos = CGPointMake((kStartPos.x + kEndPos.x)/2, kStartPos.y * 0.05);//test
+            CGMutablePathRef curvedPath = CGPathCreateMutable();
+            CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
+            CGPathAddCurveToPoint(curvedPath, NULL,
+                                  peakPos.x, peakPos.y,
+                                  (peakPos.x + kEndPos.x)/2, (peakPos.y + kEndPos.y)/2,
+                                  kEndPos.x, kEndPos.y);
+            
+            // パスをCAKeyframeAnimationオブジェクトにセット
+            animation.path = curvedPath;
+            
+            // パスを解放
+            CGPathRelease(curvedPath);
+            
+            // レイヤーにアニメーションを追加
+            [viewInArray.layer addAnimation:animation forKey:@"position"];
+            //                [((UIView *)[array_uiv objectAtIndex:i]).layer addAnimation:animation forKey:@"position"];
+            
+        }
+        [CATransaction commit];
+        //        }
+        
+    }
+    
+}
+
 #endif
 
 @end

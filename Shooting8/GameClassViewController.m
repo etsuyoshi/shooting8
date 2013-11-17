@@ -572,46 +572,100 @@ UIView *viewMyEffect;
 //            CALayer *_itemLayer1 = [[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer];
 //            NSLog(@"i=%d, x=%f, y=%f, dist = %f",i,  _itemLayer1.position.x, _itemLayer1.position.y, [self getDistance:_itemLayer1.position.x y:_itemLayer1.position.y]);
             
-//            if(true){
-            if(isMagnetMode && !([[ItemArray objectAtIndex:i] getIsMagnetMode])){//ゲーム自体のmagnetModeかアイテム個体のmagnetModeか
+            if(true){//常にマグネットモード
+            //自機位置が変更された場合に対応するため常に監視しておく必要がある。
+//            if(isMagnetMode && !([[ItemArray objectAtIndex:i] getIsMagnetMode])){//ゲーム自体のmagnetModeかアイテム個体のmagnetModeか
                 [[ItemArray objectAtIndex:i] setIsMagnetMode:YES];
 //                NSLog(@"マグネットモード");
 //                CGPoint _itemLoc = [[ItemArray objectAtIndex:i] getImageView].center;
-                CALayer *_itemLayer = [[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer];
+//                CALayer *_itemLayer = [[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer];
+                UIView *_itemView = (UIView *)[[ItemArray objectAtIndex:i] getImageView];
 //                NSLog(@"xItem:%f, yItem:%f,", _itemLoc.x, _itemLoc.y);
                 //myMachine and item are neighbor
                 
 //                if([self getDistance:_itemLoc.x y:_itemLoc.y] < diameterMagnet){
-                if([self getDistance:_itemLayer.position.x y:_itemLayer.position.y] < diameterMagnet){
-                    
-                    
+//                if([self getDistance:_itemLayer.position.x y:_itemLayer.position.y] < diameterMagnet){
+                if(true){//test:全ての範囲のアイテムに対して
+//                    CGPoint kStartPos = ((CALayer *)[[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer]).position;//viewInArray.center;//((CALayer *)[iv.layer presentationLayer]).position;
+                    CGPoint kStartPos = ((CALayer *)[_itemView.layer presentationLayer]).position;
+                    CGPoint kEndPos = [MyMachine getImageView].center;//CGPointMake(kStartPos.x + arc4random() % 100 - 50,//iv.bounds.size.width,
+                    //                                          500);//iv.superview.bounds.size.height);//480);//
+                    NSLog(@"start[x,y]=%f, %f, end[x,y]=%f, %f",kStartPos.x,kStartPos.y,kEndPos.x,kEndPos.y);
                     [CATransaction begin];
-                    //        [CATransaction setAnimationDuration:0.5f];
                     [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+                    [CATransaction setCompletionBlock:^{//終了処理
+//                        CAAnimation* animationKeyFrame = [((UIView *)[[ItemArray objectAtIndex:i] getImageView]).layer animationForKey:@"position"];
+                        CAAnimation *animationKeyFrame = [_itemView.layer animationForKey:@"position"];
+                        if(animationKeyFrame){
+                            //途中で終わらずにアニメーションが全て完了して
+                            //            [self die];
+                            NSLog(@"animation key frame already exit & die");
+                        }else{
+                            //途中で何らかの理由で遮られた場合
+                            NSLog(@"animation key frame not exit");
+                        }
+                        
+                    }];
+                    
                     {
-                        [CATransaction setAnimationDuration:2.0f];//時間
-                        //        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
                         
-                        //        viewLayerTest.layer.position=CGPointMake(200, 200);
-                        //        viewLayerTest.layer.opacity=0.5;
+                        // CAKeyframeAnimationオブジェクトを生成
+                        CAKeyframeAnimation *animation;
+                        animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+                        animation.fillMode = kCAFillModeForwards;
+                        animation.removedOnCompletion = NO;
+                        animation.duration = 0.1f;
+                        
+                        // 放物線のパスを生成
+                        //    CGFloat jumpHeight = kStartPos.y * 0.2;
+//                        CGPoint peakPos = CGPointMake((kStartPos.x + kEndPos.x)/2, (kStartPos.y * kEndPos.y)/2);//test
+                        CGPoint peakPos = CGPointMake((kStartPos.x + kEndPos.x)/2, (kStartPos.y + kEndPos.y) / 2);//test
+                        CGMutablePathRef curvedPath = CGPathCreateMutable();
+                        CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
+                        CGPathAddCurveToPoint(curvedPath, NULL,
+                                              peakPos.x, peakPos.y,
+                                              (peakPos.x + kEndPos.x)/2, (peakPos.y + kEndPos.y)/2,
+                                              kEndPos.x, kEndPos.y);
+                        
+                        // パスをCAKeyframeAnimationオブジェクトにセット
+                        animation.path = curvedPath;
+                        
+                        // パスを解放
+                        CGPathRelease(curvedPath);
+                        
+                        // レイヤーにアニメーションを追加
+//                        [[[ItemArray objectAtIndex:i] getImageView].layer addAnimation:animation forKey:@"position"];
+                        [_itemView.layer addAnimation:animation forKey:@"position"];
+                        
+                    }
+                    [CATransaction commit];
+//                    [CATransaction begin];
+//                    //        [CATransaction setAnimationDuration:0.5f];
+//                    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+//                    {
+//                        [CATransaction setAnimationDuration:2.0f];//時間
+//                        //        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
 //                        
-                        CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"position"];
-//                        CABasicAnimation *anim = (CABasicAnimation *)[[[ItemArray objectAtIndex:i] getImageView].layer animationForKey:@"position"];
-                        [anim setDuration:1.5f];
-//                        anim.fromValue = [NSValue valueWithCGPoint:((CALayer *)[[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer]).position];//現在位置
-                        //            anim.toValue = [NSValue valueWithCGPoint:CGPointMake(self.view.bounds.size.width,
-                        //                                                                 self.view.bounds.size.height)];
-                        
-                        anim.toValue = [NSValue valueWithCGPoint:[MyMachine getImageView].center];
-                        
-                        
-                        anim.removedOnCompletion = NO;
-                        anim.fillMode = kCAFillModeForwards;
-                        [[[ItemArray objectAtIndex:i] getImageView].layer addAnimation:anim forKey:@"position"];
-                        
-                        //        mylayer.position=CGPointMake(200, 200);
-                        //        mylayer.opacity=0.5;
-                    } [CATransaction commit];
+//                        //        viewLayerTest.layer.position=CGPointMake(200, 200);
+//                        //        viewLayerTest.layer.opacity=0.5;
+////                        
+//                        CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"position"];
+////                        CABasicAnimation *anim = (CABasicAnimation *)[[[ItemArray objectAtIndex:i] getImageView].layer animationForKey:@"position"];
+//                        [anim setDuration:1.5f];
+////                        anim.fromValue = [NSValue valueWithCGPoint:((CALayer *)[[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer]).position];//現在位置
+//                        //            anim.toValue = [NSValue valueWithCGPoint:CGPointMake(self.view.bounds.size.width,
+//                        //                                                                 self.view.bounds.size.height)];
+//                        
+//                        anim.toValue = [NSValue valueWithCGPoint:[MyMachine getImageView].center];
+//                        
+//                        
+//                        anim.removedOnCompletion = NO;
+//                        anim.fillMode = kCAFillModeForwards;
+//                        [[[ItemArray objectAtIndex:i] getImageView].layer addAnimation:anim forKey:@"position"];
+//                        
+//                        //        mylayer.position=CGPointMake(200, 200);
+//                        //        mylayer.opacity=0.5;
+//                    } [CATransaction commit];
                     
                     
                     
@@ -1054,7 +1108,7 @@ UIView *viewMyEffect;
                                 //テスト：順番に作成
 //                                NSLog(@"item occur : %d", countItem);
 //                                _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xEnemy y_init:_yEnemy width:50 height:50];
-                                //only magnet
+                                //test:only magnet
                                 _item = [[ItemClass alloc] init:5 x_init:_xEnemy y_init:_yEnemy width:OBJECT_SIZE height:OBJECT_SIZE];
                                 
 //                                [ItemArray addObject:_item];

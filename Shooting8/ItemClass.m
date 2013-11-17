@@ -196,8 +196,6 @@
         CGPathAddCurveToPoint(curvedPath, NULL,
                               peakPos.x, peakPos.y,
                               (peakPos.x + kEndPos.x)/2, (peakPos.y + kEndPos.y)/2,
-                              //                          kStartPos.x + jumpHeight/2, kStartPos.y - jumpHeight,
-                              //                          kEndPos.x - jumpHeight/2, kStartPos.y - jumpHeight,
                               kEndPos.x, kEndPos.y);
         
         // パスをCAKeyframeAnimationオブジェクトにセット
