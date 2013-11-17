@@ -167,10 +167,10 @@
     [CATransaction begin];
     [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
     [CATransaction setCompletionBlock:^{//終了処理
-        CAAnimation* animationKeyFrame = [iv.layer animationForKey:@"freeDown"];
+        CAAnimation* animationKeyFrame = [iv.layer animationForKey:@"position"];
         if(animationKeyFrame){
-            //途中で終わらずにアニメーションが全て完了したら
-            [self die];
+            //途中で終わらずにアニメーションが全て完了して
+//            [self die];
             NSLog(@"animation key frame already exit & die");
         }else{
             //途中で何らかの理由で遮られた場合
@@ -207,7 +207,7 @@
         CGPathRelease(curvedPath);
         
         // レイヤーにアニメーションを追加
-        [iv.layer addAnimation:animation forKey:@"freeDown"];
+        [iv.layer addAnimation:animation forKey:@"position"];
         
     }
     [CATransaction commit];

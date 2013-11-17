@@ -9,9 +9,13 @@
 //＝＞タイミングの問題(制御文の記述タイミングではなく、「複数の」アイテム発生と取得の制御のタイミング)
 //testViewにおいて、複数発生した場合の挙動について確認
 //具体的には任意タイミングで発生するアイテムに対して、何らかのトリガーで(発生後すぐ？)uiv.centerに移動アニメーション
-
+//キーにpositionを設定して移動アニメーションと同値にしたところうまく行く。
+//恐らく(同一キーになっているアニメーションを繋げる機能があるらしいため)アイテム生成時の軌道も同一にする必要があるかもしれない
+//とりあえず現状は大体(？)のsweepアニメが実行されるので、一件落着。
 
 //問題点：②magnetmodeで自機位置に移動したアイテムが取得されない場合がある
+
+//testviewで配列生成、アニメーションで指定位置に動かした時に消去する仕組みを作成
 //問題点：③追跡モード(新規更新必要)
 //現状は「if(isMagnetMode && !([[ItemArray objectAtIndex:i] getIsMagnetMode])){」になっているため。
 
@@ -71,9 +75,9 @@
 
 #define STATUSBAR_MODE
 #define ENEMY_TEST
-#ifdef ENEMY_TEST
+//#ifdef ENEMY_TEST
 #define FREQ_ENEMY 10//Freq_Enemyカウントに一回発生
-#endif
+//#endif
 
 //#define COUNT_TEST
 
@@ -585,15 +589,16 @@ UIView *viewMyEffect;
                     //        [CATransaction setAnimationDuration:0.5f];
                     [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
                     {
-                        [CATransaction setAnimationDuration:2];
+                        [CATransaction setAnimationDuration:2.0f];//時間
                         //        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
                         
                         //        viewLayerTest.layer.position=CGPointMake(200, 200);
                         //        viewLayerTest.layer.opacity=0.5;
-                        
+//                        
                         CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"position"];
-                        [anim setDuration:0.5f];
-                        anim.fromValue = [NSValue valueWithCGPoint:((CALayer *)[[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer]).position];//現在位置
+//                        CABasicAnimation *anim = (CABasicAnimation *)[[[ItemArray objectAtIndex:i] getImageView].layer animationForKey:@"position"];
+                        [anim setDuration:1.5f];
+//                        anim.fromValue = [NSValue valueWithCGPoint:((CALayer *)[[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer]).position];//現在位置
                         //            anim.toValue = [NSValue valueWithCGPoint:CGPointMake(self.view.bounds.size.width,
                         //                                                                 self.view.bounds.size.height)];
                         
@@ -602,7 +607,7 @@ UIView *viewMyEffect;
                         
                         anim.removedOnCompletion = NO;
                         anim.fillMode = kCAFillModeForwards;
-                        [[[ItemArray objectAtIndex:i] getImageView].layer addAnimation:anim forKey:@"sweep"];
+                        [[[ItemArray objectAtIndex:i] getImageView].layer addAnimation:anim forKey:@"position"];
                         
                         //        mylayer.position=CGPointMake(200, 200);
                         //        mylayer.opacity=0.5;
@@ -1378,16 +1383,26 @@ UIView *viewMyEffect;
 //        }
 //    }
 //    NSLog(@"%f", count);
-    for(int tempCount = 0; tempCount < 1000000;tempCount++){
-        //Freq_Enemyカウントに一回発生
-        if((int)(count * 100) % (tempCount * FREQ_ENEMY) == 0){
-//            NSLog(@"%dsec", (int)(count));
-            isYield = true;
-            break;
-        }else{
-            isYield = false;
-        }
+    
+    
+//#ifdef FREQ_ENEMY
+//    for(int tempCount = 0; tempCount < 1000;tempCount++){
+//        //Freq_Enemyカウントに一回発生
+//        if((int)(count * 100) % (tempCount * FREQ_ENEMY) == 0){
+////            NSLog(@"%dsec", (int)(count));
+//            isYield = true;
+//            break;
+//        }else{
+//            isYield = false;
+//        }
+//    }
+//#endif
+    
+    //randomに発生
+    if(arc4random() % 20 == 0){
+        isYield = true;
     }
+    
 #endif
     if(isYield){
         enemyCount ++;

@@ -11,10 +11,10 @@
 //#define MODE3
 //#define MODE4
 
-#define CATRANSACTION_TEST
+//#define CATRANSACTION_TEST
 //#define TEST_EFFECT
 //#define ORBITPATH_TEST
-//#define TRACK_TEST
+#define TRACK_TEST
 
 
 #import "EnemyClass.h"
@@ -35,12 +35,16 @@ UIImageView *uiiv;
 NSString *imageName;
 NSTimer *tm;
 NSMutableArray *uiArray;
+
+#ifdef TRACK_TEST
+    NSMutableArray *array_uiv;
+#endif
+
 int counter;
 UIView *circleView;
 CALayer *mylayer;
 UIView *viewLayerTest;
 
-NSMutableArray *array_uiv;
 
 int tempCount = 0;
 
@@ -108,6 +112,12 @@ int tempCount = 0;
     imageName = [NSString stringWithFormat:@"tool_bomb.png"];
     
     uiArray = [[NSMutableArray alloc]init];
+    
+#ifdef TRACK_TEST
+    array_uiv = [[NSMutableArray alloc] init];
+#endif
+    
+    
     tm = [NSTimer scheduledTimerWithTimeInterval:0.1
                                           target:self
                                         selector:@selector(time:)//タイマー呼び出し
@@ -204,7 +214,17 @@ int tempCount = 0;
         [self explodeTest];
     }
 #elif defined TRACK_TEST
-    if(counter % 50 == 0){
+    if([array_uiv count] == 0){//最初に100個作成
+        [self createView:100];
+    }
+    if(counter % 50 == 0){//uivを動かすとcounterがゼロになるので実行される
+        
+        //５秒毎に一個作成
+        [self createView:1];
+        //５秒毎に発生したviewとuivのcenterが異なればuiv.centerへの移動アニメーションを実行させる
+//        [self occureAnim];//createViewで生成した全てのビューに対して実行
+        [self occureAnimFreeOrbit];//occureAnimの任意軌道版
+        
         //trackさせる
         
         /*
@@ -213,31 +233,31 @@ int tempCount = 0;
          */
         
         
-        [CATransaction begin];
-        //        [CATransaction setAnimationDuration:0.5f];
-        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
-        {
-            [CATransaction setAnimationDuration:2];
-            //        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-            
-            //        viewLayerTest.layer.position=CGPointMake(200, 200);
-            //        viewLayerTest.layer.opacity=0.5;
-            
-            CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"position"];
-            [anim setDuration:0.5f];
-            anim.fromValue = [NSValue valueWithCGPoint:((CALayer *)[viewLayerTest.layer presentationLayer]).position];//現在位置
-            //            anim.toValue = [NSValue valueWithCGPoint:CGPointMake(self.view.bounds.size.width,
-            //                                                                 self.view.bounds.size.height)];
-            
-            anim.toValue = [NSValue valueWithCGPoint:uiv.center];
-            
-            
-            anim.removedOnCompletion = NO;
-            anim.fillMode = kCAFillModeForwards;
-            [viewLayerTest.layer addAnimation:anim forKey:@"sweep"];
-            
-            //        mylayer.position=CGPointMake(200, 200);
-            //        mylayer.opacity=0.5;
+//        [CATransaction begin];
+//        //        [CATransaction setAnimationDuration:0.5f];
+//        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+//        {
+//            [CATransaction setAnimationDuration:2];
+//            //        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+//            
+//            //        viewLayerTest.layer.position=CGPointMake(200, 200);
+//            //        viewLayerTest.layer.opacity=0.5;
+//            
+//            CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"position"];
+//            [anim setDuration:0.5f];
+//            anim.fromValue = [NSValue valueWithCGPoint:((CALayer *)[viewLayerTest.layer presentationLayer]).position];//現在位置
+//            //            anim.toValue = [NSValue valueWithCGPoint:CGPointMake(self.view.bounds.size.width,
+//            //                                                                 self.view.bounds.size.height)];
+//            
+//            anim.toValue = [NSValue valueWithCGPoint:uiv.center];
+//            
+//            
+//            anim.removedOnCompletion = NO;
+//            anim.fillMode = kCAFillModeForwards;
+//            [viewLayerTest.layer addAnimation:anim forKey:@"position"];
+//            
+//            //        mylayer.position=CGPointMake(200, 200);
+//            //        mylayer.opacity=0.5;
         
         
         
@@ -312,11 +332,11 @@ int tempCount = 0;
 //            // レイヤーにアニメーションを追加
 //            [viewLayerTest.layer addAnimation:animation forKey:@"freeDown"];
             
-        }
-        [CATransaction commit];
+//        }
+//        [CATransaction commit];
     }
     
-#elif defined CATRANSACTION_TEST
+#elif defined CATRANSACTION_TEST//うまくいってる
     
     NSLog(@"y=%f", ((CALayer *)viewLayerTest.layer.presentationLayer).position.y);
     if(((CALayer *)viewLayerTest.layer.presentationLayer).position.y >= self.view.bounds.size.height - 10 ||
@@ -336,10 +356,10 @@ int tempCount = 0;
             CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"position"];
             [anim setDuration:0.5f];
             anim.fromValue = [NSValue valueWithCGPoint:((CALayer *)[viewLayerTest.layer presentationLayer]).position];//現在位置
-            anim.toValue = [NSValue valueWithCGPoint:CGPointMake(self.view.bounds.size.width,
-                                                                 self.view.bounds.size.height)];
+//            anim.toValue = [NSValue valueWithCGPoint:CGPointMake(self.view.bounds.size.width,
+//                                                                 self.view.bounds.size.height)];
             
-//            anim.toValue = [NSValue valueWithCGPoint:uiv.center];
+            anim.toValue = [NSValue valueWithCGPoint:uiv.center];
             
             
             anim.removedOnCompletion = NO;
@@ -679,5 +699,149 @@ int tempCount = 0;
     // レイヤーにアニメーションを追加
     [uiv.layer addAnimation:animation forKey:nil];
 }
+
+#ifdef TRACK_TEST
+-(void)createView:(int)c{
+    UIView *viewInArray = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 100, 40)];
+    [viewInArray setBackgroundColor:[UIColor colorWithRed:1 green:1 blue:((float)[array_uiv count]) /255.0f alpha:1.0f]];
+    [self.view bringSubviewToFront:viewInArray];
+    
+    for(int i = 0 ;i < c;i ++){
+        [self.view addSubview:viewInArray];
+        [array_uiv addObject:viewInArray];
+    }
+    
+    
+    /*
+     
+     tonarinoyatuurusei
+     tonarinoyatuurusei
+     tonarinoyatuurusei
+     
+     */
+}
+
+
+-(void) occureAnim{
+    
+    //createViewで発生させたビューを移動させる
+    //NSTimerで毎カウント実行させて、見た目上、uivが動いたタイミングで他のviewInArrayも動かす
+    UIView *viewInArray;
+    for(int i = 0;i < [array_uiv count];i++){
+//        NSLog(@"array count = %d", i);
+        viewInArray = (UIView *)[array_uiv objectAtIndex:i];
+        //座標位置が異なればアニメーションさせる
+//        NSLog(@"judge at %d, uiv.x = %f, uiv.y = %f, x = %f, y = %f", i, uiv.center.x, uiv.center.y, viewInArray.center.x, viewInArray.center.y);
+        if(uiv.center.x != viewInArray.center.x ||
+           uiv.center.y != viewInArray.center.y){
+            
+//            NSLog(@"start anim at i=%d", i);
+            
+            [CATransaction begin];
+            //        [CATransaction setAnimationDuration:0.5f];
+            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+            {
+                [CATransaction setAnimationDuration:2];
+                //        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+                
+                //        viewLayerTest.layer.position=CGPointMake(200, 200);
+                //        viewLayerTest.layer.opacity=0.5;
+                
+//                CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"toCenterPosition"];
+                CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"position"];
+                [anim setDuration:0.5f];
+                anim.fromValue = [NSValue valueWithCGPoint:((CALayer *)[viewInArray.layer presentationLayer]).position];//現在位置
+                //            anim.toValue = [NSValue valueWithCGPoint:CGPointMake(self.view.bounds.size.width,
+                //                                                                 self.view.bounds.size.height)];
+                
+                anim.toValue = [NSValue valueWithCGPoint:uiv.center];
+                
+                
+                anim.removedOnCompletion = NO;
+                anim.fillMode = kCAFillModeForwards;
+//                [viewLayerTest.layer addAnimation:anim forKey:@"toCenterPosition"];
+                [viewInArray.layer addAnimation:anim forKey:@"position"];
+                
+                //        mylayer.position=CGPointMake(200, 200);
+                //        mylayer.opacity=0.5;
+            } [CATransaction commit];
+        }
+
+    }
+
+}
+
+
+-(void) occureAnimFreeOrbit{
+    
+    //createViewで発生させたビューを移動させる
+    //NSTimerで毎カウント実行させて、見た目上、uivが動いたタイミングで他のviewInArrayも動かす
+    UIView *viewInArray;
+    for(int i = 0;i < [array_uiv count];i++){
+        //        NSLog(@"array count = %d", i);
+        viewInArray = (UIView *)[array_uiv objectAtIndex:i];
+        //座標位置が異なればアニメーションさせる
+        //        NSLog(@"judge at %d, uiv.x = %f, uiv.y = %f, x = %f, y = %f", i, uiv.center.x, uiv.center.y, viewInArray.center.x, viewInArray.center.y);
+        if(uiv.center.x != viewInArray.center.x ||
+           uiv.center.y != viewInArray.center.y){
+            
+            //            NSLog(@"start anim at i=%d", i);
+            
+            CGPoint kStartPos = ((CALayer *)[viewInArray.layer presentationLayer]).position;//viewInArray.center;//((CALayer *)[iv.layer presentationLayer]).position;
+            CGPoint kEndPos = uiv.center;//CGPointMake(kStartPos.x + arc4random() % 100 - 50,//iv.bounds.size.width,
+//                                          500);//iv.superview.bounds.size.height);//480);//
+            [CATransaction begin];
+            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+            [CATransaction setCompletionBlock:^{//終了処理
+                CAAnimation* animationKeyFrame = [viewInArray.layer animationForKey:@"position"];
+                if(animationKeyFrame){
+                    //途中で終わらずにアニメーションが全て完了して
+                    //            [self die];
+                    NSLog(@"animation key frame already exit & die");
+                }else{
+                    //途中で何らかの理由で遮られた場合
+                    NSLog(@"animation key frame not exit");
+                }
+                
+            }];
+            
+            {
+                
+                // CAKeyframeAnimationオブジェクトを生成
+                CAKeyframeAnimation *animation;
+                animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+                animation.fillMode = kCAFillModeForwards;
+                animation.removedOnCompletion = NO;
+                animation.duration = 3.0;
+                
+                // 放物線のパスを生成
+                //    CGFloat jumpHeight = kStartPos.y * 0.2;
+                CGPoint peakPos = CGPointMake((kStartPos.x + kEndPos.x)/2, kStartPos.y * 0.05);//test
+                CGMutablePathRef curvedPath = CGPathCreateMutable();
+                CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
+                CGPathAddCurveToPoint(curvedPath, NULL,
+                                      peakPos.x, peakPos.y,
+                                      (peakPos.x + kEndPos.x)/2, (peakPos.y + kEndPos.y)/2,
+                                      //                          kStartPos.x + jumpHeight/2, kStartPos.y - jumpHeight,
+                                      //                          kEndPos.x - jumpHeight/2, kStartPos.y - jumpHeight,
+                                      kEndPos.x, kEndPos.y);
+                
+                // パスをCAKeyframeAnimationオブジェクトにセット
+                animation.path = curvedPath;
+                
+                // パスを解放
+                CGPathRelease(curvedPath);
+                
+                // レイヤーにアニメーションを追加
+                [viewInArray.layer addAnimation:animation forKey:@"position"];
+                
+            }
+            [CATransaction commit];
+        }
+        
+    }
+    
+}
+#endif
 
 @end
