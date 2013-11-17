@@ -47,14 +47,14 @@
 //    http://stackoverflow.com/questions/9395914/switch-with-typedef-enum-type-from-string
     type = _type;
     switch(type){
-        case ItemTypeWeapon0:{//青：攻撃力上昇
+        case ItemTypeWeapon0:{//青：攻撃力上昇 at int 0
 //            rect = CGRectMake(x_loc, y_loc, w, h);
             rect = CGRectMake(x_loc, y_loc, w, h);
             iv = [[UIImageView alloc]initWithFrame:rect];
             iv.image = [UIImage imageNamed:@"weapon_bomb.png"];
             break;
         }
-        case ItemTypeWeapon1:{
+        case ItemTypeWeapon1:{//1
             rect = CGRectMake(x_loc, y_loc, w, h);
             iv = [[UIImageView alloc]initWithFrame:rect];
             iv.image = [UIImage imageNamed:@"weapon_diffuse.png"];
@@ -79,6 +79,12 @@
             iv = [[UIImageView alloc]initWithFrame:rect];
             iv.image = [UIImage imageNamed:@"defense_shield.png"];
             
+            break;
+        }
+        case ItemTypeMagnet:{//5
+            rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
+            iv = [[UIImageView alloc]initWithFrame:rect];
+            iv.image = [UIImage imageNamed:@"tool_magnet.png"];
             break;
         }
         case ItemTypeBomb://画面内敵全滅
@@ -130,12 +136,6 @@
             iv.image = [UIImage imageNamed:@"coin_red.png"];
             break;
         }
-        case ItemTypeMagnet:{
-            rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
-            iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"tool_magnet.png"];
-            break;
-        }
         case ItemTypeBig:{
             rect = CGRectMake(x_loc, y_loc, w, h);//コインは解像度が低いのでサイズを小さくして表示する
             iv = [[UIImageView alloc]initWithFrame:rect];
@@ -164,33 +164,53 @@
     CGPoint kStartPos = iv.center;//((CALayer *)[iv.layer presentationLayer]).position;
     CGPoint kEndPos = CGPointMake(kStartPos.x + arc4random() % 100 - 50,//iv.bounds.size.width,
                                   500);//iv.superview.bounds.size.height);//480);//
-    // CAKeyframeAnimationオブジェクトを生成
-    CAKeyframeAnimation *animation;
-    animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
-    animation.fillMode = kCAFillModeForwards;
-    animation.removedOnCompletion = NO;
-    animation.duration = 1.0;
+    [CATransaction begin];
+    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+    [CATransaction setCompletionBlock:^{//終了処理
+        CAAnimation* animationKeyFrame = [iv.layer animationForKey:@"freeDown"];
+        if(animationKeyFrame){
+            //途中で終わらずにアニメーションが全て完了したら
+            [self die];
+            NSLog(@"animation key frame already exit & die");
+        }else{
+            //途中で何らかの理由で遮られた場合
+            NSLog(@"animation key frame not exit");
+        }
+        
+    }];
     
-    // 放物線のパスを生成
-//    CGFloat jumpHeight = kStartPos.y * 0.2;
-    CGPoint peakPos = CGPointMake((kStartPos.x + kEndPos.x)/2, kStartPos.y * 0.05);//test
-    CGMutablePathRef curvedPath = CGPathCreateMutable();
-    CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
-    CGPathAddCurveToPoint(curvedPath, NULL,
-                          peakPos.x, peakPos.y,
-                          (peakPos.x + kEndPos.x)/2, (peakPos.y + kEndPos.y)/2,
-//                          kStartPos.x + jumpHeight/2, kStartPos.y - jumpHeight,
-//                          kEndPos.x - jumpHeight/2, kStartPos.y - jumpHeight,
-                          kEndPos.x, kEndPos.y);
-    
-    // パスをCAKeyframeAnimationオブジェクトにセット
-    animation.path = curvedPath;
-    
-    // パスを解放
-    CGPathRelease(curvedPath);
-    
-    // レイヤーにアニメーションを追加
-    [iv.layer addAnimation:animation forKey:nil];
+    {
+        
+        // CAKeyframeAnimationオブジェクトを生成
+        CAKeyframeAnimation *animation;
+        animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+        animation.fillMode = kCAFillModeForwards;
+        animation.removedOnCompletion = NO;
+        animation.duration = 3.0;
+        
+        // 放物線のパスを生成
+        //    CGFloat jumpHeight = kStartPos.y * 0.2;
+        CGPoint peakPos = CGPointMake((kStartPos.x + kEndPos.x)/2, kStartPos.y * 0.05);//test
+        CGMutablePathRef curvedPath = CGPathCreateMutable();
+        CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
+        CGPathAddCurveToPoint(curvedPath, NULL,
+                              peakPos.x, peakPos.y,
+                              (peakPos.x + kEndPos.x)/2, (peakPos.y + kEndPos.y)/2,
+                              //                          kStartPos.x + jumpHeight/2, kStartPos.y - jumpHeight,
+                              //                          kEndPos.x - jumpHeight/2, kStartPos.y - jumpHeight,
+                              kEndPos.x, kEndPos.y);
+        
+        // パスをCAKeyframeAnimationオブジェクトにセット
+        animation.path = curvedPath;
+        
+        // パスを解放
+        CGPathRelease(curvedPath);
+        
+        // レイヤーにアニメーションを追加
+        [iv.layer addAnimation:animation forKey:@"freeDown"];
+        
+    }
+    [CATransaction commit];
     
 //methodology1
 //    [CATransaction begin];//up
@@ -218,7 +238,7 @@
 //                          iv.center.y,
 //                          ((CALayer *)iv.layer.presentationLayer).position.y,y_loc,
 //                          isAlive);
-////                    [iv.layer removeAnimationForKey:@"down"];   // 後始末
+////                       // 後始末
 ////                    [self die];//下まで行ったら処理
 //                    NSLog(@"die at center:%f, layer.position:%f, y_loc:%d, %d", iv.center.y,
 //                          ((CALayer *)iv.layer.presentationLayer).position.y,y_loc,
@@ -398,27 +418,29 @@
 
 -(void) die{
     //アイテム消滅時(プレイヤーによる取得時)のパーティクルの初期化
-    killedParticle = [[KiraParticleView alloc] initWithFrame:CGRectMake(x_loc, y_loc, 40, 40)
-                                                                  particleType:ParticleTypeKilled];
-//    [killedParticle setIsEmitting:1];
-    [UIView animateWithDuration:0.5f
-                     animations:^{
-                         [killedParticle setAlpha:3.0f];//最初は濃く
-                     }
-                     completion:^(BOOL finished){
-                         
-                         [UIView animateWithDuration:0.5f//次に徐々に薄く小さく
-                                          animations:^{
-                                              [killedParticle setAlpha:0.0f];
-                                          }
-                                          completion:^(BOOL finished){
-                                              //終了時処理
-                                              [killedParticle setIsEmitting:NO];
-                                              [killedParticle removeFromSuperview];
-
-                                          }];
-                         
-                     }];
+//    killedParticle = [[KiraParticleView alloc] initWithFrame:CGRectMake(x_loc, y_loc, 40, 40)
+//                                                                  particleType:ParticleTypeKilled];
+////    [killedParticle setIsEmitting:1];
+//    [UIView animateWithDuration:0.5f
+//                     animations:^{
+//                         [killedParticle setAlpha:3.0f];//最初は濃く
+//                     }
+//                     completion:^(BOOL finished){
+//                         
+//                         [UIView animateWithDuration:0.5f//次に徐々に薄く小さく
+//                                          animations:^{
+//                                              [killedParticle setAlpha:0.0f];
+//                                          }
+//                                          completion:^(BOOL finished){
+//                                              //終了時処理
+//                                              [killedParticle setIsEmitting:NO];
+//                                              [killedParticle removeFromSuperview];
+//
+//                                          }];
+//                         
+//                     }];
+    
+    NSLog(@"isMagnetMode = %d", isMagnetMode);
     
     
     isAlive = false;

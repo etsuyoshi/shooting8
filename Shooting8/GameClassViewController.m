@@ -1,3 +1,20 @@
+//問題点：①全てのアイテムがmagnetModeになっていない？＝＞落ちたアイテムのisMagnetModeを確認
+//magnetアイテム取得後、全てのアイテムがisMagnetModeになっていることを確認(取得前はfalseになっていることも確認)
+//ではなぜ、自機の隣を「すれ違って」落ちてしまうのか(前提：magnetModeの状態で)
+//0.01secで全てのアイテムを逐次、magnetModeになっているかサンプリング判定しているから？(サンプリング間隔のもれ？)
+//自由落下をゆっくりにしたが、sweepされない。逐次、distanceの取得と範囲内判定もされている->サンプリング漏れが原因ではない。
+//アニメーション設定はされているけど、実際にアニメーションが実行されていない可能性？
+//トラックするメカニズムは実現できた(testview at CATRANSACTION_TEST)
+//それでも挙動は変わらず(磁石を取得した瞬間に発生したアイテムについてはsweepされる)
+//＝＞タイミングの問題(制御文の記述タイミングではなく、「複数の」アイテム発生と取得の制御のタイミング)
+//testViewにおいて、複数発生した場合の挙動について確認
+//具体的には任意タイミングで発生するアイテムに対して、何らかのトリガーで(発生後すぐ？)uiv.centerに移動アニメーション
+
+
+//問題点：②magnetmodeで自機位置に移動したアイテムが取得されない場合がある
+//問題点：③追跡モード(新規更新必要)
+//現状は「if(isMagnetMode && !([[ItemArray objectAtIndex:i] getIsMagnetMode])){」になっているため。
+
 //現状問題点：衝突判定においてアニメーション中なのでレイヤーの位置が取得できていない。
 //superlayerに貼付けた際に当該レイヤーを保存して、後で参照できるようにしておく(現状の方法：[[ItemArray objectAtIndex:i] getImageview].layer.presentationLayerでは別の新規レイヤーを取り出している可能性？
 
@@ -52,8 +69,13 @@
  ・自機の移動はpanGesture:済
  */
 
-//#define TEST
-#define FREQ_ENEMY 10//100カウントに一回発生
+#define STATUSBAR_MODE
+#define ENEMY_TEST
+#ifdef ENEMY_TEST
+#define FREQ_ENEMY 10//Freq_Enemyカウントに一回発生
+#endif
+
+//#define COUNT_TEST
 
 #import "GameClassViewController.h"
 #import "BGMClass.h"
@@ -79,8 +101,12 @@ UIImageView *iv_frame, *iv_myMachine, *iv_enemyBeam, *iv_beam_launch;//, *iv_bac
 UIView *_loadingView;
 UIActivityIndicatorView *_indicator;
 
-#ifdef TEST
+#ifdef COUNT_TEST
 UITextView *tvCount;//テスト用
+#endif
+
+#ifdef STATUSBAR_MODE
+UILabel *label_test;
 #endif
 
 int world_no;
@@ -191,8 +217,8 @@ UIView *viewMyEffect;
     AudioServicesCreateSystemSoundID (sound_hit_URL, &sound_hit_ID);
     CFRelease (sound_hit_URL);
     
-#ifdef TEST
-    //テスト用
+#ifdef COUNT_TEST
+    //秒数カウンターテスト用
     tvCount = [CreateComponentClass createTextView:CGRectMake(0, 100, 100, 50)
                                               text:@"count:0"];
 
@@ -200,6 +226,7 @@ UIView *viewMyEffect;
     tvCount.textColor = [UIColor whiteColor];
     [self.view addSubview:tvCount];
 #endif
+    
     
     // ステータスバーを非表示にする
     if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)])
@@ -376,6 +403,15 @@ UIView *viewMyEffect;
                                         selector:@selector(time:)//タイマー呼び出し
                                         userInfo:nil
                                          repeats:YES];
+    
+#ifdef STATUSBAR_MODE
+    label_test = [[UILabel alloc]initWithFrame:CGRectMake(100, 0, 100, 50)];
+    label_test.text = @"test";
+    label_test.font = [UIFont fontWithName:@"AppleGothic" size:12];
+    [self.view addSubview:label_test];
+    [self.view bringSubviewToFront:label_test];
+#endif
+
 }
 
 
@@ -499,7 +535,7 @@ UIView *viewMyEffect;
             if([(EnemyClass *)[EnemyArray objectAtIndex: i] getDeadTime] >= explosionCycle ||
                [[EnemyArray objectAtIndex:i] getY] >= self.view.bounds.size.height + OBJECT_SIZE){
                 //爆発パーティクルの消去
-#ifdef TEST
+#ifdef COUNT_TEST
                 NSLog(@"enemy remove at at %d", i);
 #endif
                 //explodeした場合は既に画面から消去されている
@@ -527,10 +563,14 @@ UIView *viewMyEffect;
 //                [KiraArray insertObject:[((ItemClass*)[ItemArray objectAtIndex:i]) getMovingParticle:0] atIndex:0];
 //                [self.view addSubview:[KiraArray objectAtIndex:0]];
             }
+
+            //確認用
+//            CALayer *_itemLayer1 = [[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer];
+//            NSLog(@"i=%d, x=%f, y=%f, dist = %f",i,  _itemLayer1.position.x, _itemLayer1.position.y, [self getDistance:_itemLayer1.position.x y:_itemLayer1.position.y]);
             
 //            if(true){
             if(isMagnetMode && !([[ItemArray objectAtIndex:i] getIsMagnetMode])){//ゲーム自体のmagnetModeかアイテム個体のmagnetModeか
-                [[ItemArray objectAtIndex:i] setIsMagnetMode:true];
+                [[ItemArray objectAtIndex:i] setIsMagnetMode:YES];
 //                NSLog(@"マグネットモード");
 //                CGPoint _itemLoc = [[ItemArray objectAtIndex:i] getImageView].center;
                 CALayer *_itemLayer = [[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer];
@@ -540,65 +580,137 @@ UIView *viewMyEffect;
 //                if([self getDistance:_itemLoc.x y:_itemLoc.y] < diameterMagnet){
                 if([self getDistance:_itemLayer.position.x y:_itemLayer.position.y] < diameterMagnet){
                     
+                    
                     [CATransaction begin];
+                    //        [CATransaction setAnimationDuration:0.5f];
                     [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
-                    [CATransaction setCompletionBlock:^{//終了処理
-//                        CAAnimation* animationMag = [[[ItemArray objectAtIndex:i] getImageView].layer animationForKey:@"sweep"];
-                        if(i < [ItemArray count]){
-                            
-                            if(CGRectIntersectsRect(((CALayer*)[MyMachine getImageView].layer.presentationLayer).frame,
-                                                    ((CALayer*)[_item getImageView].layer.presentationLayer).frame)) {
-                                
-                                NSLog(@"collision");
-                                //handle the collision
-                            }
-//                            if([[ItemArray objectAtIndex:i] getIsAlive]){
-                            ItemClass *_item = [ItemArray objectAtIndex:i];
-                            CGPoint pos = [[ItemArray objectAtIndex:i] getImageView].center;
-                            pos = [[_item getImageView].layer convertPoint:pos toLayer:[_item getImageView].layer.superlayer];
-                                NSLog(@"sweep-completion-block at i=%d, %d, x = %d, y = %d, x=%f, y=%f, newX=%f, newY=%f, %f, %f", i,
-                                      [[ItemArray objectAtIndex:i] getIsAlive],
-                                      [[ItemArray objectAtIndex:i] getX],
-                                      [[ItemArray objectAtIndex:i] getY],
-                                      [[ItemArray objectAtIndex:i] getImageView].center.x,
-                                      [[ItemArray objectAtIndex:i] getImageView].center.y,
-                                      pos.x, pos.y,
-                                      ((CALayer *)[[_item getImageView].layer presentationLayer]).position.x,
-                                      ((CALayer *)[[_item getImageView].layer presentationLayer]).position.y);
-                            
-//                            [[[ItemArray objectAtIndex:i]getImageView].layer.presentationLayer removeAnimationForKey:@"sweep"];   // 後始末:元の状態に戻す？removeすると"sweep"開始位置に戻ってしまう
-                            
-                            //自機位置の距離判定して取得判定をしてしまう？
-//                            [self getDistance:0 y:0];
-                        }
-                        //        NSLog(@"item : x = %f, y = %f",
-                        //              ((CALayer *)[iv.layer presentationLayer]).position.x,
-                        //              ((CALayer *)[iv.layer presentationLayer]).position.y);
-                    }];
-                    
-                    
-                    //    [CATransaction setAnimationDuration:0.5f];
-                    
                     {
-                        CABasicAnimation *animSweep = [CABasicAnimation animationWithKeyPath:@"position"];
-                        [animSweep setDuration:0.4f];
-                        //最初はアニメーションが始まっていないので中心位置はUIView.centerで取得
-                        //[ItemArray objectAtIndex:i] getImageView]
+                        [CATransaction setAnimationDuration:2];
+                        //        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
                         
-//                        animSweep.fromValue = [NSValue valueWithCGPoint:_itemLayer.position];
-//                        animSweep.fromValue = [NSValue valueWithCGPoint:CGPointMake(
-//                                               [[ItemArray objectAtIndex:i] getX], [[ItemArray objectAtIndex:i] getY]
-//                                               )];
-//                        animSweep.fromValue = [NSValue valueWithCGPoint:[[ItemArray objectAtIndex:i] getImageView].layer.position];
-                        animSweep.toValue = [NSValue valueWithCGPoint:[MyMachine getImageView].center];//myview.superview.bounds.size.height)];
-//                        animSweep.toValue = [NSValue valueWithCGPoint:CGPointZero];//test
-                        // completion処理用に、アニメーションが終了しても登録を残しておく
-                        animSweep.removedOnCompletion = NO;
-                        animSweep.fillMode = kCAFillModeForwards;
-                        [[[ItemArray objectAtIndex:i] getImageView].layer.presentationLayer addAnimation:animSweep forKey:@"sweep"];//uiviewから生成したlayerをanimation
+                        //        viewLayerTest.layer.position=CGPointMake(200, 200);
+                        //        viewLayerTest.layer.opacity=0.5;
                         
-                    }
-                    [CATransaction commit];
+                        CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"position"];
+                        [anim setDuration:0.5f];
+                        anim.fromValue = [NSValue valueWithCGPoint:((CALayer *)[[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer]).position];//現在位置
+                        //            anim.toValue = [NSValue valueWithCGPoint:CGPointMake(self.view.bounds.size.width,
+                        //                                                                 self.view.bounds.size.height)];
+                        
+                        anim.toValue = [NSValue valueWithCGPoint:[MyMachine getImageView].center];
+                        
+                        
+                        anim.removedOnCompletion = NO;
+                        anim.fillMode = kCAFillModeForwards;
+                        [[[ItemArray objectAtIndex:i] getImageView].layer addAnimation:anim forKey:@"sweep"];
+                        
+                        //        mylayer.position=CGPointMake(200, 200);
+                        //        mylayer.opacity=0.5;
+                    } [CATransaction commit];
+                    
+                    
+                    
+//                    [CATransaction begin];
+//                    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+//                    [CATransaction setCompletionBlock:^{//終了処理
+////                        CAAnimation* animationMag = [[[ItemArray objectAtIndex:i] getImageView].layer animationForKey:@"sweep"];
+//                        if(i < [ItemArray count]){
+////                            CAAnimation *animSwp = [_itemLayer animationForKey:@"freeDown"];//終了判定用
+//                            
+//                            //if collide
+//                            if(CGRectIntersectsRect(((CALayer*)[MyMachine getImageView].layer.presentationLayer).frame,
+//                                                    ((CALayer*)[_item getImageView].layer.presentationLayer).frame)) {
+//                                
+//                                NSLog(@"collision");
+//                                //handle the collision
+//                            }else{//if no collide
+//                                //down animation
+//                                [CATransaction begin];
+//                                [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+//                                [CATransaction setCompletionBlock:^{//終了判定
+//                                    
+//                                }];//終了判定時処理終了
+//                                
+//                                
+//                                {
+//                                    CABasicAnimation *animSweep = [CABasicAnimation animationWithKeyPath:@"position"];
+//                                    [animSweep setDuration:0.4f];
+//                                    //最初はアニメーションが始まっていないので中心位置はUIView.centerで取得
+//                                    //[ItemArray objectAtIndex:i] getImageView]
+//                                    
+//                                    //                        animSweep.fromValue = [NSValue valueWithCGPoint:_itemLayer.position];
+//                                    //                        animSweep.fromValue = [NSValue valueWithCGPoint:CGPointMake(
+//                                    //                                               [[ItemArray objectAtIndex:i] getX], [[ItemArray objectAtIndex:i] getY]
+//                                    //                                               )];
+//                                    //                        animSweep.fromValue = [NSValue valueWithCGPoint:[[ItemArray objectAtIndex:i] getImageView].layer.position];
+//                                    animSweep.toValue = [NSValue valueWithCGPoint:
+//                                                         CGPointMake(_itemLayer.position.x,
+//                                                                     self.view.bounds.size.height)];
+//                                    // completion処理用に、アニメーションが終了しても登録を残しておく
+//                                    animSweep.removedOnCompletion = NO;
+//                                    animSweep.fillMode = kCAFillModeForwards;
+//                                    [[[ItemArray objectAtIndex:i] getImageView].layer.presentationLayer addAnimation:animSweep forKey:@"sweep"];//uiviewから生成したlayerをanimation
+//                                    
+//                                }
+//                                [CATransaction commit];
+//                                
+//
+//                                
+//                            }
+////                            if([[ItemArray objectAtIndex:i] getIsAlive]){
+////                            ItemClass *_item = [ItemArray objectAtIndex:i];
+////                            CGPoint pos = [[ItemArray objectAtIndex:i] getImageView].center;
+////                            pos = [[_item getImageView].layer convertPoint:pos toLayer:[_item getImageView].layer.superlayer];
+//                            
+////                            NSLog(@"sweep-completion-block at i=%d, %d, x = %d, y = %d, x=%f, y=%f, newX=%f, newY=%f, %f, %f", i,
+////                                  [[ItemArray objectAtIndex:i] getIsAlive],
+////                                  [[ItemArray objectAtIndex:i] getX],
+////                                  [[ItemArray objectAtIndex:i] getY],
+////                                  [[ItemArray objectAtIndex:i] getImageView].center.x,
+////                                  [[ItemArray objectAtIndex:i] getImageView].center.y,
+////                                  pos.x, pos.y,
+////                                  ((CALayer *)[[_item getImageView].layer presentationLayer]).position.x,
+////                                  ((CALayer *)[[_item getImageView].layer presentationLayer]).position.y);
+//                            
+//                            
+////                            [[[ItemArray objectAtIndex:i]getImageView].layer.presentationLayer removeAnimationForKey:@"sweep"];   // 後始末:元の状態に戻す？removeすると"sweep"開始位置に戻ってしまう
+//                            
+//                            //自機位置の距離判定して取得判定をしてしまう？
+////                            [self getDistance:0 y:0];
+//                        }
+//                        //        NSLog(@"item : x = %f, y = %f",
+//                        //              ((CALayer *)[iv.layer presentationLayer]).position.x,
+//                        //              ((CALayer *)[iv.layer presentationLayer]).position.y);
+//                    }];//終了判定終了
+//                    
+//                    
+//                    //    [CATransaction setAnimationDuration:0.5f];
+//                    
+//                    {
+//                        CABasicAnimation *animSweep = [CABasicAnimation animationWithKeyPath:@"position"];
+//                        [animSweep setDuration:0.4f];
+//                        //最初はアニメーションが始まっていないので中心位置はUIView.centerで取得
+//                        //[ItemArray objectAtIndex:i] getImageView]
+//                        
+////                        animSweep.fromValue = [NSValue valueWithCGPoint:_itemLayer.position];
+////                        animSweep.fromValue = [NSValue valueWithCGPoint:CGPointMake(
+////                                               [[ItemArray objectAtIndex:i] getX], [[ItemArray objectAtIndex:i] getY]
+////                                               )];
+////                        animSweep.fromValue = [NSValue valueWithCGPoint:[[ItemArray objectAtIndex:i] getImageView].layer.position];
+//                        animSweep.toValue = [NSValue valueWithCGPoint:[MyMachine getImageView].center];//myview.superview.bounds.size.height)];
+////                        animSweep.toValue = [NSValue valueWithCGPoint:CGPointZero];//test
+//                        // completion処理用に、アニメーションが終了しても登録を残しておく
+//                        animSweep.removedOnCompletion = NO;
+//                        animSweep.fillMode = kCAFillModeForwards;
+//                        [[[ItemArray objectAtIndex:i] getImageView].layer.presentationLayer addAnimation:animSweep forKey:@"sweep"];//uiviewから生成したlayerをanimation
+//                        
+//                    }
+//                    [CATransaction commit];
+//                    
+
+                    
+                    
+                    
                     
                     
 //                    NSLog(@"magnet射程範囲->count:%d, i=%d, item:%@",
@@ -657,13 +769,13 @@ UIView *viewMyEffect;
 //                  _yItem, [MyMachine getY]);
             
             //アイテム検出テスト
-            int xi = ((CALayer *)[_item getImageView].layer).position.x;//[_item getImageView].center.x;
-            int yi = ((CALayer *)[_item getImageView].layer).position.y;//[_item getImageView].center.y;
-            int xm = [MyMachine getImageView].center.x;
-            int ym = [MyMachine getImageView].center.y;
-            if(itemCount == 0){
-                NSLog(@"xi=%d, yi=%d, xm=%d, ym=%d", xi, yi, xm, ym);
-            }
+//            int xi = ((CALayer *)[_item getImageView].layer).position.x;//[_item getImageView].center.x;
+//            int yi = ((CALayer *)[_item getImageView].layer).position.y;//[_item getImageView].center.y;
+//            int xm = [MyMachine getImageView].center.x;
+//            int ym = [MyMachine getImageView].center.y;
+//            if(itemCount == 0){
+//                NSLog(@"xi=%d, yi=%d, xm=%d, ym=%d", xi, yi, xm, ym);
+//            }
             if(
                _xItem >= [MyMachine getX] - OBJECT_SIZE * 0.5 &&
                _xItem <= [MyMachine getX] + OBJECT_SIZE * 0.5 &&
@@ -725,9 +837,9 @@ UIView *viewMyEffect;
                         if(!isMagnetMode){
                             [MyMachine setStatus:@"1" key:ItemTypeMagnet];//あまり意味ない？
                             
-                        
+                            NSLog(@"get isMagnetMode :true");
                             isMagnetMode = true;
-                            countMagnet = 1000;//10カウント
+                            countMagnet = 10000;//10カウント
                         }
                         break;
                     }
@@ -929,15 +1041,17 @@ UIView *viewMyEffect;
                             enemyDown++;
 //                            NSLog(@"enemyDown: %d", enemyDown);
                             
-                            //アイテム出現
+                            //アイテム出現、アイテム生成
                             if(true){//arc4random() % 2 == 0){
 //                                NSLog(@"アイテム出現");
 //                                ItemClass *_item = [[ItemClass alloc] init:[_enemy getX] y_init:[_enemy getY] width:50 height:50];
                                 
                                 //テスト：順番に作成
 //                                NSLog(@"item occur : %d", countItem);
-                                _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xEnemy y_init:_yEnemy width:50 height:50];
-
+//                                _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xEnemy y_init:_yEnemy width:50 height:50];
+                                //only magnet
+                                _item = [[ItemClass alloc] init:5 x_init:_xEnemy y_init:_yEnemy width:OBJECT_SIZE height:OBJECT_SIZE];
+                                
 //                                [ItemArray addObject:_item];
                                 [ItemArray insertObject:_item atIndex:0];
                                 //現状全てのアイテムは手前に進んで消えるので先に発生(FIFO)したものから消去
@@ -1053,7 +1167,7 @@ UIView *viewMyEffect;
 //            [self performSelector:@selector(exitProcess) withObject:nil afterDelay:0.1];//自機爆破後、即座に終了させると違和感あるため少しdelay
 //            [self exitProcess];//delayさせるとその間にprogressが進んでしまうので即座に表示
 //        }
-        count += 0.1f;
+        count += 0.01f;
         
         if(count >= TIMEOVER_SECOND){
             isGameMode = false;
@@ -1222,7 +1336,7 @@ UIView *viewMyEffect;
 -(void) yieldEnemy{
     Boolean isYield = false;
     
-#ifndef TEST
+#ifndef ENEMY_TEST//本番
     if(count < 5){
         if(arc4random() % 20 == 0){//20分の1
             isYield = true;
@@ -1249,29 +1363,35 @@ UIView *viewMyEffect;
         }
     }
 #else
-    //1秒にfreq*10回発生
-    float freq = 0.1f;
-    float error = 0.01f;//内部計算誤差
-    //freq10:0.1, 0.2, 0.3
-    //freq4 :0.25,0.50,0.75
-    //freq3 :0.33,0.66,0.99
-//    if(1.0f / freq == count){
-    for(int i = 0;i < 100000;i++){
-        if((1.0f / freq * (float)i >= count - error) &&
-           (1.0f / freq * (float)i <= count + error)){
+//    //1秒にfreq*10回発生
+//    float freq = 0.1f;
+//    float error = 0.01f;//内部計算誤差
+//    //freq10:0.1, 0.2, 0.3
+//    //freq4 :0.25,0.50,0.75
+//    //freq3 :0.33,0.66,0.99
+////    if(1.0f / freq == count){
+//    for(int i = 0;i < 100000;i++){
+//        if((1.0f / freq * (float)i >= count - error) &&
+//           (1.0f / freq * (float)i <= count + error)){
+//            isYield = true;
+//            break;
+//        }
+//    }
+//    NSLog(@"%f", count);
+    for(int tempCount = 0; tempCount < 1000000;tempCount++){
+        //Freq_Enemyカウントに一回発生
+        if((int)(count * 100) % (tempCount * FREQ_ENEMY) == 0){
+//            NSLog(@"%dsec", (int)(count));
             isYield = true;
             break;
+        }else{
+            isYield = false;
         }
     }
 #endif
-    if(arc4random() % FREQ_ENEMY == 0){
-        isYield = true;
-    }else{
-        isYield = false;
-    }
     if(isYield){
         enemyCount ++;
-//        NSLog(@"enemyCount %d", enemyCount);
+        NSLog(@"enemyCount %d", enemyCount);
         int x = arc4random() % ((int)self.view.bounds.size.width - OBJECT_SIZE);
         
         EnemyClass *enemy = [[EnemyClass alloc]init:x size:OBJECT_SIZE];
@@ -1281,13 +1401,6 @@ UIView *viewMyEffect;
         [self.view bringSubviewToFront:[[EnemyArray objectAtIndex:0] getImageView]];
         
         
-//#ifdef TEST
-//      [[EnemyArray objectAtIndex:0] getImageView].center = CGPointMake(self.view.bounds.size.width / 2,
-//                                                                       arc4random() % (int)self.view.bounds.size.height);
-//#endif
-        
-//        [iv_background1 bringSubviewToFront:[[EnemyArray objectAtIndex:0] getImageView]];
-//        [iv_background2 bringSubviewToFront:[[EnemyArray objectAtIndex:0] getImageView]];
         
         if([EnemyArray count] > 50) {
             [[[EnemyArray lastObject] getImageView] removeFromSuperview];
