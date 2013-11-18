@@ -98,6 +98,7 @@
 #import <QuartzCore/QuartzCore.h>
 #define TIMEOVER_SECOND 1000
 #define OBJECT_SIZE 70//自機と敵機のサイズ
+#define ITEM_SIZE 50
 
 CGRect rect_frame, rect_myMachine, rect_enemyBeam, rect_beam_launch;
 UIImageView *iv_frame, *iv_myMachine, *iv_enemyBeam, *iv_beam_launch;//, *iv_background1, *iv_background2;
@@ -270,7 +271,7 @@ UIView *viewMyEffect;
     isGameMode = true;
     isTouched = false;
     isMagnetMode = false;
-    diameterMagnet = 300;//引力有効範囲：アイテム購入により変更可能
+    diameterMagnet = 200;//引力有効範囲：アイテム購入により変更可能
     self.navigationItem.rightBarButtonItems = @[right_button_stop, right_button_setting];
     self.navigationItem.leftItemsSupplementBackButton = YES; //戻るボタンを有効にする
     
@@ -491,7 +492,10 @@ UIView *viewMyEffect;
     if([MyMachine getIsAlive] && isTouched){
         [MyMachine yieldBeam:0 init_x:[MyMachine getX] init_y:[MyMachine getY]];
         //ビームはFIFOなので最初のもののみを表示
-        [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
+//        [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
+        for(int i = 0; i < [MyMachine getNumOfBeam];i++){
+            [self.view addSubview:[[MyMachine getBeam:i] getImageView]];//最初の１〜３個
+        }
     }
     
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
@@ -572,9 +576,9 @@ UIView *viewMyEffect;
 //            CALayer *_itemLayer1 = [[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer];
 //            NSLog(@"i=%d, x=%f, y=%f, dist = %f",i,  _itemLayer1.position.x, _itemLayer1.position.y, [self getDistance:_itemLayer1.position.x y:_itemLayer1.position.y]);
             
-            if(true){//常にマグネットモード
+//            if(true){//常にマグネットモード
             //自機位置が変更された場合に対応するため常に監視しておく必要がある。
-//            if(isMagnetMode && !([[ItemArray objectAtIndex:i] getIsMagnetMode])){//ゲーム自体のmagnetModeかアイテム個体のmagnetModeか
+            if(isMagnetMode){// && !([[ItemArray objectAtIndex:i] getIsMagnetMode])){//ゲーム自体のmagnetModeかアイテム個体のmagnetModeか
                 [[ItemArray objectAtIndex:i] setIsMagnetMode:YES];
 //                NSLog(@"マグネットモード");
 //                CGPoint _itemLoc = [[ItemArray objectAtIndex:i] getImageView].center;
@@ -585,12 +589,14 @@ UIView *viewMyEffect;
                 
 //                if([self getDistance:_itemLoc.x y:_itemLoc.y] < diameterMagnet){
 //                if([self getDistance:_itemLayer.position.x y:_itemLayer.position.y] < diameterMagnet){
-                if(true){//test:全ての範囲のアイテムに対して
+//                if(true){//test:全ての範囲のアイテムに対して
+                if(ABS(((CALayer *)[_itemView.layer presentationLayer]).position.x - [MyMachine getImageView].center.x) < diameterMagnet &&
+                   ABS(((CALayer *)[_itemView.layer presentationLayer]).position.y - [MyMachine getImageView].center.y) < diameterMagnet){
 //                    CGPoint kStartPos = ((CALayer *)[[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer]).position;//viewInArray.center;//((CALayer *)[iv.layer presentationLayer]).position;
                     CGPoint kStartPos = ((CALayer *)[_itemView.layer presentationLayer]).position;
                     CGPoint kEndPos = [MyMachine getImageView].center;//CGPointMake(kStartPos.x + arc4random() % 100 - 50,//iv.bounds.size.width,
                     //                                          500);//iv.superview.bounds.size.height);//480);//
-                    NSLog(@"start[x,y]=%f, %f, end[x,y]=%f, %f",kStartPos.x,kStartPos.y,kEndPos.x,kEndPos.y);
+//                    NSLog(@"start[x,y]=%f, %f, end[x,y]=%f, %f",kStartPos.x,kStartPos.y,kEndPos.x,kEndPos.y);
                     [CATransaction begin];
                     [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
                     [CATransaction setCompletionBlock:^{//終了処理
@@ -835,11 +841,15 @@ UIView *viewMyEffect;
 //            if(itemCount == 0){
 //                NSLog(@"xi=%d, yi=%d, xm=%d, ym=%d", xi, yi, xm, ym);
 //            }
+            float near_coeff = 0.5;
+            if(isMagnetMode){//グローバルに設定しても良い
+                near_coeff = 0.9f;
+            }
             if(
-               _xItem >= [MyMachine getX] - OBJECT_SIZE * 0.5 &&
-               _xItem <= [MyMachine getX] + OBJECT_SIZE * 0.5 &&
-               _yItem >= [MyMachine getY] - OBJECT_SIZE * 0.5 &&
-               _yItem <= [MyMachine getY] + OBJECT_SIZE * 0.5){
+               _xItem >= [MyMachine getX] - OBJECT_SIZE * near_coeff &&
+               _xItem <= [MyMachine getX] + OBJECT_SIZE * near_coeff &&
+               _yItem >= [MyMachine getY] - OBJECT_SIZE * near_coeff &&
+               _yItem <= [MyMachine getY] + OBJECT_SIZE * near_coeff){
                 
 //                if(itemCount == 0){
 //                NSLog(@"collision detect at %d", itemCount);
@@ -898,7 +908,7 @@ UIView *viewMyEffect;
                             
                             NSLog(@"get isMagnetMode :true");
                             isMagnetMode = true;
-                            countMagnet = 10000;//10カウント
+                            countMagnet = 500;//500カウント=5sec
                         }
                         break;
                     }
@@ -1107,9 +1117,9 @@ UIView *viewMyEffect;
                                 
                                 //テスト：順番に作成
 //                                NSLog(@"item occur : %d", countItem);
-//                                _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xEnemy y_init:_yEnemy width:50 height:50];
+                                _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xEnemy y_init:_yEnemy width:ITEM_SIZE height:ITEM_SIZE];
                                 //test:only magnet
-                                _item = [[ItemClass alloc] init:5 x_init:_xEnemy y_init:_yEnemy width:OBJECT_SIZE height:OBJECT_SIZE];
+//                                _item = [[ItemClass alloc] init:5 x_init:_xEnemy y_init:_yEnemy width:OBJECT_SIZE height:OBJECT_SIZE];
                                 
 //                                [ItemArray addObject:_item];
                                 [ItemArray insertObject:_item atIndex:0];
@@ -1295,75 +1305,80 @@ UIView *viewMyEffect;
     if([MyMachine getIsAlive] && isTouched){
         [MyMachine yieldBeam:0 init_x:[MyMachine getX] init_y:[MyMachine getY]];
         //ビームはFIFOなので最初のもののみを表示
-        [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
+        for(int i = 0; i < [MyMachine getNumOfBeam];i++){
+            [self.view addSubview:[[MyMachine getBeam:i] getImageView]];//最初の１〜３個
+        }
     }
-    
-    if(flagItemTrigger && !isEffectDisplaying){//他のエフェクトが表示中でなければ
-        flagItemTrigger = false;
-        isEffectDisplaying = true;
-        
-        
-        int diameter = 100;
-        int duration = 3;//repeat-count
-        int finishRadius = 20;
-        CGFloat animationDuration = 0.5f; // Your duration
-        CGFloat animationDelay = 0; // Your delay (if any)
-        UIImageView *circle = [[UIImageView alloc] initWithFrame:CGRectMake(30, 30,
-                                                                            diameter,
-                                                                            diameter)];
-        circle.center = CGPointMake(viewMyEffect.frame.size.width/2,
-                                    viewMyEffect.frame.size.height/2);
-        circle.layer.cornerRadius=diameter/2;
-        
-        //cyan[0,1,1] or white[1, 1, 1]?
-        UIColor *itemColor =[UIColor colorWithRed:1 green:1 blue:1 alpha:0.1f];
-        circle.layer.borderColor=[[itemColor colorWithAlphaComponent:0.5f] CGColor] ;
-        circle.layer.borderWidth = 4.0f;//4px
-        circle.layer.backgroundColor = [itemColor CGColor];
 
+    if(isMagnetMode){//statusCountがカウントダウンされて変化する
         
-        CABasicAnimation *cornerRadiusAnimation = [CABasicAnimation animationWithKeyPath:@"cornerRadius"];
-        [cornerRadiusAnimation setFromValue:[NSNumber numberWithFloat:diameter/2]]; // The current value
-        [cornerRadiusAnimation setToValue:[NSNumber numberWithFloat:10.0]]; // The new value
-        [cornerRadiusAnimation setDuration:animationDuration];
-        [cornerRadiusAnimation setBeginTime:CACurrentMediaTime() + animationDelay];
-        [cornerRadiusAnimation setRepeatCount:duration];
         
-        // If your UIView animation uses a timing funcition then your basic animation needs the same one
-        [cornerRadiusAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-        
-        // This will keep make the animation look as the "from" and "to" values before and after the animation
-        [cornerRadiusAnimation setFillMode:kCAFillModeBoth];
-        [circle.layer addAnimation:cornerRadiusAnimation forKey:@"keepAsCircle"];
-//        [circle.layer setCornerRadius:10.0]; // Core Animation doesn't change the real value so we have to.
-        
-        [UIView animateWithDuration:animationDuration
-                              delay:animationDelay
-                            options:UIViewAnimationOptionCurveEaseInOut
-         //                                |UIViewAnimationOptionRepeat
-                         animations:^{
-                             [UIView setAnimationRepeatCount: duration];
-                             [circle.layer setFrame:CGRectMake(viewMyEffect.frame.size.width/2-finishRadius/2,
-                                                               viewMyEffect.frame.size.height/2-finishRadius/2,
-                                                               finishRadius,
-                                                               finishRadius)]; // Arbitrary frame ...
-                             [circle.layer setBackgroundColor:[[UIColor colorWithRed:0
-                                                                               green:1
-                                                                                blue:1
-                                                                               alpha:0.5f] CGColor]];
-                             circle.center = CGPointMake(viewMyEffect.frame.size.width/2,
-                                                         viewMyEffect.frame.size.height/2);//viewEffect.center;//
-                             // You other UIView animations in here...
-                         } completion:^(BOOL finished) {
-                             // Maybe you have your completion in here...
-                             [circle removeFromSuperview];
-                             isEffectDisplaying = false;
-                             //                         [viewMyEffect removeFromSuperview];
-                         }];
-        
-        [viewMyEffect addSubview:circle];
-    
-    }
+        if(flagItemTrigger && !isEffectDisplaying){//他のエフェクトが表示中でなければ
+            flagItemTrigger = false;
+            isEffectDisplaying = true;
+            
+            int diameter = diameterMagnet;
+            int duration = 3;//repeat-count
+            int finishRadius = 20;
+            CGFloat animationDuration = 0.5f; // Your duration
+            CGFloat animationDelay = 0; // Your delay (if any)
+            UIImageView *circle = [[UIImageView alloc] initWithFrame:CGRectMake(30, 30,
+                                                                                diameter,
+                                                                                diameter)];
+            circle.center = CGPointMake(viewMyEffect.frame.size.width/2,
+                                        viewMyEffect.frame.size.height/2);
+            circle.layer.cornerRadius=diameter/2;
+            
+            //cyan[0,1,1] or white[1, 1, 1]?
+            UIColor *itemColor =[UIColor colorWithRed:1 green:1 blue:1 alpha:0.1f];
+            circle.layer.borderColor=[[itemColor colorWithAlphaComponent:0.5f] CGColor] ;
+            circle.layer.borderWidth = 4.0f;//4px
+            circle.layer.backgroundColor = [itemColor CGColor];
+            
+            
+            CABasicAnimation *cornerRadiusAnimation = [CABasicAnimation animationWithKeyPath:@"cornerRadius"];
+            [cornerRadiusAnimation setFromValue:[NSNumber numberWithFloat:diameter/2]]; // The current value
+            [cornerRadiusAnimation setToValue:[NSNumber numberWithFloat:10.0]]; // The new value
+            [cornerRadiusAnimation setDuration:animationDuration];
+            [cornerRadiusAnimation setBeginTime:CACurrentMediaTime() + animationDelay];
+            [cornerRadiusAnimation setRepeatCount:duration];
+            
+            // If your UIView animation uses a timing funcition then your basic animation needs the same one
+            [cornerRadiusAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+            
+            // This will keep make the animation look as the "from" and "to" values before and after the animation
+            [cornerRadiusAnimation setFillMode:kCAFillModeBoth];
+            [circle.layer addAnimation:cornerRadiusAnimation forKey:@"keepAsCircle"];
+            //        [circle.layer setCornerRadius:10.0]; // Core Animation doesn't change the real value so we have to.
+            
+            [UIView animateWithDuration:animationDuration
+                                  delay:animationDelay
+                                options:UIViewAnimationOptionCurveEaseInOut
+             //                                |UIViewAnimationOptionRepeat
+                             animations:^{
+                                 [UIView setAnimationRepeatCount: duration];
+                                 [circle.layer setFrame:CGRectMake(viewMyEffect.frame.size.width/2-finishRadius/2,
+                                                                   viewMyEffect.frame.size.height/2-finishRadius/2,
+                                                                   finishRadius,
+                                                                   finishRadius)]; // Arbitrary frame ...
+                                 [circle.layer setBackgroundColor:[[UIColor colorWithRed:0
+                                                                                   green:1
+                                                                                    blue:1
+                                                                                   alpha:0.5f] CGColor]];
+                                 circle.center = CGPointMake(viewMyEffect.frame.size.width/2,
+                                                             viewMyEffect.frame.size.height/2);//viewEffect.center;//
+                                 // You other UIView animations in here...
+                             } completion:^(BOOL finished) {
+                                 // Maybe you have your completion in here...
+                                 [circle removeFromSuperview];
+                                 isEffectDisplaying = false;
+                                 //                         [viewMyEffect removeFromSuperview];
+                             }];
+            
+            [viewMyEffect addSubview:circle];
+        }//if(flagItemTrigger && !isEffectDisplaying){//他のエフェクトが表示中でなければ
+
+    }//if(isMagnetMode)
     
     
     
@@ -2061,8 +2076,8 @@ UIView *viewMyEffect;
     
     //磁石モード
     if(countMagnet > 0){
-        //テストモード：永久にマグネットモード
-//        countMagnet --;
+        countMagnet --;
+        NSLog(@"countMag = %d", countMagnet);
     }else{
         isMagnetMode = false;
     }

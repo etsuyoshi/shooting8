@@ -72,7 +72,7 @@ UIActivityIndicatorView *_indicator;
 //    CGRect rect_frame = [[UIScreen mainScreen] bounds];
     CGRect rect_main = CGRectMake(-100, -30, 580, 480);
     UIImageView *iv_frame = [[UIImageView alloc]initWithFrame:rect_main];
-    iv_frame.image = [UIImage imageNamed:@"chara_test2.png"];
+    iv_frame.image = [UIImage imageNamed:@"chara01.png"];
     
     [self.view addSubview:iv_frame];
     

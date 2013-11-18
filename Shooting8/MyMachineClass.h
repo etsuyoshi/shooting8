@@ -25,6 +25,7 @@
     int lifetime_count;
     int bomb_size;
     int dead_time;
+    int numOfBeam;
     Boolean isAlive;
     UIImageView *iv;
     CGRect rect;
@@ -42,6 +43,8 @@
 -(void)setType:(int)_type;
 -(void)setDamage:(int)damage location:(CGPoint)location;
 -(void)setStatus:(NSString *)statusValue key:(ItemType)itemType;
+-(void)setNumOfBeam:(int)_numOfBeam;
+-(int)getNumOfBeam;
 -(void)die:(CGPoint)loc;
 -(int)getHitPoint;
 -(Boolean)getIsAlive;

@@ -196,7 +196,7 @@ AttrClass *attr;
     
     //背景作成
 //    UIImageView *iv_back = [self createImageView:@"chara_test2.png" tag:0 frame:[[UIScreen mainScreen] bounds]];
-    UIImageView *iv_back = [self createImageView:@"chara_test2.png" tag:0 frame:CGRectMake(-110, -10, 680, 500)];
+    UIImageView *iv_back = [self createImageView:@"chara01.png" tag:0 frame:CGRectMake(-110, -10, 680, 500)];
     
     iv_back.alpha = ALPHA_COMPONENT;
     [self.view sendSubviewToBack:iv_back];

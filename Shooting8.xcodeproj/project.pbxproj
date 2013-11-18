@@ -158,6 +158,7 @@
 		34C16CCF181C2D9000650A40 /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34C16CCE181C2D9000650A40 /* TestViewController.m */; };
 		34C16CD1181C4E9400650A40 /* sabaki_hmix.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34C16CD0181C4E9400650A40 /* sabaki_hmix.mp3 */; };
 		34C84E771822568200E4B074 /* snow.png in Resources */ = {isa = PBXBuildFile; fileRef = 34C84E761822568200E4B074 /* snow.png */; };
+		34D09F541838B1B90039D78E /* chara01.png in Resources */ = {isa = PBXBuildFile; fileRef = 34D09F531838B1B90039D78E /* chara01.png */; };
 		34D30EC2181EDB25006D05F0 /* WingBow.png in Resources */ = {isa = PBXBuildFile; fileRef = 34D30EC1181EDB25006D05F0 /* WingBow.png */; };
 		34E216C1181BE80400B939E6 /* flinging.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34E216C0181BE80400B939E6 /* flinging.mp3 */; };
 		34E216C6181BF62F00B939E6 /* bgm_game_687.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34E216C5181BF62F00B939E6 /* bgm_game_687.mp3 */; };
@@ -375,6 +376,7 @@
 		34C16CCE181C2D9000650A40 /* TestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 		34C16CD0181C4E9400650A40 /* sabaki_hmix.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = sabaki_hmix.mp3; sourceTree = "<group>"; };
 		34C84E761822568200E4B074 /* snow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = snow.png; sourceTree = "<group>"; };
+		34D09F531838B1B90039D78E /* chara01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chara01.png; sourceTree = "<group>"; };
 		34D30EC1181EDB25006D05F0 /* WingBow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WingBow.png; sourceTree = "<group>"; };
 		34E216C0181BE80400B939E6 /* flinging.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = flinging.mp3; sourceTree = "<group>"; };
 		34E216C5181BF62F00B939E6 /* bgm_game_687.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bgm_game_687.mp3; sourceTree = "<group>"; };
@@ -651,6 +653,7 @@
 		34A2B1B9181F9DB500CB97F2 /* player */ = {
 			isa = PBXGroup;
 			children = (
+				34D09F531838B1B90039D78E /* chara01.png */,
 				34FA1A32180BDAA80011E1CA /* player.png */,
 				34FA1A33180BDAA80011E1CA /* player2.png */,
 				34FA1A36180BE08B0011E1CA /* player3.png */,
@@ -962,6 +965,7 @@
 				348D635417FE13DF00A3049B /* circle_2w_128.png in Resources */,
 				34A1ED3E181CCDF20007471C /* BugBow.png in Resources */,
 				348D635617FE14B000A3049B /* circle_2w_rSmall_128.png in Resources */,
+				34D09F541838B1B90039D78E /* chara01.png in Resources */,
 				3440529C182BBC1A0049AE46 /* coin_yellow.png in Resources */,
 				34F53376181BBEDC00FB9470 /* bgm_menu_683.mp3 in Resources */,
 				348D635E17FE1A1100A3049B /* cross.png in Resources */,

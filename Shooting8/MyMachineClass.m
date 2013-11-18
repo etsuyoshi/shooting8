@@ -32,6 +32,7 @@ NSString *imageName;
     bigSize = mySize * 4;
     lifetime_count = 0;
     dead_time = -1;//死亡したら0にして一秒後にparticleを消去する
+    numOfBeam = 1;//通常時、最初はビームの数は1つ(１列)
     isAlive = true;
     explodeParticle = nil;
     damageParticle  = nil;
@@ -361,12 +362,44 @@ NSString *imageName;
 -(void)yieldBeam:(int)beam_type init_x:(int)x init_y:(int)y{
 //    BeamClass *beam = [[BeamClass alloc] init:x y_init:y width:50 height:50];
     //ビーム配列は先入先出(FIFO)
-    [beamArray insertObject:[[BeamClass alloc] init:x
-                                             y_init:y
-                                              width:50
-                                             height:50]
-                    atIndex:0];
+    /*
+     *1列の場合は０が中心位置に、２列の場合は０が左、１が右、３列の場合、０が左、１が中心、２が右
+     */
+    switch (numOfBeam) {
+        case 1:{
+            [beamArray insertObject:[[BeamClass alloc] init:x
+                                                     y_init:y
+                                                      width:50
+                                                     height:50]
+                            atIndex:0];//全て最初に格納
+            
+            break;
+        }
+        case 2:{
+            
+            for(int i = 0; i < numOfBeam;i++){
+                [beamArray insertObject:[[BeamClass alloc] init:x+(20*pow(-1,i+1))//(30*(-1)^i)
+                                                         y_init:y
+                                                          width:50
+                                                         height:50]
+                                atIndex:0];//全て最初に格納
+            }
+            break;
+        }
+        case 3:{
+            
+            for(int i = 0; i < numOfBeam;i++){
+                [beamArray insertObject:[[BeamClass alloc] init:x+40*(i-1)//30*(i-1)
+                                                         y_init:y
+                                                          width:50
+                                                         height:50]
+                                atIndex:0];//全て最初に格納
+            }
+            break;
+        }
+    }
     
+        
 //    [beamArray addObject:beam];
 //    if([beamArray count] > 10){
 ////        最後のビームを削除
@@ -461,11 +494,22 @@ NSString *imageName;
             break;
         }
         case ItemTypeWeapon2:{//wpLaser
+            numOfBeam++;
+//            [self setNumOfBeam:numOfBeam];
             break;
         }
         default:
             break;
     }
+}
+
+-(void)setNumOfBeam:(int)_numOfBeam{
+    numOfBeam = _numOfBeam;
+}
+
+-(int)getNumOfBeam{
+    
+    return numOfBeam;
 }
 
 
