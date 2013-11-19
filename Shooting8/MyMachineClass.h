@@ -25,6 +25,9 @@
     int lifetime_count;
     int bomb_size;
     int dead_time;
+    int magnetCount;
+    int weaponCount;//攻撃力強化タイム
+    int bigCount;
     int numOfBeam;
     Boolean isAlive;
     UIImageView *iv;
@@ -42,6 +45,7 @@
 -(id)init;
 -(void)setType:(int)_type;
 -(void)setDamage:(int)damage location:(CGPoint)location;
+-(int)getStatus:(ItemType)_statusKey;
 -(void)setStatus:(NSString *)statusValue key:(ItemType)itemType;
 -(void)setNumOfBeam:(int)_numOfBeam;
 -(int)getNumOfBeam;

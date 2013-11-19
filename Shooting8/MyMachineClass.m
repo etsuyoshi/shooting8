@@ -32,6 +32,9 @@ NSString *imageName;
     bigSize = mySize * 4;
     lifetime_count = 0;
     dead_time = -1;//死亡したら0にして一秒後にparticleを消去する
+    weaponCount = 0;//攻撃力強化タイム(通常時はゼロ)
+    magnetCount = 0;
+    bigCount = 0;
     numOfBeam = 1;//通常時、最初はビームの数は1つ(１列)
     isAlive = true;
     explodeParticle = nil;
@@ -190,6 +193,7 @@ NSString *imageName;
 
 -(void)setSize:(int)s{
     mySize = s;
+    iv.frame = CGRectMake(x_loc-mySize/2, y_loc-mySize/2, mySize, mySize);
 }
 -(int)getSize{
     return mySize;
@@ -307,6 +311,27 @@ NSString *imageName;
             iv.image = [UIImage imageNamed:@"player.png"];
             break;
         }
+    }
+    if(magnetCount > 0){
+        magnetCount--;
+    }else{
+//        magnetCount = 0;
+        [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeMagnet]];
+    }
+    
+    if(weaponCount > 0){
+        weaponCount--;
+    }else{
+        numOfBeam = 1;
+        [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeWeapon1]];
+    }
+    
+    if(bigCount > 0){
+        bigCount --;
+    }else{
+        mySize = originalSize;
+        iv.frame = CGRectMake(x_loc-mySize/2, y_loc-mySize/2, mySize, mySize);
+        [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeBig]];
     }
     
     lifetime_count ++;
@@ -428,9 +453,15 @@ NSString *imageName;
 -(void)setDefensePow:(int)_power{
     defensePower = _power;
 }
+
+-(int)getStatus:(ItemType)_statusKey{
+    NSString *returnStr = [status objectForKey:[NSNumber numberWithInt:_statusKey]];
+    return [returnStr integerValue];
+}
 //edit status
 -(void)setStatus:(NSString *)statusValue key:(ItemType)_statusKey{
     itemType = _statusKey;
+    
 //    NSLog(@"status: %@, key: %d", statusValue, itemType);
     [status setObject:statusValue forKey:[NSNumber numberWithInt:itemType]];
     
@@ -449,24 +480,32 @@ NSString *imageName;
     switch(_statusKey){
             
         case ItemTypeMagnet:{
-            
+            if([statusValue integerValue]){
+                magnetCount = 500;
+            }else{
+                magnetCount = 0;
+            }
             break;
         }
         case ItemTypeBig:{
-            /*
-             *未完成
-             */
-            //bigger
-            mySize = bigSize;
-            iv.frame = CGRectMake(x_loc-mySize/2, y_loc-mySize/2, mySize, mySize);
-            [UIView animateWithDuration:10.0f
-                             animations:^{
-                                 iv.frame = CGRectMake(x_loc-bigSize/2, y_loc-bigSize/2, bigSize, bigSize);
-                             }
-                             completion:^(BOOL finished){
-                                 //original size
-                                 iv.frame = CGRectMake(x_loc-originalSize/2, y_loc-originalSize/2, originalSize, originalSize);
-                             }];
+            if([statusValue integerValue]){
+                
+                //bigger
+                bigCount = 500;
+                mySize = bigSize;
+                iv.frame = CGRectMake(x_loc-mySize/2, y_loc-mySize/2, mySize, mySize);
+            }else{
+                mySize = originalSize;
+                iv.frame = CGRectMake(x_loc-mySize/2, y_loc-mySize/2, mySize, mySize);
+            }
+//            [UIView animateWithDuration:10.0f
+//                             animations:^{
+//                                 iv.frame = CGRectMake(x_loc-bigSize/2, y_loc-bigSize/2, bigSize, bigSize);
+//                             }
+//                             completion:^(BOOL finished){
+//                                 //original size
+//                                 iv.frame = CGRectMake(x_loc-originalSize/2, y_loc-originalSize/2, originalSize, originalSize);
+//                             }];
             break;
         }
         case ItemTypeBomb:{
@@ -491,11 +530,21 @@ NSString *imageName;
             break;
         }
         case ItemTypeWeapon1:{//wpDiffuse
+            //ビームが３列になるまでは追加取得可能(新規取得する毎にカウンターが初期化)
+            if([statusValue integerValue]){
+                
+                if(numOfBeam < 3){
+                    weaponCount = 500;
+                    numOfBeam++;//max:3
+                }
+            }else{
+                weaponCount = 0;
+                numOfBeam = 1;
+            }
+            //            [self setNumOfBeam:numOfBeam];
             break;
         }
         case ItemTypeWeapon2:{//wpLaser
-            numOfBeam++;
-//            [self setNumOfBeam:numOfBeam];
             break;
         }
         default:
@@ -511,8 +560,6 @@ NSString *imageName;
     
     return numOfBeam;
 }
-
-
 
 
 @end

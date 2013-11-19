@@ -51,26 +51,26 @@
 //            rect = CGRectMake(x_loc, y_loc, w, h);
             rect = CGRectMake(x_loc, y_loc, w, h);
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"weapon_bomb.png"];
+            iv.image = [UIImage imageNamed:@"weapon_bomb.png"];//未
             break;
         }
         case ItemTypeWeapon1:{//1
             rect = CGRectMake(x_loc, y_loc, w, h);
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"weapon_diffuse.png"];
+            iv.image = [UIImage imageNamed:@"weapon_diffuse.png"];//済
             
             break;
         }
         case ItemTypeWeapon2:{
             rect = CGRectMake(x_loc, y_loc, w, h);
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"weapon_laser.png"];
+            iv.image = [UIImage imageNamed:@"weapon_laser.png"];//未
             break;
         }
         case ItemTypeDeffense0:{
             rect = CGRectMake(x_loc, y_loc, w, h);
             iv = [[UIImageView alloc]initWithFrame:rect];
-            iv.image = [UIImage imageNamed:@"defense_barrier.png"];
+            iv.image = [UIImage imageNamed:@"defense_barrier.png"];//
             
             break;
         }

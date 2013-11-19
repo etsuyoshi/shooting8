@@ -16,7 +16,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
     ItemTypeDeffense0,//3
     ItemTypeDeffense1,//4
     ItemTypeMagnet,//5
-    ItemTypeBomb,
+    ItemTypeBomb,//6
     ItemTypeHeal,
     ItemTypeBig,
     ItemTypeSmall,

@@ -1,3 +1,5 @@
+//クリティカル問題：ビームを消去してないので売ってるとゲーム強制終了。
+
 //問題点：①全てのアイテムがmagnetModeになっていない？＝＞落ちたアイテムのisMagnetModeを確認
 //magnetアイテム取得後、全てのアイテムがisMagnetModeになっていることを確認(取得前はfalseになっていることも確認)
 //ではなぜ、自機の隣を「すれ違って」落ちてしまうのか(前提：magnetModeの状態で)
@@ -129,10 +131,11 @@ int length_beam, thick_beam;//ビームの長さと太さ
 Boolean isGameMode;
 Boolean flagItemTrigger;//エフェクト表示トリガー
 Boolean isEffectDisplaying;//エフェクト表示中フラグ
-Boolean isMagnetMode;//マグネットモード
+//Boolean isMagnetMode;//マグネットモード
 int diameterMagnet;//マグネット引力有効範囲
-int countMagnet;//マグネット有効期間
-
+//int countMagnet;//マグネット有効期間
+//Boolean isBigMode;//ビッグモード
+//int countBig;
 
 UIPanGestureRecognizer *panGesture;
 //UILongPressGestureRecognizer *longPress_frame;
@@ -169,6 +172,9 @@ ItemClass *_item;
 ItemType itemType;
 EnemyClass *_enemy;
 BeamClass *_beam;//
+int _xMine;
+int _yMine;
+int _sMine;
 int _xEnemy;
 int _yEnemy;
 int _sEnemy;
@@ -178,6 +184,9 @@ int _sItem;
 int _xBeam;
 int _yBeam;
 int _sBeam;
+
+
+int mySize = OBJECT_SIZE;//拡大した時のために変更可能にしておく
 
 UIView *viewMyEffect;
 
@@ -270,7 +279,8 @@ UIView *viewMyEffect;
     
     isGameMode = true;
     isTouched = false;
-    isMagnetMode = false;
+//    isMagnetMode = false;
+//    isBigMode = false;
     diameterMagnet = 200;//引力有効範囲：アイテム購入により変更可能
     self.navigationItem.rightBarButtonItems = @[right_button_stop, right_button_setting];
     self.navigationItem.leftItemsSupplementBackButton = YES; //戻るボタンを有効にする
@@ -578,7 +588,8 @@ UIView *viewMyEffect;
             
 //            if(true){//常にマグネットモード
             //自機位置が変更された場合に対応するため常に監視しておく必要がある。
-            if(isMagnetMode){// && !([[ItemArray objectAtIndex:i] getIsMagnetMode])){//ゲーム自体のmagnetModeかアイテム個体のmagnetModeか
+//            if(isMagnetMode){// && !([[ItemArray objectAtIndex:i] getIsMagnetMode])){//ゲーム自体のmagnetModeかアイテム個体のmagnetModeか
+            if([MyMachine getStatus:ItemTypeMagnet]){
                 [[ItemArray objectAtIndex:i] setIsMagnetMode:YES];
 //                NSLog(@"マグネットモード");
 //                CGPoint _itemLoc = [[ItemArray objectAtIndex:i] getImageView].center;
@@ -842,14 +853,15 @@ UIView *viewMyEffect;
 //                NSLog(@"xi=%d, yi=%d, xm=%d, ym=%d", xi, yi, xm, ym);
 //            }
             float near_coeff = 0.5;
-            if(isMagnetMode){//グローバルに設定しても良い
-                near_coeff = 0.9f;
+//            if(isMagnetMode){//グローバルに設定しても良い
+            if([MyMachine getStatus:ItemTypeMagnet]){
+                near_coeff = 0.7f;
             }
             if(
-               _xItem >= [MyMachine getX] - OBJECT_SIZE * near_coeff &&
-               _xItem <= [MyMachine getX] + OBJECT_SIZE * near_coeff &&
-               _yItem >= [MyMachine getY] - OBJECT_SIZE * near_coeff &&
-               _yItem <= [MyMachine getY] + OBJECT_SIZE * near_coeff){
+               _xItem >= [MyMachine getX] - mySize * near_coeff &&
+               _xItem <= [MyMachine getX] + mySize * near_coeff &&
+               _yItem >= [MyMachine getY] - mySize * near_coeff &&
+               _yItem <= [MyMachine getY] + mySize * near_coeff){
                 
 //                if(itemCount == 0){
 //                NSLog(@"collision detect at %d", itemCount);
@@ -903,23 +915,33 @@ UIView *viewMyEffect;
                         //射程範囲に入ったらアイテムを自分位置に向かわせる
                         //上記ItemClass:donext実行後にisMagnetModeで判定するが、
                         //isMagnetModeはcountMagnet>0により判定する。
-                        if(!isMagnetMode){
+//                        if(!isMagnetMode){
+                        if(![MyMachine getStatus:ItemTypeMagnet]){
                             [MyMachine setStatus:@"1" key:ItemTypeMagnet];//あまり意味ない？
                             
                             NSLog(@"get isMagnetMode :true");
-                            isMagnetMode = true;
-                            countMagnet = 500;//500カウント=5sec
+                            [MyMachine setStatus:@"1" key:ItemTypeMagnet];
+//                            isMagnetMode = true;
+//                            countMagnet = 500;//500カウント=5sec
                         }
                         break;
                     }
                     case ItemTypeBig:{
                         //bigger
-                        [MyMachine setStatus:@"1" key:ItemTypeBig];
-                        
+//                        if(!isBigMode){
+                        if(![MyMachine getStatus:ItemTypeBig]){
+                            [MyMachine setStatus:@"1" key:ItemTypeBig];
+//                            countBig = 500;
+//                            isBigMode = true;
+//                            mySize = [MyMachine getSize];
+                        }
                         break;
                     }
                     case ItemTypeBomb:{
                         [MyMachine setStatus:@"1" key:ItemTypeBomb];
+                        for(int i = 0; i < [EnemyArray count] ;i++){
+                            [self enemyDieEffect:i];
+                        }
                         break;
                     }
                     case ItemTypeDeffense0:{
@@ -991,9 +1013,25 @@ UIView *viewMyEffect;
             _xEnemy = [_enemy getX];
             _yEnemy = [_enemy getY];
             _sEnemy = [_enemy getSize];
+            _xMine = [MyMachine getX];
+            _yMine = [MyMachine getY];
+            _sMine = [MyMachine getSize];
             
             //自機と敵機の衝突判定
-            if(
+//            if(isBigMode){
+            if([MyMachine getStatus:ItemTypeBig]){
+                if(
+                    _xMine + _sMine * 0.4 >= _xEnemy - _sEnemy * 0.4 &&
+                    _xMine - _sMine * 0.4 <= _xEnemy + _sEnemy * 0.4 &&
+                    _yMine + _sMine * 0.4 >= _yEnemy - _sEnemy * 0.4 &&
+                    _yMine - _sMine * 0.4 <= _yEnemy + _sEnemy * 0.4 ){
+//                    NSLog(@"size=%d", _sMine);
+//                    NSLog(@"die effect");
+                    //敵機撃墜時のエフェクト
+                    [self enemyDieEffect:i];
+                    
+                }
+            }else if(
                [MyMachine getX] >= _xEnemy - _sEnemy * 0.4 &&
                [MyMachine getX] <= _xEnemy + _sEnemy * 0.4 &&
                _yEnemy - _sEnemy * 0.4 <= [MyMachine getY] &&
@@ -1074,41 +1112,9 @@ UIView *viewMyEffect;
                         //ビームに当たる前に生きていた敵が死んだら＝今回のビームで敵を倒したら
                         if(![[EnemyArray objectAtIndex:i] getIsAlive]){
                             
-                            //imageViewだけを消去(爆発パーティクルが描画するためインスタンス自体は残しておく)
-                            [[[EnemyArray objectAtIndex:i] getImageView] removeFromSuperview];
+                            //敵機撃墜時のエフェクト
+                            [self enemyDieEffect:i];
                             
-                            
-                            //効果音=>別クラスに格納してstatic method化して簡潔に！
-                            AudioServicesPlaySystemSound (sound_hit_ID);
-
-////                            NSLog(@"パーティクル = %@", [(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle]);
-                            //爆発パーティクル表示
-//                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle] setUserInteractionEnabled: NO];//インタラクション拒否
-//                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle] setIsEmitting:YES];//消去するには数秒後にNOに
-//                            [self.view bringSubviewToFront: [(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle]];//最前面に
-//                            [self.view addSubview: [(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle]];//表示する
-                            //smoke-effect
-                            UIView *smoke = [[EnemyArray objectAtIndex:i] getSmokeEffect];
-                            [self.view bringSubviewToFront:smoke];
-                            [self.view addSubview:smoke];
-                            smoke = [[EnemyArray objectAtIndex:i] getSmokeEffect];
-                            [self.view bringSubviewToFront:smoke];
-                            [self.view addSubview:smoke];
-                            smoke = [[EnemyArray objectAtIndex:i] getSmokeEffect];
-                            [self.view bringSubviewToFront:smoke];
-                            [self.view addSubview:smoke];
-//                            [self.view addSubview:[[EnemyArray objectAtIndex:i] getSmokeEffect]];
-//                            [self.view addSubview:[[EnemyArray objectAtIndex:i] getSmokeEffect]];
-                            
-                            //メモリ解放
-//                            [EnemyArray removeObjectAtIndex:i];
-                            
-                            //得点の加算
-                            [ScoreBoard setScore:[ScoreBoard getScore] + 5];//+1でよい？！
-                            [self displayScore:ScoreBoard];
-                            
-                            enemyDown++;
-//                            NSLog(@"enemyDown: %d", enemyDown);
                             
                             //アイテム出現、アイテム生成
                             if(true){//arc4random() % 2 == 0){
@@ -1118,8 +1124,8 @@ UIView *viewMyEffect;
                                 //テスト：順番に作成
 //                                NSLog(@"item occur : %d", countItem);
                                 _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xEnemy y_init:_yEnemy width:ITEM_SIZE height:ITEM_SIZE];
-                                //test:only magnet
-//                                _item = [[ItemClass alloc] init:5 x_init:_xEnemy y_init:_yEnemy width:OBJECT_SIZE height:OBJECT_SIZE];
+                                //test:only bomb
+//                                _item = [[ItemClass alloc] init:6 x_init:_xEnemy y_init:_yEnemy width:OBJECT_SIZE height:OBJECT_SIZE];
                                 
 //                                [ItemArray addObject:_item];
                                 [ItemArray insertObject:_item atIndex:0];
@@ -1228,7 +1234,6 @@ UIView *viewMyEffect;
     }
     if(isGameMode){
         [self ordinaryAnimationStart];
-        [self statusCount];//全てステータスの有効時間を判定：if(flag1&&flag2&& ...)で時間短縮可能？
         //一定時間経過するとゲームオーバー
 //        if(count >= TIMEOVER_SECOND || ![MyMachine getIsAlive]){
 //            NSLog(@"gameover");
@@ -1310,8 +1315,8 @@ UIView *viewMyEffect;
         }
     }
 
-    if(isMagnetMode){//statusCountがカウントダウンされて変化する
-        
+    if([MyMachine getStatus:ItemTypeMagnet]){
+    
         
         if(flagItemTrigger && !isEffectDisplaying){//他のエフェクトが表示中でなければ
             flagItemTrigger = false;
@@ -2068,20 +2073,6 @@ UIView *viewMyEffect;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
-/*
- * さまざまなステータスが有効な時間をカウント(ゼロになったら反転)
- */
--(void)statusCount{
-    
-    
-    //磁石モード
-    if(countMagnet > 0){
-        countMagnet --;
-        NSLog(@"countMag = %d", countMagnet);
-    }else{
-        isMagnetMode = false;
-    }
-}
 
 /*
  *自機と指定した距離を取得する
@@ -2091,6 +2082,43 @@ UIView *viewMyEffect;
     int y0 = [MyMachine getImageView].center.y;
 //    NSLog(@"distance = %f", sqrtf((x - x0) * (x - x0) + (y - y0) * (y - y0)));
     return sqrtf((x - x0) * (x - x0) + (y - y0) * (y - y0));
+}
+
+
+-(void)enemyDieEffect:(int)i{
+    //imageViewだけを消去(爆発パーティクルが描画するためインスタンス自体は残しておく)
+    [[[EnemyArray objectAtIndex:i] getImageView] removeFromSuperview];
+    
+    
+    //効果音=>別クラスに格納してstatic method化して簡潔に！
+    AudioServicesPlaySystemSound (sound_hit_ID);
+    
+    ////                            NSLog(@"パーティクル = %@", [(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle]);
+    //爆発パーティクル表示
+    //                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle] setUserInteractionEnabled: NO];//インタラクション拒否
+    //                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle] setIsEmitting:YES];//消去するには数秒後にNOに
+    //                            [self.view bringSubviewToFront: [(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle]];//最前面に
+    //                            [self.view addSubview: [(EnemyClass *)[EnemyArray objectAtIndex:i] getExplodeParticle]];//表示する
+    //smoke-effect
+    UIView *smoke = [[EnemyArray objectAtIndex:i] getSmokeEffect];
+    [self.view bringSubviewToFront:smoke];
+    [self.view addSubview:smoke];
+    smoke = [[EnemyArray objectAtIndex:i] getSmokeEffect];
+    [self.view bringSubviewToFront:smoke];
+    [self.view addSubview:smoke];
+    smoke = [[EnemyArray objectAtIndex:i] getSmokeEffect];
+    [self.view bringSubviewToFront:smoke];
+    [self.view addSubview:smoke];
+    //                            [self.view addSubview:[[EnemyArray objectAtIndex:i] getSmokeEffect]];
+    //                            [self.view addSubview:[[EnemyArray objectAtIndex:i] getSmokeEffect]];
+    
+    //得点の加算
+    [ScoreBoard setScore:[ScoreBoard getScore] + 5];//+1でよい？！
+    [self displayScore:ScoreBoard];
+    
+    enemyDown++;
+    //                            NSLog(@"enemyDown: %d", enemyDown);
+    
 }
 
 @end
