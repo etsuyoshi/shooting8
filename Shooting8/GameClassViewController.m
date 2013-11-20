@@ -513,7 +513,7 @@ UIView *viewMyEffect;
     }
     
     //爆弾投下
-    if(arc4random() % 10 == 0 &&//1秒に1回
+    if(arc4random() % 50 == 0 &&//1秒に1回
        [MyMachine getStatus:ItemTypeWeapon0]){
         
         [self throwBombAnimation];
@@ -949,9 +949,14 @@ UIView *viewMyEffect;
                     }
                     case ItemTypeBomb:{
                         [MyMachine setStatus:@"1" key:ItemTypeBomb];
-                        for(int i = 0; i < [EnemyArray count] ;i++){//画面内全敵対象
-                            [self enemyDieEffect:i];
+                        
+                        if(![MyMachine getStatus:ItemTypeBomb]){
+                            [MyMachine setStatus:@"1" key:ItemTypeBomb];
+                            [self ItemBombEffect:self.view.center];
                         }
+//                        for(int i = 0; i < [EnemyArray count] ;i++){//画面内全敵対象
+//                            [self enemyDieEffect:i];
+//                        }
                         break;
                     }
                     case ItemTypeDeffense0:{
@@ -1030,7 +1035,7 @@ UIView *viewMyEffect;
             
             //自機と敵機の衝突判定
 //            if(isBigMode){
-            if([MyMachine getStatus:ItemTypeBig]){
+            if([MyMachine getStatus:ItemTypeBig]){//in case of : bigMode
                 if(
                     _xMine + _sMine * 0.4 >= _xEnemy - _sEnemy * 0.4 &&
                     _xMine - _sMine * 0.4 <= _xEnemy + _sEnemy * 0.4 &&
@@ -1135,8 +1140,8 @@ UIView *viewMyEffect;
                                 //テスト：順番に作成
 //                                NSLog(@"item occur : %d", countItem);
 //                                _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xEnemy y_init:_yEnemy width:ITEM_SIZE height:ITEM_SIZE];
-                                //test:only bomb
-                                _item = [[ItemClass alloc] init:0 x_init:_xEnemy y_init:_yEnemy width:ITEM_SIZE height:ITEM_SIZE];
+                                //test:only heal
+                                _item = [[ItemClass alloc] init:6 x_init:_xEnemy y_init:_yEnemy width:ITEM_SIZE height:ITEM_SIZE];
                                 
 //                                [ItemArray addObject:_item];
                                 [ItemArray insertObject:_item atIndex:0];
@@ -2164,9 +2169,9 @@ UIView *viewMyEffect;
             float x = ((CALayer *)[bombView.layer presentationLayer]).position.x;
             float y = ((CALayer *)[bombView.layer presentationLayer]).position.y;
             NSLog(@"x = %f, y = %f", x, y);
-            [self ExplodeBombEffect:self.view.center];//((CALayer *)[bombView.layer presentationLayer]).position];
+            [self ExplodeBombEffect:kEndPos];//CGPointMake(x, y)];//bombView.center];//((CALayer *)[bombView.layer presentationLayer]).position];
             
-//            [bombView removeFromSuperview];
+            [bombView removeFromSuperview];
             
         }else{
             //途中で何らかの理由で遮られた場合
@@ -2221,22 +2226,44 @@ UIView *viewMyEffect;
 }
 
 -(void)ExplodeBombEffect:(CGPoint)point{
-    int bombSize = 300;
-    UIImageView *uivBomb = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, bombSize/10, bombSize/10)];
-    uivBomb.image = [UIImage imageNamed:@"bomb012.png"];
+    int bombSize = 200;
+    UIImageView *uivBomb = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0,
+                                                                        bombSize/10, bombSize/10)];
+    uivBomb.image = [UIImage imageNamed:@"bomb012.png"];//original:758x598
     uivBomb.center = point;
-    [UIView animateWithDuration:2.0
+    CGAffineTransform transform = CGAffineTransformMakeRotation(M_PI/10.0f);
+    [UIView animateWithDuration:0.1f
                           delay:0.0
-                        options:UIViewAnimationOptionRepeat | UIViewAnimationOptionCurveLinear animations:^{
-                            CGAffineTransform transform = CGAffineTransformMakeRotation(M_PI);
+                        options:UIViewAnimationOptionCurveLinear
+//     |UIViewAnimationOptionRepeat//リピートさせる場合
+                     animations:^{
                             uivBomb.transform = transform;
                             uivBomb.frame = CGRectMake(point.x - bombSize/2,
                                                        point.y - bombSize/2,
-                                                       bombSize, bombSize);
+                                                       bombSize, 758.0f/598*bombSize);
                             uivBomb.center = point;
                         }
                      completion:^(BOOL finished){
                          [uivBomb removeFromSuperview];
+                         
+                         //爆発範囲内の敵にダメージor殲滅？
+                         for(int i = 0;i < [EnemyArray count] ;i++){
+                             if([[EnemyArray objectAtIndex:i] getIsAlive]){
+                                 _xEnemy = [[EnemyArray objectAtIndex:i] getX];
+                                 _yEnemy = [[EnemyArray objectAtIndex:i] getY];
+                                 _sEnemy = [[EnemyArray objectAtIndex:i] getSize];
+                                 
+                                 if(point.x + bombSize * 0.4 >= _xEnemy - _sEnemy * 0.4 &&
+                                    point.x - bombSize * 0.4 <= _xEnemy + _sEnemy * 0.4 &&
+                                    point.y + bombSize * 0.4 >= _yEnemy - _sEnemy * 0.4 &&
+                                    point.y - bombSize * 0.4 <= _yEnemy + _sEnemy * 0.4 ){
+
+                                     [self enemyDieEffect:i];//殲滅？
+                                     
+                                     
+                                 }
+                             }
+                         }
                      }];
     [self.view addSubview:uivBomb];
     
@@ -2255,6 +2282,49 @@ UIView *viewMyEffect;
 ////    ExplodeParticleView.center = point;
 //    [self.view addSubview:explode];
     
+}
+
+-(void)ItemBombEffect:(CGPoint)point{
+    int bombSize = 200;
+    UIImageView *uivBomb = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0,
+                                                                        bombSize/10, bombSize/10)];
+    uivBomb.image = [UIImage imageNamed:@"bomb016.png"];//original:758x598
+    uivBomb.center = point;
+    CGAffineTransform transform = CGAffineTransformMakeRotation(M_PI/10.0f);
+    [UIView animateWithDuration:0.4f
+                          delay:0.0
+                        options:UIViewAnimationOptionCurveLinear
+     //     |UIViewAnimationOptionRepeat//リピートさせる場合
+                     animations:^{
+                         uivBomb.transform = transform;
+                         uivBomb.frame = CGRectMake(point.x - bombSize/2,
+                                                    point.y - bombSize/2,
+                                                    bombSize, 675.0f/547*bombSize);
+                         uivBomb.center = point;
+                     }
+                     completion:^(BOOL finished){
+                         [uivBomb removeFromSuperview];
+                         
+                         //爆発範囲内の敵にダメージor殲滅？
+                         for(int i = 0;i < [EnemyArray count] ;i++){
+                             if([[EnemyArray objectAtIndex:i] getIsAlive]){
+                                 _xEnemy = [[EnemyArray objectAtIndex:i] getX];
+                                 _yEnemy = [[EnemyArray objectAtIndex:i] getY];
+                                 _sEnemy = [[EnemyArray objectAtIndex:i] getSize];
+                                 
+                                 if(point.x + bombSize * 0.4 >= _xEnemy - _sEnemy * 0.4 &&
+                                    point.x - bombSize * 0.4 <= _xEnemy + _sEnemy * 0.4 &&
+                                    point.y + bombSize * 0.4 >= _yEnemy - _sEnemy * 0.4 &&
+                                    point.y - bombSize * 0.4 <= _yEnemy + _sEnemy * 0.4 ){
+                                     
+                                     [self enemyDieEffect:i];//殲滅？
+                                     
+                                     
+                                 }
+                             }
+                         }
+                     }];
+    [self.view addSubview:uivBomb];
 }
 
 @end

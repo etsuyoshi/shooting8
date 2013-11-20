@@ -32,7 +32,8 @@ NSString *imageName;
     bigSize = mySize * 4;
     lifetime_count = 0;
     dead_time = -1;//死亡したら0にして一秒後にparticleを消去する
-    weaponCount = 0;//攻撃力強化タイム(通常時はゼロ)
+    weapon0Count = 0;//攻撃力強化(爆弾投下)タイム(通常時ゼロ)
+    weapon1Count = 0;//攻撃力強化(弾丸複数)タイム(通常時はゼロ)
     magnetCount = 0;
     bigCount = 0;
     bombCount = 0;
@@ -254,8 +255,14 @@ NSString *imageName;
         [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeMagnet]];
     }
     
-    if(weaponCount > 0){
-        weaponCount--;
+    if(weapon0Count > 0){
+        weapon0Count --;
+    }else{
+        [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeWeapon0]];//bomb
+    }
+    
+    if(weapon1Count > 0){
+        weapon1Count--;
     }else{
         numOfBeam = 1;
         [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeWeapon1]];
@@ -272,8 +279,9 @@ NSString *imageName;
     if(bombCount > 0){
         bombCount --;
     }else{
-        [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeWeapon0]];//bomb
+        [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeBig]];
     }
+    
     
     lifetime_count ++;
     if(!isAlive){
@@ -450,6 +458,11 @@ NSString *imageName;
             break;
         }
         case ItemTypeBomb:{
+            if([statusValue integerValue]){
+                bombCount = 100;//爆弾アイテムを取得した瞬間に爆発(連続して取得できないようにステータス時間は短め)
+            }else{
+                bombCount = 0;
+            }
             break;
         }
         case ItemTypeDeffense0:{
@@ -469,9 +482,9 @@ NSString *imageName;
         }
         case ItemTypeWeapon0:{//wpBomb:throwing bomb
             if([statusValue integerValue]){
-                bombCount = 500;
+                weapon0Count = 500;
             }else{
-                bombCount = 0;
+                weapon0Count = 0;
             }
             break;
         }
@@ -480,11 +493,11 @@ NSString *imageName;
             if([statusValue integerValue]){
                 
                 if(numOfBeam < 3){
-                    weaponCount = 500;
+                    weapon1Count = 500;
                     numOfBeam++;//max:3
                 }
             }else{
-                weaponCount = 0;
+                weapon1Count = 0;
                 numOfBeam = 1;
             }
             //            [self setNumOfBeam:numOfBeam];
