@@ -11,6 +11,7 @@
 #import "BGMClass.h"
 #import "MenuViewController.h"
 #import "GameClassViewController.h"
+#import "BackGroundClass.h"
 #import "ItemListViewController.h"
 #import "CreateComponentClass.h"
 #import "InviteFriendsViewController.h"
@@ -59,6 +60,7 @@ NSMutableArray *titleArray;
 UIView *subView;
 UIButton *closeButton;//閉じるボタン
 BGMClass *bgmClass;
+BackGroundClass *backGround;
 AttrClass *attr;
 
 //CreateComponentClass *createComponentClass;
@@ -95,6 +97,18 @@ AttrClass *attr;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    backGround = [[BackGroundClass alloc]init:WorldTypeForest
+                                        width:self.view.bounds.size.width
+                                       height:self.view.bounds.size.height];
+    
+    
+    [self.view addSubview:[backGround getImageView1]];
+    [self.view addSubview:[backGround getImageView2]];
+    [self.view sendSubviewToBack:[backGround getImageView1]];
+    [self.view sendSubviewToBack:[backGround getImageView2]];
+    
+    [backGround startAnimation:8.0f];//3sec-Round
     
     // ステータスバーを非表示にする:plistでの処理はiOS7以降非推奨
     if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)])
@@ -196,9 +210,13 @@ AttrClass *attr;
     
     //背景作成
 //    UIImageView *iv_back = [self createImageView:@"chara_test2.png" tag:0 frame:[[UIScreen mainScreen] bounds]];
-    UIImageView *iv_back = [self createImageView:@"chara01.png" tag:0 frame:CGRectMake(-110, -10, 680, 500)];
-    
-    iv_back.alpha = ALPHA_COMPONENT;
+//    UIImageView *iv_back = [self createImageView:@"chara01.png" tag:0 frame:CGRectMake(-110, -10, 680, 500)];
+//    UIImageView *iv_back = [[UIImageView alloc] initWithFrame:CGRectMake(-110, -10, 680, 500)];
+    UIImageView *iv_back = [[UIImageView alloc] initWithFrame:CGRectMake(-110, -10, 544, 400)];
+    iv_back.image = [UIImage imageNamed:@"chara01.png"];
+    iv_back.center = self.view.center;//CGPointMake(self.view.center.x, self.view.center.y);
+    [self animAirViewUp:iv_back];
+//    iv_back.alpha = ALPHA_COMPONENT;
     [self.view sendSubviewToBack:iv_back];
     [self.view addSubview:iv_back];
     
@@ -739,7 +757,57 @@ AttrClass *attr;
 }
 
 
-
-
-
+-(void)animAirViewUp:(UIView *)view{//浮遊アニメーション
+    
+    CGPoint kStartPos = self.view.center;//((CALayer *)[view.layer presentationLayer]).position;
+    CGPoint kEndPos = self.view.center;
+    [CATransaction begin];
+//    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+    [CATransaction setCompletionBlock:^{//終了処理
+//        [self animAirView:view];
+        CAAnimation *animationKeyFrame = [view.layer animationForKey:@"position"];
+        if(animationKeyFrame){
+            //途中で終わらずにアニメーションが全て完了して
+//            [self animAirViewDown:view];
+            [self animAirViewUp:view];
+//            NSLog(@"animation key frame already exit & die");
+        }else{
+            //途中で何らかの理由で遮られた場合
+//            NSLog(@"animation key frame not exit");
+        }
+        
+    }];
+    
+    {
+        
+        // CAKeyframeAnimationオブジェクトを生成
+        CAKeyframeAnimation *animation;
+        animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+        animation.fillMode = kCAFillModeForwards;
+        animation.removedOnCompletion = NO;
+        animation.duration = 1.0f;
+        
+        // 放物線のパスを生成
+        CGPoint peakPos = CGPointMake(kStartPos.x, kEndPos.y * 0.95f);//test
+        CGMutablePathRef curvedPath = CGPathCreateMutable();
+        CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
+        CGPathAddCurveToPoint(curvedPath, NULL,
+                              peakPos.x, peakPos.y,
+                              (peakPos.x + kEndPos.x)/2, (peakPos.y + kEndPos.y)/2,
+                              kEndPos.x, kEndPos.y);
+        
+        // パスをCAKeyframeAnimationオブジェクトにセット
+        animation.path = curvedPath;
+        
+        // パスを解放
+        CGPathRelease(curvedPath);
+        
+        // レイヤーにアニメーションを追加
+        //                        [[[ItemArray objectAtIndex:i] getImageView].layer addAnimation:animation forKey:@"position"];
+        [view.layer addAnimation:animation forKey:@"position"];
+        
+    }
+    [CATransaction commit];
+}
 @end

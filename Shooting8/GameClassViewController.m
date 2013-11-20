@@ -105,6 +105,8 @@
 CGRect rect_frame, rect_myMachine, rect_enemyBeam, rect_beam_launch;
 UIImageView *iv_frame, *iv_myMachine, *iv_enemyBeam, *iv_beam_launch;//, *iv_background1, *iv_background2;
 
+
+
 UIView *_loadingView;
 UIActivityIndicatorView *_indicator;
 
@@ -338,6 +340,7 @@ UIView *viewMyEffect;
     MyMachine = [[MyMachineClass alloc] init:x_frame/2 size:OBJECT_SIZE];
     [self.view addSubview:[MyMachine getImageView]];
     [self.view bringSubviewToFront:[MyMachine getImageView]];
+//    [[MyMachine getImageView] startAnimating];
     
     //自機エフェクトを描画するビュー
     viewMyEffect = [[UIView alloc] initWithFrame:[MyMachine getImageView].frame];
@@ -364,6 +367,7 @@ UIView *viewMyEffect;
     //ゴールドの初期化と表示
     GoldBoard = [[GoldBoardClass alloc]init:0 x_init:0 y_init:50 ketasu:10 type:@"gold"];
     [self displayScore:GoldBoard];
+    
     
     size_machine = 100;
     
@@ -508,6 +512,13 @@ UIView *viewMyEffect;
         }
     }
     
+    //爆弾投下
+    if(arc4random() % 10 == 0 &&//1秒に1回
+       [MyMachine getStatus:ItemTypeWeapon0]){
+        
+        [self throwBombAnimation];
+    }
+    
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/進行:各オブジェクトのdoNext_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
@@ -600,7 +611,6 @@ UIView *viewMyEffect;
                 
 //                if([self getDistance:_itemLoc.x y:_itemLoc.y] < diameterMagnet){
 //                if([self getDistance:_itemLayer.position.x y:_itemLayer.position.y] < diameterMagnet){
-//                if(true){//test:全ての範囲のアイテムに対して
                 if(ABS(((CALayer *)[_itemView.layer presentationLayer]).position.x - [MyMachine getImageView].center.x) < diameterMagnet &&
                    ABS(((CALayer *)[_itemView.layer presentationLayer]).position.y - [MyMachine getImageView].center.y) < diameterMagnet){
 //                    CGPoint kStartPos = ((CALayer *)[[[ItemArray objectAtIndex:i] getImageView].layer presentationLayer]).position;//viewInArray.center;//((CALayer *)[iv.layer presentationLayer]).position;
@@ -939,7 +949,7 @@ UIView *viewMyEffect;
                     }
                     case ItemTypeBomb:{
                         [MyMachine setStatus:@"1" key:ItemTypeBomb];
-                        for(int i = 0; i < [EnemyArray count] ;i++){
+                        for(int i = 0; i < [EnemyArray count] ;i++){//画面内全敵対象
                             [self enemyDieEffect:i];
                         }
                         break;
@@ -966,6 +976,7 @@ UIView *viewMyEffect;
                     }
                     case ItemTypeWeapon0:{//wpBomb
                         [MyMachine setStatus:@"1" key:ItemTypeWeapon0];
+//                        [self throwBombEffect];
                         break;
                     }
                     case ItemTypeWeapon1:{//wpDiffuse
@@ -1123,9 +1134,9 @@ UIView *viewMyEffect;
                                 
                                 //テスト：順番に作成
 //                                NSLog(@"item occur : %d", countItem);
-                                _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xEnemy y_init:_yEnemy width:ITEM_SIZE height:ITEM_SIZE];
+//                                _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xEnemy y_init:_yEnemy width:ITEM_SIZE height:ITEM_SIZE];
                                 //test:only bomb
-//                                _item = [[ItemClass alloc] init:6 x_init:_xEnemy y_init:_yEnemy width:OBJECT_SIZE height:OBJECT_SIZE];
+                                _item = [[ItemClass alloc] init:0 x_init:_xEnemy y_init:_yEnemy width:ITEM_SIZE height:ITEM_SIZE];
                                 
 //                                [ItemArray addObject:_item];
                                 [ItemArray insertObject:_item atIndex:0];
@@ -2118,6 +2129,114 @@ UIView *viewMyEffect;
     
     enemyDown++;
     //                            NSLog(@"enemyDown: %d", enemyDown);
+    
+}
+
+
+/*
+ *現在位置(mymachine getimageview.center)からランダムに爆弾を投げる
+ *レベル上昇で意図した場所に投げられる？
+ */
+-(void)throwBombAnimation{
+    
+    //投下用爆弾
+    UIImageView *bombView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0,
+                                                                         ITEM_SIZE*1.5f, ITEM_SIZE)];
+    bombView.image = [UIImage imageNamed:@"bomb026.png"];
+    
+    
+    bombView.center = [MyMachine getImageView].center;
+    CGPoint kStartPos = bombView.center;//((CALayer *)[view.layer presentationLayer]).position;
+    CGPoint kEndPos = CGPointMake(arc4random() % ((int)self.view.bounds.size.width),
+                                  bombView.center.y * 0.5f);
+    [CATransaction begin];
+    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn]];
+//    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+//    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+    [CATransaction setCompletionBlock:^{//終了処理
+        //        [self animAirView:view];
+        CAAnimation *animationKeyFrame = [bombView.layer animationForKey:@"position"];
+        if(animationKeyFrame){
+            //途中で終わらずにアニメーションが全て完了した場合
+            NSLog(@"bomb throwed!!");
+            [bombView removeFromSuperview];
+            
+            
+            //爆発エフェクト
+            float x = ((CALayer *)[bombView.layer presentationLayer]).position.x;
+            float y = ((CALayer *)[bombView.layer presentationLayer]).position.y;
+            NSLog(@"x = %f, y = %f", x, y);
+            [self ExplodeBombEffect:self.view.center];//((CALayer *)[bombView.layer presentationLayer]).position];
+            
+        }else{
+            //途中で何らかの理由で遮られた場合
+            NSLog(@"animation key frame not exit");
+        }
+        
+    }];
+    
+    {
+        
+        //回転させたい！
+        //http://stackoverflow.com/questions/7329426/how-can-i-rotate-a-uibutton-continuously-and-be-able-to-stop-it
+        //http://stackoverflow.com/questions/7204607/ios-cakeyframeanimation-rotate
+        
+        // CAKeyframeAnimationオブジェクトを生成
+        CAKeyframeAnimation *animation;
+        animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+        animation.fillMode = kCAFillModeForwards;
+        animation.removedOnCompletion = NO;
+        animation.duration = 0.7f;
+        
+        // 放物線のパスを生成
+        CGPoint peakPos = CGPointMake((arc4random()%2==0?0:320),//kStartPos.x + arc4random() % 600 - 300,
+                                      kEndPos.y*0.05f);//test
+        CGMutablePathRef curvedPath = CGPathCreateMutable();
+        CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
+        CGPathAddCurveToPoint(curvedPath, NULL,
+                              peakPos.x, peakPos.y,
+                              (peakPos.x + kEndPos.x)/2, (peakPos.y + kEndPos.y)/2,
+                              kEndPos.x, kEndPos.y);
+        
+        // パスをCAKeyframeAnimationオブジェクトにセット
+        animation.path = curvedPath;
+        
+        // パスを解放
+        CGPathRelease(curvedPath);
+        
+        // レイヤーにアニメーションを追加
+        //                        [[[ItemArray objectAtIndex:i] getImageView].layer addAnimation:animation forKey:@"position"];
+        [bombView.layer addAnimation:animation forKey:@"position"];
+
+    }
+    [CATransaction commit];
+    
+//    [UIView animateWithDuration:3.0f
+//                     animations:^{
+//                         bombView.center = self.view.center;
+//                     }];
+    
+    [self.view bringSubviewToFront:bombView];
+    [self.view addSubview:bombView];
+}
+
+
+-(void)ExplodeBombEffect:(CGPoint)point{
+    int bombSize = 300;
+    ExplodeParticleView *explode = [[ExplodeParticleView alloc]initWithFrame:CGRectMake(point.x - bombSize/2
+                                                                                        , point.y - bombSize/2,
+                                                                                        bombSize, bombSize)];
+    
+    [UIView animateWithDuration:0.9f
+                     animations:^{
+                         explode.alpha = 0.0f;
+                     }
+                     completion:^(BOOL finished){
+                         [explode setIsEmitting:NO];
+                         [explode removeFromSuperview];
+                     }];
+//    ExplodeParticleView.center = point;
+    [self.view addSubview:explode];
     
 }
 

@@ -35,6 +35,7 @@ NSString *imageName;
     weaponCount = 0;//攻撃力強化タイム(通常時はゼロ)
     magnetCount = 0;
     bigCount = 0;
+    bombCount = 0;
     numOfBeam = 1;//通常時、最初はビームの数は1つ(１列)
     isAlive = true;
     explodeParticle = nil;
@@ -44,6 +45,27 @@ NSString *imageName;
     rect = CGRectMake(x_loc-mySize/2, y_loc-mySize/2, mySize, mySize);
     iv = [[UIImageView alloc]initWithFrame:rect];
     iv.image = [UIImage imageNamed:@"player.png"];
+    
+    
+    
+    NSArray *imgArray = [[NSArray alloc] initWithObjects:
+                         [UIImage imageNamed:@"player.png"],
+//                         [UIImage imageNamed:@"player1.png"],
+                         [UIImage imageNamed:@"player2.png"],
+                         [UIImage imageNamed:@"player3.png"],
+                         [UIImage imageNamed:@"player4.png"],
+                         [UIImage imageNamed:@"player4.png"],
+                         [UIImage imageNamed:@"player3.png"],
+                         [UIImage imageNamed:@"player2.png"],
+//                         [UIImage imageNamed:@"player1.png"],
+                         [UIImage imageNamed:@"player.png"],
+                         nil];
+//    UIImageView *animationView = [[UIImageView alloc] initWithFrame:CGRectMake(124,204,72,72)];
+    iv.animationImages = imgArray;
+    iv.animationDuration = 3.0f; // アニメーション全体で3秒（＝各間隔は0.5秒）
+//    [iv startAnimating]; // アニメーション開始!!
+    
+    
 //    machine_type = arc4random() % 3;
     beamArray = [[NSMutableArray alloc]init];
     
@@ -278,40 +300,44 @@ NSString *imageName;
     
 //    
 //    switch(machine_type){//lifetime_count%8を引数に取る？
-    switch ((int)(lifetime_count/10) % 8){//タイマーの間隔による
-        case 0:{
-            iv.image = [UIImage imageNamed:@"player.png"];
-            break;
-        }
-        case 1:{
-            iv.image = [UIImage imageNamed:@"player2.png"];
-            break;
-        }
-        case 2:{
-            iv.image = [UIImage imageNamed:@"player3.png"];
-            break;
-        }
-        case 3:{
-            iv.image = [UIImage imageNamed:@"player4.png"];
-            break;
-        }
-        case 4:{
-            iv.image = [UIImage imageNamed:@"player4.png"];
-            break;
-        }
-        case 5:{
-            iv.image = [UIImage imageNamed:@"player3.png"];
-            break;
-        }
-        case 6:{
-            iv.image = [UIImage imageNamed:@"player2.png"];
-            break;
-        }
-        case 7:{
-            iv.image = [UIImage imageNamed:@"player.png"];
-            break;
-        }
-    }
+    
+    
+    
+    
+//    switch ((int)(lifetime_count/10) % 8){//タイマーの間隔による
+//        case 0:{
+//            iv.image = [UIImage imageNamed:@"player.png"];
+//            break;
+//        }
+//        case 1:{
+//            iv.image = [UIImage imageNamed:@"player2.png"];
+//            break;
+//        }
+//        case 2:{
+//            iv.image = [UIImage imageNamed:@"player3.png"];
+//            break;
+//        }
+//        case 3:{
+//            iv.image = [UIImage imageNamed:@"player4.png"];
+//            break;
+//        }
+//        case 4:{
+//            iv.image = [UIImage imageNamed:@"player4.png"];
+//            break;
+//        }
+//        case 5:{
+//            iv.image = [UIImage imageNamed:@"player3.png"];
+//            break;
+//        }
+//        case 6:{
+//            iv.image = [UIImage imageNamed:@"player2.png"];
+//            break;
+//        }
+//        case 7:{
+//            iv.image = [UIImage imageNamed:@"player.png"];
+//            break;
+//        }
+//    }
     if(magnetCount > 0){
         magnetCount--;
     }else{
@@ -332,6 +358,12 @@ NSString *imageName;
         mySize = originalSize;
         iv.frame = CGRectMake(x_loc-mySize/2, y_loc-mySize/2, mySize, mySize);
         [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeBig]];
+    }
+    
+    if(bombCount > 0){
+        bombCount --;
+    }else{
+        [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeWeapon0]];//bomb
     }
     
     lifetime_count ++;
@@ -526,7 +558,12 @@ NSString *imageName;
         case ItemTypeTransparency:{
             break;
         }
-        case ItemTypeWeapon0:{//wpBomb
+        case ItemTypeWeapon0:{//wpBomb:throwing bomb
+            if([statusValue integerValue]){
+                bombCount = 500;
+            }else{
+                bombCount = 0;
+            }
             break;
         }
         case ItemTypeWeapon1:{//wpDiffuse

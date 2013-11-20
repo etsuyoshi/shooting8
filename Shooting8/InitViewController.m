@@ -10,7 +10,7 @@
 
 
 #define NoConnectTEST
-//#define TestView
+#define TestView
 #ifdef TestView
     #import "TestViewController.h"
 #endif

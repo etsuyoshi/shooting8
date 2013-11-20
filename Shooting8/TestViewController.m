@@ -14,9 +14,14 @@
 //#define CATRANSACTION_TEST
 //#define TEST_EFFECT
 //#define ORBITPATH_TEST
-#define TRACK_TEST
+//#define TRACK_TEST
+//#define EXPLOSTION_TEST
+//#define BOMB_TEST
+#define MYMACHINE_TEST
 
 
+
+#import "ExplodeParticleView.h"
 #import "EnemyClass.h"
 #import "ItemClass.h"
 #import "CreateComponentClass.h"
@@ -47,6 +52,7 @@ int counter;
 UIView *circleView;
 CALayer *mylayer;
 UIView *viewLayerTest;
+ExplodeParticleView *explodeParticle;
 
 
 int tempCount = 0;
@@ -417,7 +423,117 @@ int tempCount = 0;
     if(counter == 0){
         [self effectTest];
     }
+#elif defined EXPLOSTION_TEST
+    if(counter == 0){
+        
+        int x_loc = self.view.center.x;
+        int y_loc = self.view.center.y;
+        int bomb_size = 200;
+//        ExplodeParticleView *ex = [[ExplodeParticleView alloc]init];
+        explodeParticle = [[ExplodeParticleView alloc] initWithFrame:CGRectMake(x_loc, y_loc, bomb_size, bomb_size)];
+//        explodeParticle set
+        [UIView animateWithDuration:1.5f
+                         animations:^{
+                             [explodeParticle setAlpha:0.0f];//徐々に薄く
+                         }
+                         completion:^(BOOL finished){
+                             //終了時処理
+                             [explodeParticle setIsEmitting:NO];
+                             [explodeParticle removeFromSuperview];
+                         }];
+        [self.view addSubview:explodeParticle];
+        NSLog(@"explode");
+    }
+    
+#elif defined BOMB_TEST
+    
+    if(counter == 0){
+        
+        UIImageView *bombView = [[UIImageView alloc]initWithFrame:CGRectMake(0,0,100, 100)];
+        bombView.image = [UIImage imageNamed:@"bomb026"];
+        //    bombView.center = [MyMachine getImageView].center;
+        CGPoint kStartPos = bombView.center;//((CALayer *)[view.layer presentationLayer]).position;
+        CGPoint kEndPos = CGPointMake(320, 480);//CGPointMake(self.view.center.x,//test: + arc4random() % 320 - 160,
+//                                      bombView.center.y * 0.5f);
+        [CATransaction begin];
+        //    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+        [CATransaction setCompletionBlock:^{//終了処理
+            //        [self animAirView:view];
+            CAAnimation *animationKeyFrame = [bombView.layer animationForKey:@"position"];
+            if(animationKeyFrame){
+                //途中で終わらずにアニメーションが全て完了した場合
+                NSLog(@"bomb throwerd!!");
+                //            [bombView removeFromSuperview];
+            }else{
+                //途中で何らかの理由で遮られた場合
+                NSLog(@"animation key frame not exit");
+            }
+            
+        }];
+        
+        {
+            
+            // CAKeyframeAnimationオブジェクトを生成
+            CAKeyframeAnimation *animation;
+            animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+            animation.fillMode = kCAFillModeForwards;
+            animation.removedOnCompletion = NO;
+            animation.duration = 2.0f;
+            
+            // 放物線のパスを生成
+            CGPoint peakPos = CGPointMake(kStartPos.x + arc4random() * 100 - 50,
+                                          (kStartPos.y + kEndPos.y)/2.0f);//test
+            CGMutablePathRef curvedPath = CGPathCreateMutable();
+            CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
+            CGPathAddCurveToPoint(curvedPath, NULL,
+                                  peakPos.x, peakPos.y,
+                                  (peakPos.x + kEndPos.x)/2, (peakPos.y + kEndPos.y)/2,
+                                  kEndPos.x, kEndPos.y);
+            
+            // パスをCAKeyframeAnimationオブジェクトにセット
+            animation.path = curvedPath;
+            
+            // パスを解放
+            CGPathRelease(curvedPath);
+            
+            // レイヤーにアニメーションを追加
+            //                        [[[ItemArray objectAtIndex:i] getImageView].layer addAnimation:animation forKey:@"position"];
+            [bombView.layer addAnimation:animation forKey:@"position"];
+            
+        }
+        [CATransaction commit];
+        
+        //    [UIView animateWithDuration:3.0f
+        //                     animations:^{
+        //                         bombView.center = self.view.center;
+        //                     }];
+        
+        [self.view bringSubviewToFront:bombView];
+        [self.view addSubview:bombView];
+    }
+    
+#elif defined MYMACHINE_TEST
+    if(counter == 0){
+        //http://stackoverflow.com/questions/5475380/uiimageview-animation-is-not-displayed-on-view
+        NSArray *imgArray = [[NSArray alloc] initWithObjects:
+                             [UIImage imageNamed:@"player.png"],
+                             [UIImage imageNamed:@"player1.png"],
+                             [UIImage imageNamed:@"player2.png"],
+                             [UIImage imageNamed:@"player3.png"],
+                             [UIImage imageNamed:@"player4.png"],
+                             [UIImage imageNamed:@"player4.png"],
+                             [UIImage imageNamed:@"player3.png"],
+                             nil];
+        UIImageView *animationView = [[UIImageView alloc] initWithFrame:CGRectMake(124,204,72,72)];
+        animationView.animationImages = imgArray;
+        animationView.animationDuration = 3.0f; // アニメーション全体で3秒（＝各間隔は0.5秒）
+        animationView.animationRepeatCount = 500;
+        [animationView startAnimating]; // アニメーション開始!!
+        [self.view addSubview:animationView];
+    }
 
+    
 #else
     NSLog(@"aaa");
     //nothing

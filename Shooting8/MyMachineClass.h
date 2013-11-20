@@ -26,8 +26,9 @@
     int bomb_size;
     int dead_time;
     int magnetCount;
-    int weaponCount;//攻撃力強化タイム
+    int weaponCount;//攻撃力強化できる時間
     int bigCount;
+    int bombCount;//爆弾を投げられる時間
     int numOfBeam;
     Boolean isAlive;
     UIImageView *iv;

@@ -81,6 +81,7 @@
 		344BD61E1815936B00387201 /* mob_hari_02.png in Resources */ = {isa = PBXBuildFile; fileRef = 344BD6151815936B00387201 /* mob_hari_02.png */; };
 		344BD61F1815936B00387201 /* mob_hari_01.png in Resources */ = {isa = PBXBuildFile; fileRef = 344BD6161815936B00387201 /* mob_hari_01.png */; };
 		344BD6211815943400387201 /* mob_tanu_01.png in Resources */ = {isa = PBXBuildFile; fileRef = 344BD6201815943400387201 /* mob_tanu_01.png */; };
+		34518647183B9F5B00DDD6D2 /* bomb026.png in Resources */ = {isa = PBXBuildFile; fileRef = 34518646183B9F5B00DDD6D2 /* bomb026.png */; };
 		3458DB251827C3E2003F1672 /* BackGroundClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 3458DB241827C3E2003F1672 /* BackGroundClass.m */; };
 		3460F94E1824FA2700951A99 /* weapon_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 3460F9431824FA2700951A99 /* weapon_diffuse.png */; };
 		3460F9501824FA2700951A99 /* tool_bomb.png in Resources */ = {isa = PBXBuildFile; fileRef = 3460F9451824FA2700951A99 /* tool_bomb.png */; };
@@ -290,6 +291,7 @@
 		344BD6151815936B00387201 /* mob_hari_02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mob_hari_02.png; sourceTree = "<group>"; };
 		344BD6161815936B00387201 /* mob_hari_01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mob_hari_01.png; sourceTree = "<group>"; };
 		344BD6201815943400387201 /* mob_tanu_01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mob_tanu_01.png; sourceTree = "<group>"; };
+		34518646183B9F5B00DDD6D2 /* bomb026.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bomb026.png; sourceTree = "<group>"; };
 		3458DB231827C3E2003F1672 /* BackGroundClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackGroundClass.h; sourceTree = "<group>"; };
 		3458DB241827C3E2003F1672 /* BackGroundClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackGroundClass.m; sourceTree = "<group>"; };
 		3460F9431824FA2700951A99 /* weapon_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = weapon_diffuse.png; sourceTree = "<group>"; };
@@ -509,6 +511,7 @@
 		342057D817F2B34C0084E99D /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				34518645183B9F4A00DDD6D2 /* bomb */,
 				342CA73B1824400000F072E0 /* Tool */,
 				34A2B1BB181F9DEC00CB97F2 /* bullet */,
 				34A2B1BA181F9DDD00CB97F2 /* gameEffect */,
@@ -576,6 +579,14 @@
 				3460F94D1824FA2700951A99 /* weapon_laser.png */,
 			);
 			name = Tool;
+			sourceTree = "<group>";
+		};
+		34518645183B9F4A00DDD6D2 /* bomb */ = {
+			isa = PBXGroup;
+			children = (
+				34518646183B9F5B00DDD6D2 /* bomb026.png */,
+			);
+			name = bomb;
 			sourceTree = "<group>";
 		};
 		347D26F118166DFC00498F68 /* number */ = {
@@ -996,6 +1007,7 @@
 				34C16CD1181C4E9400650A40 /* sabaki_hmix.mp3 in Resources */,
 				3411FB8A17FF2D06001D1491 /* cosmos_star4_repair.png in Resources */,
 				34C09ED0180085DF00E4A4D8 /* blue.png in Resources */,
+				34518647183B9F5B00DDD6D2 /* bomb026.png in Resources */,
 				34C09EDB18009C5F00E4A4D8 /* blue_item_yuri.png in Resources */,
 				34C09EDC18009C5F00E4A4D8 /* yellow_item_thunder.png in Resources */,
 				34C09EDE18009D0300E4A4D8 /* blue_item_yuri_big.png in Resources */,

@@ -10,9 +10,9 @@
 #import "KiraParticleView.h"
 
 typedef NS_ENUM(NSInteger, ItemType) {
-    ItemTypeWeapon0,//0
-    ItemTypeWeapon1,//1
-    ItemTypeWeapon2,//2
+    ItemTypeWeapon0,//0:bomb
+    ItemTypeWeapon1,//1:diffuse
+    ItemTypeWeapon2,//2:laser
     ItemTypeDeffense0,//3
     ItemTypeDeffense1,//4
     ItemTypeMagnet,//5
