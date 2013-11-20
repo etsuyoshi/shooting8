@@ -10,22 +10,22 @@
 #import "KiraParticleView.h"
 
 typedef NS_ENUM(NSInteger, ItemType) {
-    ItemTypeWeapon0,//0:bomb
-    ItemTypeWeapon1,//1:diffuse
-    ItemTypeWeapon2,//2:laser
+    ItemTypeWeapon0,//0:bomb:doing
+    ItemTypeWeapon1,//1:diffuse:done
+    ItemTypeWeapon2,//2:laser:doing(requesting)
     ItemTypeDeffense0,//3
     ItemTypeDeffense1,//4
     ItemTypeMagnet,//5
     ItemTypeBomb,//6
-    ItemTypeHeal,
-    ItemTypeBig,
-    ItemTypeSmall,
-    ItemTypeTransparency,
-    ItemTypeYellowGold,
-    ItemTypeGreenGold,
-    ItemTypeBlueGold,
-    ItemTypePurpleGold,
-    ItemTypeRedGold
+    ItemTypeHeal,//7
+    ItemTypeBig,//8:done
+    ItemTypeSmall,//9:not
+    ItemTypeTransparency,//10:not
+    ItemTypeYellowGold,//11:done
+    ItemTypeGreenGold,//12:done
+    ItemTypeBlueGold,//13:done
+    ItemTypePurpleGold,//14:done
+    ItemTypeRedGold//15:done
 };
 
 @interface ItemClass : NSObject{

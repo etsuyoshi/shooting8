@@ -515,22 +515,28 @@ int tempCount = 0;
     
 #elif defined MYMACHINE_TEST
     if(counter == 0){
+        
+        NSLog(@"start");
         //http://stackoverflow.com/questions/5475380/uiimageview-animation-is-not-displayed-on-view
         NSArray *imgArray = [[NSArray alloc] initWithObjects:
                              [UIImage imageNamed:@"player.png"],
-                             [UIImage imageNamed:@"player1.png"],
                              [UIImage imageNamed:@"player2.png"],
                              [UIImage imageNamed:@"player3.png"],
                              [UIImage imageNamed:@"player4.png"],
                              [UIImage imageNamed:@"player4.png"],
                              [UIImage imageNamed:@"player3.png"],
+                             [UIImage imageNamed:@"player2.png"],
+                             [UIImage imageNamed:@"player.png"],
                              nil];
         UIImageView *animationView = [[UIImageView alloc] initWithFrame:CGRectMake(124,204,72,72)];
         animationView.animationImages = imgArray;
-        animationView.animationDuration = 3.0f; // アニメーション全体で3秒（＝各間隔は0.5秒）
-        animationView.animationRepeatCount = 500;
+        animationView.animationDuration = 1.0f; // アニメーション全体で3秒（＝各間隔は0.5秒）
+        animationView.animationRepeatCount = 0;
         [animationView startAnimating]; // アニメーション開始!!
+        animationView.image = [UIImage imageNamed:@"player.png"];//最終状態?
         [self.view addSubview:animationView];
+        
+        NSLog(@"complete");
     }
 
     

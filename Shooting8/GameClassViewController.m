@@ -2159,14 +2159,14 @@ UIView *viewMyEffect;
         if(animationKeyFrame){
             //途中で終わらずにアニメーションが全て完了した場合
             NSLog(@"bomb throwed!!");
-            [bombView removeFromSuperview];
-            
             
             //爆発エフェクト
             float x = ((CALayer *)[bombView.layer presentationLayer]).position.x;
             float y = ((CALayer *)[bombView.layer presentationLayer]).position.y;
             NSLog(@"x = %f, y = %f", x, y);
             [self ExplodeBombEffect:self.view.center];//((CALayer *)[bombView.layer presentationLayer]).position];
+            
+//            [bombView removeFromSuperview];
             
         }else{
             //途中で何らかの理由で遮られた場合
@@ -2220,23 +2220,40 @@ UIView *viewMyEffect;
     [self.view addSubview:bombView];
 }
 
-
 -(void)ExplodeBombEffect:(CGPoint)point{
     int bombSize = 300;
-    ExplodeParticleView *explode = [[ExplodeParticleView alloc]initWithFrame:CGRectMake(point.x - bombSize/2
-                                                                                        , point.y - bombSize/2,
-                                                                                        bombSize, bombSize)];
-    
-    [UIView animateWithDuration:0.9f
-                     animations:^{
-                         explode.alpha = 0.0f;
-                     }
+    UIImageView *uivBomb = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, bombSize/10, bombSize/10)];
+    uivBomb.image = [UIImage imageNamed:@"bomb012.png"];
+    uivBomb.center = point;
+    [UIView animateWithDuration:2.0
+                          delay:0.0
+                        options:UIViewAnimationOptionRepeat | UIViewAnimationOptionCurveLinear animations:^{
+                            CGAffineTransform transform = CGAffineTransformMakeRotation(M_PI);
+                            uivBomb.transform = transform;
+                            uivBomb.frame = CGRectMake(point.x - bombSize/2,
+                                                       point.y - bombSize/2,
+                                                       bombSize, bombSize);
+                            uivBomb.center = point;
+                        }
                      completion:^(BOOL finished){
-                         [explode setIsEmitting:NO];
-                         [explode removeFromSuperview];
+                         [uivBomb removeFromSuperview];
                      }];
-//    ExplodeParticleView.center = point;
-    [self.view addSubview:explode];
+    [self.view addSubview:uivBomb];
+    
+//    ExplodeParticleView *explode = [[ExplodeParticleView alloc]initWithFrame:CGRectMake(point.x - bombSize/2
+//                                                                                        , point.y - bombSize/2,
+//                                                                                        bombSize, bombSize)];
+//    
+//    [UIView animateWithDuration:0.9f
+//                     animations:^{
+//                         explode.alpha = 0.0f;
+//                     }
+//                     completion:^(BOOL finished){
+//                         [explode setIsEmitting:NO];
+//                         [explode removeFromSuperview];
+//                     }];
+////    ExplodeParticleView.center = point;
+//    [self.view addSubview:explode];
     
 }
 

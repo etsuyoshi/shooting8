@@ -44,26 +44,24 @@ NSString *imageName;
     //x_loc,y_loc is center point
     rect = CGRectMake(x_loc-mySize/2, y_loc-mySize/2, mySize, mySize);
     iv = [[UIImageView alloc]initWithFrame:rect];
-    iv.image = [UIImage imageNamed:@"player.png"];
+//    iv.image = [UIImage imageNamed:@"player.png"];
     
     
     
     NSArray *imgArray = [[NSArray alloc] initWithObjects:
                          [UIImage imageNamed:@"player.png"],
-//                         [UIImage imageNamed:@"player1.png"],
                          [UIImage imageNamed:@"player2.png"],
                          [UIImage imageNamed:@"player3.png"],
                          [UIImage imageNamed:@"player4.png"],
                          [UIImage imageNamed:@"player4.png"],
                          [UIImage imageNamed:@"player3.png"],
                          [UIImage imageNamed:@"player2.png"],
-//                         [UIImage imageNamed:@"player1.png"],
                          [UIImage imageNamed:@"player.png"],
                          nil];
-//    UIImageView *animationView = [[UIImageView alloc] initWithFrame:CGRectMake(124,204,72,72)];
     iv.animationImages = imgArray;
-    iv.animationDuration = 3.0f; // アニメーション全体で3秒（＝各間隔は0.5秒）
-//    [iv startAnimating]; // アニメーション開始!!
+    iv.animationRepeatCount = 0;
+    iv.animationDuration = 1.0f; // アニメーション全体で1秒（＝各間隔は0.5秒）
+    [iv startAnimating]; // アニメーション開始!!
     
     
 //    machine_type = arc4random() % 3;
@@ -121,28 +119,6 @@ NSString *imageName;
               @"0", [NSNumber numberWithInt:ItemTypePurpleGold],
               @"0", [NSNumber numberWithInt:ItemTypeRedGold],
               nil];
-    
-    
-
-    
-//    switch(machine_type){
-//        case 0:
-//            bomb_size = 20;
-//            iv.image = [UIImage imageNamed:@"player.png"];
-//            break;
-//        case 1:
-//            bomb_size = 30;
-//            iv.image = [UIImage imageNamed:@"player2.png"];
-//            break;
-//        case 2:
-//            bomb_size = 40;
-//            iv.image = [UIImage imageNamed:@"player3.png"];
-//            break;
-//        case 3:
-//            bomb_size = 40;
-//            iv.image = [UIImage imageNamed:@"player4.png"];
-//            break;
-//    }
     
     
     return self;
@@ -220,74 +196,7 @@ NSString *imageName;
 -(int)getSize{
     return mySize;
 }
--(void)startAnimate{
-//    NSString *imageName = @"player.png";
-    
-//    [UIView transitionWithView:uiiv
-//                      duration:3.0f
-//                       options:UIViewAnimationOptionTransitionCrossDissolve
-//                    animations:^{
-//                        uiiv.image = [UIImage imageNamed:@"tool_bomb.png"];
-//                    } completion:^(BOOL finished){
-//                        NSLog(@"finished");
-//                    }];
 
-    
-    //test@http://sweettolife.com/questions/14865790/change-image-after-uiimageview-had-started-completed-animation
-//    UIViewAnimationOptionTransitionCrossDissolve
-    [UIView transitionWithView:iv
-                      duration:3.0f
-                        options:UIViewAnimationOptionTransitionNone
-                     animations:^{
-                         iv.image = [UIImage imageNamed:imageName];
-
-                     }
-                     completion:^(BOOL finished){
-                         if(finished){
-//                         NSLog(@"windStatus = %d", wingStatus);
-                         wingStatus ++;
-                         wingStatus %= 8;
-                         
-                         switch(wingStatus){//lifetime_count%8を引数に取る？
-                                 //    switch (lifetime_count % 20){//タイマーの間隔による
-                             case 0:{
-                                 imageName = [NSString stringWithFormat:@"%@",@"player.png"];
-                                 break;
-                             }
-                             case 1:{
-                                 imageName = [NSString stringWithFormat:@"%@",@"player2.png"];
-                                 break;
-                             }
-                             case 2:{
-                                 imageName = [NSString stringWithFormat:@"%@",@"player3.png"];
-                                 break;
-                             }
-                             case 3:{
-                                 imageName = [NSString stringWithFormat:@"%@",@"player4.png"];
-                                 break;
-                             }
-                             case 4:{
-                                 imageName = [NSString stringWithFormat:@"%@",@"player4.png"];
-                                 break;
-                             }
-                             case 5:{
-                                 imageName = [NSString stringWithFormat:@"%@",@"player3.png"];
-                                 break;
-                             }
-                             case 6:{
-                                 imageName = [NSString stringWithFormat:@"%@",@"player2.png"];
-                                 break;
-                             }
-                             case 7:{
-                                 imageName = [NSString stringWithFormat:@"%@",@"player.png"];
-                                 break;
-                             }
-                         }
-                         
-                         [self startAnimate];
-                         }
-                     }];
-}
 -(void)doNext{
     
     //    [iv removeFromSuperview];
