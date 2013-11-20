@@ -37,6 +37,7 @@ NSString *imageName;
     magnetCount = 0;
     bigCount = 0;
     bombCount = 0;
+    healCount = 0;
     numOfBeam = 1;//通常時、最初はビームの数は1つ(１列)
     isAlive = true;
     explodeParticle = nil;
@@ -279,9 +280,17 @@ NSString *imageName;
     if(bombCount > 0){
         bombCount --;
     }else{
-        [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeBig]];
+        [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeBomb]];
     }
     
+    if(healCount > 0){
+        if(healCount % 100 == 0){
+            
+        }
+        healCount --;
+    }else{
+        [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeHeal]];
+    }
     
     lifetime_count ++;
     if(!isAlive){
@@ -471,7 +480,12 @@ NSString *imageName;
         case ItemTypeDeffense1:{
             break;
         }
-        case ItemTypeHeal:{
+        case ItemTypeHeal:{//tlHeal
+            if([statusValue integerValue]){
+                healCount = 500;
+            }else{
+                healCount = 0;
+            }
             break;
         }
         case ItemTypeSmall:{

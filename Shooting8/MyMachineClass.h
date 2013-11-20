@@ -30,9 +30,11 @@
     int weapon1Count;//攻撃力強化できる時間
     int bombCount;
     int bigCount;
+    int healCount;
     int numOfBeam;
     Boolean isAlive;
     UIImageView *iv;
+    UIImageView *ivHealEffect;
     CGRect rect;
     NSMutableArray *beamArray;
     ExplodeParticleView *explodeParticle;

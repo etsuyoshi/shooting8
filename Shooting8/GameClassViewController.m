@@ -948,7 +948,7 @@ UIView *viewMyEffect;
                         break;
                     }
                     case ItemTypeBomb:{
-                        [MyMachine setStatus:@"1" key:ItemTypeBomb];
+//                        [MyMachine setStatus:@"1" key:ItemTypeBomb];
                         
                         if(![MyMachine getStatus:ItemTypeBomb]){
                             [MyMachine setStatus:@"1" key:ItemTypeBomb];
@@ -1141,7 +1141,7 @@ UIView *viewMyEffect;
 //                                NSLog(@"item occur : %d", countItem);
 //                                _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xEnemy y_init:_yEnemy width:ITEM_SIZE height:ITEM_SIZE];
                                 //test:only heal
-                                _item = [[ItemClass alloc] init:6 x_init:_xEnemy y_init:_yEnemy width:ITEM_SIZE height:ITEM_SIZE];
+                                _item = [[ItemClass alloc] init:7 x_init:_xEnemy y_init:_yEnemy width:ITEM_SIZE height:ITEM_SIZE];
                                 
 //                                [ItemArray addObject:_item];
                                 [ItemArray insertObject:_item atIndex:0];
@@ -2291,7 +2291,7 @@ UIView *viewMyEffect;
     uivBomb.image = [UIImage imageNamed:@"bomb016.png"];//original:758x598
     uivBomb.center = point;
     CGAffineTransform transform = CGAffineTransformMakeRotation(M_PI/10.0f);
-    [UIView animateWithDuration:0.4f
+    [UIView animateWithDuration:0.2f
                           delay:0.0
                         options:UIViewAnimationOptionCurveLinear
      //     |UIViewAnimationOptionRepeat//リピートさせる場合
@@ -2305,7 +2305,49 @@ UIView *viewMyEffect;
                      completion:^(BOOL finished){
                          [uivBomb removeFromSuperview];
                          
-                         //爆発範囲内の敵にダメージor殲滅？
+                         //連続した小爆発(爆発周りの敵にダメージ)
+                         [self smallBombEffectRepeat:10 point:CGPointMake(arc4random() % (int)                                                                             self.view.bounds.size.width, arc4random() % (int)(self.view.bounds.size.height*0.8f))];
+                     }];
+    [self.view addSubview:uivBomb];
+}
+
+
+-(void)smallBombEffectRepeat:(int)repeatCount point:(CGPoint)point{//sub-effect of itemBombEffect
+    int bombSize = 150;
+    UIImageView *uivBomb = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0,
+                                                                        bombSize/10, bombSize/10)];
+    switch (repeatCount % 3) {
+        case 0:{
+            uivBomb.image = [UIImage imageNamed:@"bomb010.png"];//original:318x340
+            break;
+        }
+        case 1:{
+            uivBomb.image = [UIImage imageNamed:@"bomb013.png"];//original:541x484
+            break;
+        }
+        case 2:{
+            uivBomb.image = [UIImage imageNamed:@"bomb017.png"];//original:281x325
+        }
+        default:
+            break;
+    }
+//    uivBomb.image = [UIImage imageNamed:@"bomb016.png"];//original:758x598
+    uivBomb.center = point;
+    CGAffineTransform transform = CGAffineTransformMakeRotation(M_PI/10.0f);
+    [UIView animateWithDuration:0.2f
+                          delay:0.0
+                        options:UIViewAnimationOptionCurveLinear
+     //     |UIViewAnimationOptionRepeat//リピートさせる場合
+                     animations:^{
+                         uivBomb.transform = transform;
+                         uivBomb.frame = CGRectMake(point.x - bombSize/2,
+                                                    point.y - bombSize/2,
+                                                    bombSize, 675.0f/547*bombSize);
+                         uivBomb.center = point;
+                     }
+                     completion:^(BOOL finished){
+                         [uivBomb removeFromSuperview];
+                         
                          for(int i = 0;i < [EnemyArray count] ;i++){
                              if([[EnemyArray objectAtIndex:i] getIsAlive]){
                                  _xEnemy = [[EnemyArray objectAtIndex:i] getX];
@@ -2317,11 +2359,16 @@ UIView *viewMyEffect;
                                     point.y + bombSize * 0.4 >= _yEnemy - _sEnemy * 0.4 &&
                                     point.y - bombSize * 0.4 <= _yEnemy + _sEnemy * 0.4 ){
                                      
-                                     [self enemyDieEffect:i];//殲滅？
+                                     [self enemyDieEffect:i];//殲滅？orダメージ
                                      
                                      
                                  }
                              }
+                         }
+                         
+                         if(repeatCount > 0){
+                             [self smallBombEffectRepeat:repeatCount-1
+                                                   point:CGPointMake(arc4random() % (int)self.view.bounds.size.width, arc4random() % (int)self.view.bounds.size.height)];
                          }
                      }];
     [self.view addSubview:uivBomb];

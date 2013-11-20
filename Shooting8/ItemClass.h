@@ -14,13 +14,13 @@ typedef NS_ENUM(NSInteger, ItemType) {
     ItemTypeWeapon1,//1:diffuse:done
     ItemTypeWeapon2,//2:laser:doing(requesting)
     ItemTypeDeffense0,//3:not(need!)
-    ItemTypeDeffense1,//4:not
+    ItemTypeDeffense1,//4:not(never?)->change armor?
     ItemTypeMagnet,//5:done
     ItemTypeBomb,//6:done
     ItemTypeHeal,//7:doing!
     ItemTypeBig,//8:done
     ItemTypeSmall,//9:not(never?)
-    ItemTypeTransparency,//10:not
+    ItemTypeTransparency,//10:not(need)
     ItemTypeYellowGold,//11:done
     ItemTypeGreenGold,//12:done
     ItemTypeBlueGold,//13:done
