@@ -968,7 +968,9 @@ UIView *viewMyEffect;
                         break;
                     }
                     case ItemTypeHeal:{
-                        [MyMachine setStatus:@"1" key:ItemTypeHeal];
+                        if(![MyMachine getStatus:ItemTypeHeal]){
+                            [MyMachine setStatus:@"1" key:ItemTypeHeal];
+                        }
                         break;
                     }
                     case ItemTypeSmall:{

@@ -18,6 +18,7 @@ int wingStatus;
 int effectDuration;
 CGPoint _center;
 NSString *imageName;
+NSMutableArray *healEffectArray;
 -(id) init:(int)x_init size:(int)size{
     effectDuration = 10;//10回アニメーション
     wingStatus = 0;//翼の状態
@@ -42,14 +43,11 @@ NSString *imageName;
     isAlive = true;
     explodeParticle = nil;
     damageParticle  = nil;
-//    rect = CGRectMake(x_loc, y_loc, mySize, mySize);
+    
+    
     //x_loc,y_loc is center point
     rect = CGRectMake(x_loc-mySize/2, y_loc-mySize/2, mySize, mySize);
     iv = [[UIImageView alloc]initWithFrame:rect];
-//    iv.image = [UIImage imageNamed:@"player.png"];
-    
-    
-    
     NSArray *imgArray = [[NSArray alloc] initWithObjects:
                          [UIImage imageNamed:@"player.png"],
                          [UIImage imageNamed:@"player2.png"],
@@ -64,6 +62,9 @@ NSString *imageName;
     iv.animationRepeatCount = 0;
     iv.animationDuration = 1.0f; // アニメーション全体で1秒（＝各間隔は0.5秒）
     [iv startAnimating]; // アニメーション開始!!
+    
+    healEffectArray = [[NSMutableArray alloc]init];//要素に疑似パーティクルセルを格納
+    
     
     
 //    machine_type = arc4random() % 3;
@@ -284,11 +285,18 @@ NSString *imageName;
     }
     
     if(healCount > 0){
+        //gameView側で実行
+//        NSLog(@"healcount = %d", healCount);
         if(healCount % 100 == 0){
-            
+//            NSLog(@"heal");
+//            for(int i = 0; i < 30;i++){
+                [self healEffectInit];
+                [self healEffectRepeat:100];
+//            }
         }
         healCount --;
     }else{
+        [ivHealEffect removeFromSuperview];
         [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeHeal]];
     }
     
@@ -533,6 +541,84 @@ NSString *imageName;
     
     return numOfBeam;
 }
+
+-(void)healEffectInit{
+    NSArray *imgArrayHeal;
+    imgArrayHeal = [[NSArray alloc] initWithObjects:
+                    [UIImage imageNamed:@"img03.png"],
+                    [UIImage imageNamed:@"img04.png"],
+                    [UIImage imageNamed:@"img05.png"],
+                    [UIImage imageNamed:@"img06.png"],
+                    [UIImage imageNamed:@"img07.png"],
+                    [UIImage imageNamed:@"img08.png"],
+                    [UIImage imageNamed:@"img09.png"],
+                    [UIImage imageNamed:@"img10.png"],
+                    [UIImage imageNamed:@"img11.png"],
+                    nil];
+    CGRect rectHeal;
+    
+    for(int i = 0; i < 10;i++){
+        //回復時アニメーション->frame:主人公の左上起点基準
+        rectHeal= CGRectMake(- (arc4random() % originalSize),//左端
+                             - (arc4random() % originalSize),//上端
+                             originalSize, originalSize);
+        ivHealEffect = [[UIImageView alloc] initWithFrame:rectHeal];
+        ivHealEffect.animationImages = imgArrayHeal;
+        ivHealEffect.animationRepeatCount = 0;
+        ivHealEffect.animationDuration = 1.0f; // アニメーション全体で1秒（＝各間隔は0.5秒）
+        [ivHealEffect startAnimating]; // アニメーション開始!!(アイテム取得時に実行)
+        
+        [healEffectArray addObject:ivHealEffect];
+        
+        
+    }
+}
+
+-(void)healEffectRepeat:(int)repeatCount{
+    /*
+     *同時に全ての配列に格納されたセルを降らせる
+     */
+    for(int i = 0; i < [healEffectArray count];i++){
+        [iv addSubview:[healEffectArray objectAtIndex:i]];
+        [UIView animateWithDuration:0.8f//random?
+                         animations:^{
+                             ((UIImageView*)[healEffectArray objectAtIndex:i]).center = CGPointMake(arc4random() % mySize - mySize/2, mySize);//down
+                             ((UIImageView*)[healEffectArray objectAtIndex:i]).alpha = 0.5f;
+                         }
+                         completion:^(BOOL finished){
+                             if(finished){
+                                 [[healEffectArray objectAtIndex:i] removeFromSuperview];
+                             }
+                         }];
+    }
+    
+//    ivHealEffect = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, originalSize, originalSize)];
+    
+//    ivHealEffect.animationImages = imgArrayHeal;
+//    ivHealEffect.animationRepeatCount = 0;
+//    ivHealEffect.animationDuration = 0.3f; // アニメーション全体で1秒（＝各間隔は0.5秒）
+    
+//    ivHealEffect.center = CGPointMake(arc4random() % mySize, 0);
+//    ivHealEffect.alpha = 1.0f;
+//    [iv addSubview:ivHealEffect];
+//    [ivHealEffect startAnimating];
+    //アニメーション:回復は緑系で上昇の方が良い？
+//    [UIView animateWithDuration:0.8f//random?
+//                     animations:^{
+//                         ivHealEffect.center = CGPointMake(arc4random() % mySize - mySize/2, mySize);//down
+//                         ivHealEffect.alpha = 0.5f;
+//                     }
+//                     completion:^(BOOL finished){
+//                         if(finished){
+//                             [ivHealEffect removeFromSuperview];
+//                             if(repeatCount > 0){
+////                                 NSLog(@"repeatcount = %d", repeatCount);
+//                                 [self healEffectRepeat:repeatCount-1];
+//                             }
+//                         }
+//                     }];
+}
+
 
 
 @end

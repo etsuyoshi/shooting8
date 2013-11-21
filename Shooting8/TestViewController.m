@@ -48,6 +48,11 @@ NSMutableArray *uiArray;
     NSMutableArray *array_item;
 #endif
 
+
+#ifdef MYMACHINE_TEST
+UIImageView *ivAnimateEffect;
+#endif
+
 int counter;
 UIView *circleView;
 CALayer *mylayer;
@@ -536,6 +541,20 @@ int tempCount = 0;
         animationView.image = [UIImage imageNamed:@"player.png"];//最終状態?
         [self.view addSubview:animationView];
         
+        
+        ivAnimateEffect = [[UIImageView alloc]initWithFrame:CGRectMake(0,0, 72, 72)];
+        ivAnimateEffect.animationImages = [[NSArray alloc] initWithObjects:
+                                           [UIImage imageNamed:@"kira.png"],
+                                           [UIImage imageNamed:@"kira2.png"],
+                                           [UIImage imageNamed:@"snow.png"], nil];
+        ivAnimateEffect.animationDuration = 1.0f;
+        ivAnimateEffect.animationRepeatCount = 0;
+        [ivAnimateEffect startAnimating];
+        [animationView addSubview:ivAnimateEffect];
+        
+        [self repeatAnimEffect:10];
+        
+//        [self.view addSubview:ivAnimateEffect];
         NSLog(@"complete");
     }
 
@@ -1070,4 +1089,26 @@ int tempCount = 0;
 
 #endif
 
+
+#ifdef MYMACHINE_TEST
+-(void)repeatAnimEffect:(int)repeatCount{
+    ivAnimateEffect.center = CGPointMake(50, 50);
+    [UIView animateWithDuration:0.3f
+                     animations:^{
+                         ivAnimateEffect.center = self.view.bounds.origin;
+                     }
+                     completion:^(BOOL finished){
+                         if(finished){
+                             if(repeatCount > 0){
+                                 [self repeatAnimEffect:repeatCount-1];
+                             }
+                             NSLog(@"aaa");
+                         }
+                     }];
+
+}
+
+#endif
+
 @end
+
