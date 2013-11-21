@@ -30,6 +30,9 @@
     int weapon0Count;//爆弾を投げられる時間
     int weapon1Count;//攻撃力強化できる時間
     int weapon2Count;//laser
+    int defense0Count;//barrier
+    int defense1Count;
+    int transparancyCount;
     int bombCount;
     int bigCount;
     int healCount;

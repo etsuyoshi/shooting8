@@ -956,7 +956,9 @@ UIView *viewMyEffect;
                         break;
                     }
                     case ItemTypeDeffense0:{
-                        [MyMachine setStatus:@"1" key:ItemTypeDeffense0];
+                        if(![MyMachine getStatus:ItemTypeDeffense0]){
+                            [MyMachine setStatus:@"1" key:ItemTypeDeffense0];
+                        }
                         break;
                     }
                     case ItemTypeDeffense1:{
@@ -974,7 +976,9 @@ UIView *viewMyEffect;
                         break;
                     }
                     case ItemTypeTransparency:{
-                        [MyMachine setStatus:@"1" key:ItemTypeTransparency];
+                        if(![MyMachine getStatus:ItemTypeTransparency]){
+                            [MyMachine setStatus:@"1" key:ItemTypeTransparency];
+                        }
                         break;
                     }
                     case ItemTypeWeapon0:{//wpBomb
@@ -1099,7 +1103,8 @@ UIView *viewMyEffect;
             if([MyMachine getStatus:ItemTypeWeapon2]){//レーザーモードの場合
                 if(//自機の幅を活用する
                    _xMine + _sMine * 0.5 >= _xEnemy - _sEnemy * 0.5 &&
-                   _xMine - _sMine * 0.5 <= _xEnemy + _sEnemy * 0.5){
+                   _xMine - _sMine * 0.5 <= _xEnemy + _sEnemy * 0.5 &&
+                   _yMine > _yEnemy){
                     
                     
                     //攻撃によって敵が死んだらYES:生きてればNO
@@ -2354,9 +2359,9 @@ UIView *viewMyEffect;
         
         
         //アイテム出現、アイテム生成
-//        _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
-        //test:only laser
-        _item = [[ItemClass alloc] init:2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+        _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+        //test:item
+//        _item = [[ItemClass alloc] init:ItemTypeTransparency x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
         
         [ItemArray insertObject:_item atIndex:0];
         //現状全てのアイテムは手前に進んで消えるので先に発生(FIFO)したものから消去

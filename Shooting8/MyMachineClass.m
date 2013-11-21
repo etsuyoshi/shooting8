@@ -18,6 +18,11 @@ int wingStatus;
 int effectDuration;
 CGPoint _center;
 
+//defense0-relatings
+UIImageView *ivDefense0;
+NSMutableArray *defense0EffectArray;
+NSArray *imgArrayDefense0;
+
 
 //heal-relatings
 UIImageView *ivHealEffect;
@@ -48,6 +53,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     bigCount = 0;
     bombCount = 0;
     healCount = 0;
+    defense0Count = 0;
     numOfBeam = 1;//通常時、最初はビームの数は1つ(１列)
     isAlive = true;
     explodeParticle = nil;
@@ -77,7 +83,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     ivLaser = [[UIImageView alloc] initWithFrame:rectLaser];
     NSArray *arrayLaserImg = [[NSArray alloc] initWithObjects:
                               [UIImage imageNamed:@"laser01_01.png"],
-                              [UIImage imageNamed:@"laser01_02.png"],
+                              [UIImage imageNamed:@"laser01_01_2.png"],
                               nil];
     ivLaser.animationImages = arrayLaserImg;
     ivLaser.animationRepeatCount = 0;
@@ -85,8 +91,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     [ivLaser startAnimating];
     
     //heal-relatings
-    healEffectArray = [[NSMutableArray alloc]init];//要素に疑似パーティクルセルを格納
-
+    healEffectArray = [[NSMutableArray alloc]init];//1セル毎に疑似パーティクルセルを格納
     imgArrayHeal = [[NSArray alloc] initWithObjects:
                     [UIImage imageNamed:@"img03.png"],
                     [UIImage imageNamed:@"img04.png"],
@@ -98,6 +103,12 @@ int healCompleteCount;//1回当たりの回復表示終了判定
                     [UIImage imageNamed:@"img10.png"],
                     [UIImage imageNamed:@"img11.png"],
                     nil];
+    
+    //defense0-relatings
+    imgArrayDefense0 = [[NSArray alloc] initWithObjects:
+                        [UIImage imageNamed:@"defense_barrier.png"],//dummy
+                        [UIImage imageNamed:@"defense_shield.png"],
+                        nil];
     
     
 //    machine_type = arc4random() % 3;
@@ -304,6 +315,13 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     }
     
     if(weapon2Count > 0){
+        if(weapon2Count % 100 == 0){//1time in 1.0sec
+            //            NSLog(@"heal");
+            //            for(int i = 0; i < 30;i++){
+            [self healEffectInit:30];
+            [self healEffectRepeat];
+            //            }
+        }
         weapon2Count --;
     }else{
         [ivLaser removeFromSuperview];
@@ -324,14 +342,21 @@ int healCompleteCount;//1回当たりの回復表示終了判定
         [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeBomb]];
     }
     
+    if(defense0Count > 0){
+        defense0Count --;
+    }else{
+        [ivDefense0 removeFromSuperview];
+        [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeDeffense0]];
+    }
+    
     if(healCount > 0){
         //gameView側で実行
 //        NSLog(@"healcount = %d", healCount);
         if(healCount % 150 == 0){//1time in 1.5sec
 //            NSLog(@"heal");
 //            for(int i = 0; i < 30;i++){
-                [self healEffectInit];
-                [self healEffectRepeat:100];
+            [self healEffectInit:30];
+                [self healEffectRepeat];
 //            }
         }
         if(hitPoint < maxHitPoint){
@@ -339,9 +364,26 @@ int healCompleteCount;//1回当たりの回復表示終了判定
         }
         healCount --;
     }else{
-        healCount = 0;
 //        [ivHealEffect removeFromSuperview];
         [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeHeal]];
+    }
+    
+    if(transparancyCount > 0){
+        transparancyCount --;
+        if(transparancyCount == 300){//3sec
+            //点滅
+            [self flashImageView:0.3 repeatCount:5];
+        }else if(transparancyCount == 150){
+            //速い点滅
+            [self flashImageView:0.1 repeatCount:15];
+        }else if(transparancyCount == 50){
+            [self healEffectInit:10];//transparancy-exit
+            [self healEffectRepeat];
+
+        }
+    }else{
+        iv.alpha = 1.0f;
+        [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeTransparency]];
     }
     
     lifetime_count ++;
@@ -531,6 +573,12 @@ int healCompleteCount;//1回当たりの回復表示終了判定
             break;
         }
         case ItemTypeDeffense0:{
+            if([statusValue integerValue]){
+                defense0Count = 1000;
+                [self defense0Effect];//addSubview simultaneously
+            }else{
+                defense0Count = 0;
+            }
             break;
         }
         case ItemTypeDeffense1:{
@@ -548,6 +596,12 @@ int healCompleteCount;//1回当たりの回復表示終了判定
             break;
         }
         case ItemTypeTransparency:{
+            if([statusValue integerValue]){
+                transparancyCount = 500;
+                iv.alpha = 0.2f;
+            }else{
+                transparancyCount = 0;
+            }
             break;
         }
         case ItemTypeWeapon0:{//wpBomb:throwing bomb
@@ -595,12 +649,25 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     
     return numOfBeam;
 }
-
--(void)healEffectInit{
+-(void)defense0Effect{
+    NSLog(@"defense0 mode");
+    ivDefense0 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, mySize, mySize)];
+    ivDefense0.center = CGPointMake(mySize/2, mySize/2);
+    ivDefense0.animationImages = imgArrayDefense0;
+    ivDefense0.alpha = 0.5f;
+    ivDefense0.animationDuration = 1.0f;
+    ivDefense0.animationRepeatCount = 0;
+    [ivDefense0 startAnimating];
+    
+    [iv addSubview:ivDefense0];
+    
+    NSLog(@"defense0 mode complete");
+}
+-(void)healEffectInit:(int)numCell{
     
 //    NSLog(@"healeffect init");
     healCompleteCount = 0;
-    for(int i = 0; i < 20;i++){
+    for(int i = 0; i < numCell;i++){
         //回復時アニメーション->frame:主人公の左上起点基準
 //        int y = - (arc4random() % originalSize);
 //        NSLog(@"y = %d", y);
@@ -625,7 +692,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     }
 }
 
--(void)healEffectRepeat:(int)repeatCount{
+-(void)healEffectRepeat{
     /*
      *同時に全ての配列に格納されたセルを降らせる
      */
@@ -723,6 +790,20 @@ int healCompleteCount;//1回当たりの回復表示終了判定
 -(UIImageView *)getLaserImageView{
     
     return ivLaser;
+}
+
+-(void)flashImageView:(float)duration repeatCount:(int)count{
+    float newAlpha = (iv.alpha>0.9)?0.2f:1.0f;
+    
+    [UIView animateWithDuration:duration
+                     animations:^{
+                         iv.alpha = newAlpha;
+                     }
+                     completion:^(BOOL finished){
+                         if(count > 0){
+                             [self flashImageView:duration repeatCount:count-1];
+                         }
+                     }];
 }
 
 @end

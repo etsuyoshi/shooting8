@@ -90,7 +90,6 @@
 		3460F9541824FA2700951A99 /* weapon_bomb.png in Resources */ = {isa = PBXBuildFile; fileRef = 3460F9491824FA2700951A99 /* weapon_bomb.png */; };
 		3460F9581824FA2700951A99 /* weapon_laser.png in Resources */ = {isa = PBXBuildFile; fileRef = 3460F94D1824FA2700951A99 /* weapon_laser.png */; };
 		3461FE6D183DDFAF00DB4546 /* laser01_01.png in Resources */ = {isa = PBXBuildFile; fileRef = 3461FE6C183DDFAF00DB4546 /* laser01_01.png */; };
-		3461FE6F183DE0E500DB4546 /* laser01_02.png in Resources */ = {isa = PBXBuildFile; fileRef = 3461FE6E183DE0E500DB4546 /* laser01_02.png */; };
 		3465539A180C160900788EE3 /* AttrClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 34FA1A30180BC2460011E1CA /* AttrClass.m */; };
 		3467B71D17FD53AF004EEE94 /* item.png in Resources */ = {isa = PBXBuildFile; fileRef = 3467B71C17FD53AF004EEE94 /* item.png */; };
 		3467B72217FD5981004EEE94 /* PowerGaugeClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 3467B72117FD5980004EEE94 /* PowerGaugeClass.m */; };
@@ -147,6 +146,7 @@
 		34A2275B182A4B690050CFDB /* 11.png in Resources */ = {isa = PBXBuildFile; fileRef = 34A22758182A4B690050CFDB /* 11.png */; };
 		34A2275D182A4E900050CFDB /* tool_small_cookie.png in Resources */ = {isa = PBXBuildFile; fileRef = 34A2275C182A4E900050CFDB /* tool_small_cookie.png */; };
 		34A6A1A3180EF48F006F26D6 /* ItemListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A6A1A2180EF48F006F26D6 /* ItemListViewController.m */; };
+		34ADDFDB183DF2F500448813 /* laser01_01_2.png in Resources */ = {isa = PBXBuildFile; fileRef = 34ADDFDA183DF2F500448813 /* laser01_01_2.png */; };
 		34BD6DB018193135006BC523 /* AppSocially.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 34BD6DAE18193135006BC523 /* AppSocially.bundle */; };
 		34BD6DB118193135006BC523 /* AppSocially.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34BD6DAF18193135006BC523 /* AppSocially.framework */; };
 		34BD6DB318193180006BC523 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34BD6DB218193180006BC523 /* Accounts.framework */; };
@@ -317,7 +317,6 @@
 		3460F9491824FA2700951A99 /* weapon_bomb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = weapon_bomb.png; sourceTree = "<group>"; };
 		3460F94D1824FA2700951A99 /* weapon_laser.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = weapon_laser.png; sourceTree = "<group>"; };
 		3461FE6C183DDFAF00DB4546 /* laser01_01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = laser01_01.png; sourceTree = "<group>"; };
-		3461FE6E183DE0E500DB4546 /* laser01_02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = laser01_02.png; sourceTree = "<group>"; };
 		3467B71C17FD53AF004EEE94 /* item.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = item.png; sourceTree = "<group>"; };
 		3467B72017FD5980004EEE94 /* PowerGaugeClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PowerGaugeClass.h; sourceTree = "<group>"; };
 		3467B72117FD5980004EEE94 /* PowerGaugeClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PowerGaugeClass.m; sourceTree = "<group>"; };
@@ -379,6 +378,7 @@
 		34A2275C182A4E900050CFDB /* tool_small_cookie.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tool_small_cookie.png; sourceTree = "<group>"; };
 		34A6A1A1180EF48F006F26D6 /* ItemListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemListViewController.h; sourceTree = "<group>"; };
 		34A6A1A2180EF48F006F26D6 /* ItemListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemListViewController.m; sourceTree = "<group>"; };
+		34ADDFDA183DF2F500448813 /* laser01_01_2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = laser01_01_2.png; sourceTree = "<group>"; };
 		34BD6DAE18193135006BC523 /* AppSocially.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AppSocially.bundle; sourceTree = "<group>"; };
 		34BD6DAF18193135006BC523 /* AppSocially.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AppSocially.framework; sourceTree = "<group>"; };
 		34BD6DB218193180006BC523 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
@@ -629,7 +629,7 @@
 		3461FE6B183DDF9F00DB4546 /* laser */ = {
 			isa = PBXGroup;
 			children = (
-				3461FE6E183DE0E500DB4546 /* laser01_02.png */,
+				34ADDFDA183DF2F500448813 /* laser01_01_2.png */,
 				3461FE6C183DDFAF00DB4546 /* laser01_01.png */,
 			);
 			name = laser;
@@ -1009,7 +1009,6 @@
 				3460F94E1824FA2700951A99 /* weapon_diffuse.png in Resources */,
 				342057DC17F2B34C0084E99D /* InfoPlist.strings in Resources */,
 				342057E417F2B34C0084E99D /* Default.png in Resources */,
-				3461FE6F183DE0E500DB4546 /* laser01_02.png in Resources */,
 				3460F9581824FA2700951A99 /* weapon_laser.png in Resources */,
 				342057E617F2B34C0084E99D /* Default@2x.png in Resources */,
 				34A22759182A4B690050CFDB /* 09.png in Resources */,
@@ -1034,6 +1033,7 @@
 				342ECBBC17FC570500123886 /* star.png in Resources */,
 				3488ACC4183D272F00833F93 /* img03.png in Resources */,
 				34D55FCB183C9DCF00788533 /* bomb016.png in Resources */,
+				34ADDFDB183DF2F500448813 /* laser01_01_2.png in Resources */,
 				34D55FC9183C939600788533 /* bomb012.png in Resources */,
 				3488ACCC183D272F00833F93 /* img11.png in Resources */,
 				3419C41417FD27E200980E71 /* explode4.png in Resources */,
