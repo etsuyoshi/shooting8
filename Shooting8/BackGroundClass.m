@@ -118,6 +118,10 @@ int imageMargin;
                      }];
 }
 
+-(void)oscillateEffect{
+    //現在の位置で背景を一旦停止させ、左右に数ピクセル移動を繰り返す
+}
+
 
 
 /*

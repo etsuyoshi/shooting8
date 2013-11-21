@@ -152,10 +152,6 @@ NSMutableArray *ItemArray;
 ScoreBoardClass *ScoreBoard;
 GoldBoardClass *GoldBoard;
 
-
-//_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-//パワーゲージ背景：ビジュアルこだわりポイント
-//_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 PowerGaugeClass *powerGauge;//imageviewを内包
 UIImageView *iv_powerGauge;
 UIImageView *iv_pg_ribrary;
@@ -982,16 +978,26 @@ UIView *viewMyEffect;
                         break;
                     }
                     case ItemTypeWeapon0:{//wpBomb
-                        [MyMachine setStatus:@"1" key:ItemTypeWeapon0];
+                        if(![MyMachine getStatus:ItemTypeWeapon0]){
+                            [MyMachine setStatus:@"1" key:ItemTypeWeapon0];
+                        }
 //                        [self throwBombEffect];
                         break;
                     }
                     case ItemTypeWeapon1:{//wpDiffuse
-                        [MyMachine setStatus:@"1" key:ItemTypeWeapon1];
+                        if(![MyMachine getStatus:ItemTypeWeapon1]){
+                            [MyMachine setStatus:@"1" key:ItemTypeWeapon1];
+                        }
                         break;
                     }
                     case ItemTypeWeapon2:{//wpLaser
-                        [MyMachine setStatus:@"1" key:ItemTypeWeapon2];
+                        if(![MyMachine getStatus:ItemTypeWeapon2]){
+                            [MyMachine setStatus:@"1" key:ItemTypeWeapon2];
+                            [BackGround oscillateEffect];//背景を揺らす
+                        
+                            [viewMyEffect addSubview:[MyMachine getLaserImageView]];
+                            [MyMachine getLaserImageView].center = CGPointMake(viewMyEffect.bounds.size.width/2,-[MyMachine getLaserImageView].bounds.size.height/2 + 40);
+                        }
                         break;
                     }
                     default:
@@ -1050,10 +1056,11 @@ UIView *viewMyEffect;
                     
                 }
             }else if(
-               [MyMachine getX] >= _xEnemy - _sEnemy * 0.4 &&
-               [MyMachine getX] <= _xEnemy + _sEnemy * 0.4 &&
-               _yEnemy - _sEnemy * 0.4 <= [MyMachine getY] &&
-               _yEnemy + _sEnemy * 0.4 >= [MyMachine getY]){
+               _xMine >= _xEnemy - _sEnemy * 0.4 &&
+               _xMine <= _xEnemy + _sEnemy * 0.4 &&
+               _yEnemy - _sEnemy * 0.4 <= _yMine &&
+               _yEnemy + _sEnemy * 0.4 >= _yMine)
+                     {
                 
                 NSLog(@"自機と敵機との衝突");
                 //ダメージの設定
@@ -1087,7 +1094,27 @@ UIView *viewMyEffect;
                 }
             }
         
-        
+            
+            //レーザーモードの場合：レーザーと敵機の衝突判定
+            if([MyMachine getStatus:ItemTypeWeapon2]){//レーザーモードの場合
+                if(//自機の幅を活用する
+                   _xMine + _sMine * 0.5 >= _xEnemy - _sEnemy * 0.5 &&
+                   _xMine - _sMine * 0.5 <= _xEnemy + _sEnemy * 0.5){
+                    
+                    
+                    //攻撃によって敵が死んだらYES:生きてればNO
+//                    if([self giveDamageToEnemy:i damagae:(int)[_beam getPower] x:_xBeam y:_yBeam]){
+                    if([self giveDamageToEnemy:(int)i damage:30 x:(int)_xBeam y:(int)_yBeam]){
+                        break;//当該iへの衝突判定を辞め、別の敵への判定(弾丸は最初から判定)に入る
+                    }else{
+                        continue;//no need?:同じ敵iに対して次の弾丸の衝突判定を行う
+                    };
+
+                    
+                    
+                }
+                
+            }
             
             //敵機とビームの衝突判定
             for(int j = 0 ; j < [MyMachine getBeamCount];j++){
@@ -1116,75 +1143,16 @@ UIView *viewMyEffect;
                        _yBeam + _sBeam * 0.5 <= _yEnemy + _sEnemy * 0.5 ){
                         
                         
-                        //レーザーでない場合
                         [[MyMachine getBeam:j] die];//衝突したらビームは消去
                         [[[MyMachine getBeam:j] getImageView] removeFromSuperview];//画面削除
                         
-                        
-                        //ビームが衝突した位置にdamageParticle表示(damageParticle生成のため位置情報を渡す)
-                        [(EnemyClass *)[EnemyArray objectAtIndex:i] setDamage:[_beam getPower] location:CGPointMake(_xBeam, _yBeam)];
-                        
-
-                        
-                        
-                        //ビームに当たる前に生きていた敵が死んだら＝今回のビームで敵を倒したら
-                        if(![[EnemyArray objectAtIndex:i] getIsAlive]){
-                            
-                            //敵機撃墜時のエフェクト
-                            [self enemyDieEffect:i];
-                            
-                            
-                            //アイテム出現、アイテム生成
-                            if(true){//arc4random() % 2 == 0){
-//                                NSLog(@"アイテム出現");
-//                                ItemClass *_item = [[ItemClass alloc] init:[_enemy getX] y_init:[_enemy getY] width:50 height:50];
-                                
-                                //テスト：順番に作成
-//                                NSLog(@"item occur : %d", countItem);
-//                                _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xEnemy y_init:_yEnemy width:ITEM_SIZE height:ITEM_SIZE];
-                                //test:only heal
-                                _item = [[ItemClass alloc] init:7 x_init:_xEnemy y_init:_yEnemy width:ITEM_SIZE height:ITEM_SIZE];
-                                
-//                                [ItemArray addObject:_item];
-                                [ItemArray insertObject:_item atIndex:0];
-                                //現状全てのアイテムは手前に進んで消えるので先に発生(FIFO)したものから消去
-                                if([ItemArray count] > 50){
-                                    [ItemArray removeLastObject];
-                                }
-                                [self.view bringSubviewToFront:[[ItemArray objectAtIndex:0] getImageView]];
-                                [self.view addSubview:[[ItemArray objectAtIndex:0] getImageView]];
-                                
-                                
-                            }else{
-                                NSLog(@"アイテムなし");
-                            }
-                            
-                            
-                            /*
-                             【以下のbreakは極めて重要！】
-                             強いビームパワーの場合、(一発で倒しても)同じ敵に対して何度もhit(＝enemyDown++)してしまう
-                             １つの敵に対して複数の玉があたってenemyDownする
-                             */
-                            break;//その敵への衝突判定は辞めて、次の敵への衝突判定のため最初から最後までビームループを回す＃注意
-                            //＃ちなみに(最初：最後に発生したビームから)「最後：最初に発生したビームまで」の衝突判定をさせるのたは「ある意味」非効率：今回ビームjより(時間的)前に発生したビームが後ろの敵に当たることはあまりない
-                            //#しかし、自機がビームの進行速度を上回って前方に進行した場合や敵機がまっすぐ進行して来なかった場合(曲線を描いて来た場合など)は時間的に後で発生したビームに衝突する場合がある。
-                            //前提：ビームも敵もFIFO配列
-
+                        //攻撃によって敵が死んだらYES:生きてればNO
+                        if([self giveDamageToEnemy:i damage:[_beam getPower] x:_xEnemy y:_yEnemy]){
+                            break;//当該iへの衝突判定を辞め、別の敵への判定(弾丸は最初から判定)に入る
                         }else{
-                            //敵が倒されなければダメージパーティクルのみ表示
-                            //処理が重くなるので実施見送り
-                            //ダメージパーティクル表示：処理が間に合わない可能性があるので、配列に格納して数カウントで消去
-//                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setUserInteractionEnabled: NO];//インタラクション拒否
-//                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setIsEmitting:YES];//消去するには数秒後にNOに
-//                            [self.view bringSubviewToFront: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//最前面に
-//                            [self.view addSubview: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//表示する:次のcountで消去
-                            
-                            
-                            
-                            //その敵が生きているならば同じ敵に別のビームへの衝突判定するため(continue)
-                            continue;//次のビームの衝突判定へ(ビームループ内でこの後何もしなければこのcontinueはなくても良い)
+                            continue;//no need?:同じ敵iに対して次の弾丸の衝突判定を行う
+                        };
 
-                        }
                         
 //                        break;//何の判定もせずににビーム[j]ループ脱出すると次以降のビームが敵に当たっている位置にいるのに衝突しないでスルーしてしまう
                         
@@ -2374,6 +2342,62 @@ UIView *viewMyEffect;
                          }
                      }];
     [self.view addSubview:uivBomb];
+}
+
+-(BOOL)giveDamageToEnemy:(int)i damage:(int)_damage x:(int)_xBeam y:(int)_yBeam{
+    //ビームが衝突した位置にdamageParticle表示(damageParticle生成のため位置情報を渡す)
+    [(EnemyClass *)[EnemyArray objectAtIndex:i] setDamage:_damage location:CGPointMake(_xBeam, _yBeam)];
+    
+    
+    
+    
+    //ビームに当たる前に生きていた敵が死んだら＝今回のビームで敵を倒したら
+    if(![[EnemyArray objectAtIndex:i] getIsAlive]){
+        
+        //敵機撃墜時のエフェクト
+        [self enemyDieEffect:i];
+        
+        
+        //アイテム出現、アイテム生成
+//        _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+        //test:only laser
+        _item = [[ItemClass alloc] init:2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+        
+        [ItemArray insertObject:_item atIndex:0];
+        //現状全てのアイテムは手前に進んで消えるので先に発生(FIFO)したものから消去
+        if([ItemArray count] > 50){
+            [ItemArray removeLastObject];
+        }
+        [self.view bringSubviewToFront:[[ItemArray objectAtIndex:0] getImageView]];
+        [self.view addSubview:[[ItemArray objectAtIndex:0] getImageView]];
+        
+        
+        /*
+         【以下のbreakは極めて重要！】
+         強いビームパワーの場合、(一発で倒しても)同じ敵に対して何度もhit(＝enemyDown++)してしまう
+         １つの敵に対して複数の玉があたってenemyDownする
+         */
+        return YES;//=break:その敵への衝突判定は辞めて、次の敵への衝突判定のため最初から最後までビームループを回す＃注意
+        //＃ちなみに(最初：最後に発生したビームから)「最後：最初に発生したビームまで」の衝突判定をさせるのたは「ある意味」非効率：今回ビームjより(時間的)前に発生したビームが後ろの敵に当たることはあまりない
+        //#しかし、自機がビームの進行速度を上回って前方に進行した場合や敵機がまっすぐ進行して来なかった場合(曲線を描いて来た場合など)は時間的に後で発生したビームに衝突する場合がある。
+        //前提：ビームも敵もFIFO配列
+        
+    }else{
+        //敵が倒されなければダメージパーティクルのみ表示
+        //処理が重くなるので実施見送り
+        //ダメージパーティクル表示：処理が間に合わない可能性があるので、配列に格納して数カウントで消去
+        //                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setUserInteractionEnabled: NO];//インタラクション拒否
+        //                            [[(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle] setIsEmitting:YES];//消去するには数秒後にNOに
+        //                            [self.view bringSubviewToFront: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//最前面に
+        //                            [self.view addSubview: [(EnemyClass *)[EnemyArray objectAtIndex:i] getDamageParticle]];//表示する:次のcountで消去
+        
+        
+        
+        //その敵が生きているならば同じ敵に別のビームへの衝突判定するため(continue)
+        return NO;//continue;//次のビームの衝突判定へ(ビームループ内でこの後何もしなければこのcontinueはなくても良い)
+        
+    }
+    
 }
 
 @end

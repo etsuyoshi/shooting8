@@ -17,12 +17,16 @@ int unique_id;
 int wingStatus;
 int effectDuration;
 CGPoint _center;
-NSString *imageName;
+
+
+//heal-relatings
+UIImageView *ivHealEffect;
 NSMutableArray *healEffectArray;
 NSArray *imgArrayHeal;
 CGRect rectHeal;
+int healCompleteCount;//1回当たりの回復表示終了判定
 
-int healCompleteCount;//終了判定
+
 -(id) init:(int)x_init size:(int)size{
     effectDuration = 10;//10回アニメーション
     wingStatus = 0;//翼の状態
@@ -68,6 +72,19 @@ int healCompleteCount;//終了判定
     iv.animationDuration = 1.0f; // アニメーション全体で1秒（＝各間隔は0.5秒）
     [iv startAnimating]; // アニメーション開始!!
     
+    //laser-relatings
+    CGRect rectLaser = CGRectMake(0, 0, 200, 500);
+    ivLaser = [[UIImageView alloc] initWithFrame:rectLaser];
+    NSArray *arrayLaserImg = [[NSArray alloc] initWithObjects:
+                              [UIImage imageNamed:@"laser01_01.png"],
+                              [UIImage imageNamed:@"laser01_02.png"],
+                              nil];
+    ivLaser.animationImages = arrayLaserImg;
+    ivLaser.animationRepeatCount = 0;
+    ivLaser.animationDuration = 1.0f;
+    [ivLaser startAnimating];
+    
+    //heal-relatings
     healEffectArray = [[NSMutableArray alloc]init];//要素に疑似パーティクルセルを格納
 
     imgArrayHeal = [[NSArray alloc] initWithObjects:
@@ -280,10 +297,17 @@ int healCompleteCount;//終了判定
     }
     
     if(weapon1Count > 0){
-        weapon1Count--;
+        weapon1Count --;
     }else{
         numOfBeam = 1;
         [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeWeapon1]];
+    }
+    
+    if(weapon2Count > 0){
+        weapon2Count --;
+    }else{
+        [ivLaser removeFromSuperview];
+        [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeWeapon2]];
     }
     
     if(bigCount > 0){
@@ -371,46 +395,48 @@ int healCompleteCount;//終了判定
 }
 
 -(void)yieldBeam:(int)beam_type init_x:(int)x init_y:(int)y{
-//    BeamClass *beam = [[BeamClass alloc] init:x y_init:y width:50 height:50];
-    //ビーム配列は先入先出(FIFO)
-    /*
-     *1列の場合は０が中心位置に、２列の場合は０が左、１が右、３列の場合、０が左、１が中心、２が右
-     */
-    switch (numOfBeam) {
-        case 1:{
-            [beamArray insertObject:[[BeamClass alloc] init:x
-                                                     y_init:y
-                                                      width:50
-                                                     height:50]
-                            atIndex:0];//全て最初に格納
-            
-            break;
-        }
-        case 2:{
-            
-            for(int i = 0; i < numOfBeam;i++){
-                [beamArray insertObject:[[BeamClass alloc] init:x+(20*pow(-1,i+1))//(30*(-1)^i)
-                                                         y_init:y
-                                                          width:50
-                                                         height:50]
-                                atIndex:0];//全て最初に格納
-            }
-            break;
-        }
-        case 3:{
-            
-            for(int i = 0; i < numOfBeam;i++){
-                [beamArray insertObject:[[BeamClass alloc] init:x+40*(i-1)//30*(i-1)
-                                                         y_init:y
-                                                          width:50
-                                                         height:50]
-                                atIndex:0];//全て最初に格納
-            }
-            break;
-        }
-    }
-    
+    if(weapon2Count == 0){
         
+        //    BeamClass *beam = [[BeamClass alloc] init:x y_init:y width:50 height:50];
+        //ビーム配列は先入先出(FIFO)
+        /*
+         *1列の場合は０が中心位置に、２列の場合は０が左、１が右、３列の場合、０が左、１が中心、２が右
+         */
+        switch (numOfBeam) {
+            case 1:{
+                [beamArray insertObject:[[BeamClass alloc] init:x
+                                                         y_init:y
+                                                          width:50
+                                                         height:50]
+                                atIndex:0];//全て最初に格納
+                
+                break;
+            }
+            case 2:{
+                
+                for(int i = 0; i < numOfBeam;i++){
+                    [beamArray insertObject:[[BeamClass alloc] init:x+(20*pow(-1,i+1))//(30*(-1)^i)
+                                                             y_init:y
+                                                              width:50
+                                                             height:50]
+                                    atIndex:0];//全て最初に格納
+                }
+                break;
+            }
+            case 3:{
+                
+                for(int i = 0; i < numOfBeam;i++){
+                    [beamArray insertObject:[[BeamClass alloc] init:x+40*(i-1)//30*(i-1)
+                                                             y_init:y
+                                                              width:50
+                                                             height:50]
+                                    atIndex:0];//全て最初に格納
+                }
+                break;
+            }
+        }
+        
+
 //    [beamArray addObject:beam];
 //    if([beamArray count] > 10){
 ////        最後のビームを削除
@@ -418,11 +444,13 @@ int healCompleteCount;//終了判定
 //        [beamArray removeLastObject];
 ////        [beamArray addObject:beam];
 //    }
-    for(int i = 0; i < [beamArray count] ; i++){
-        if(![[beamArray objectAtIndex:i] getIsAlive]){
-            [beamArray removeObjectAtIndex:i];
+        for(int i = 0; i < [beamArray count] ; i++){
+            if(![[beamArray objectAtIndex:i] getIsAlive]){
+                [beamArray removeObjectAtIndex:i];
+            }
         }
     }
+    
 }
 -(BeamClass *)getBeam:(int)i{
     return (BeamClass *)[beamArray objectAtIndex:i];
@@ -546,6 +574,12 @@ int healCompleteCount;//終了判定
             break;
         }
         case ItemTypeWeapon2:{//wpLaser
+            
+            if([statusValue integerValue]){
+                weapon2Count = 500;
+            }else{
+                weapon2Count = 0;
+            }
             break;
         }
         default:
@@ -686,5 +720,9 @@ int healCompleteCount;//終了判定
 }
 
 
+-(UIImageView *)getLaserImageView{
+    
+    return ivLaser;
+}
 
 @end

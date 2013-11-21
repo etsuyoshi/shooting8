@@ -29,14 +29,15 @@
     int magnetCount;
     int weapon0Count;//爆弾を投げられる時間
     int weapon1Count;//攻撃力強化できる時間
+    int weapon2Count;//laser
     int bombCount;
     int bigCount;
     int healCount;
     int numOfBeam;
     Boolean isAlive;
     UIImageView *iv;
-    UIImageView *ivHealEffect;
     CGRect rect;
+    UIImageView *ivLaser;
     NSMutableArray *beamArray;
     ExplodeParticleView *explodeParticle;
     DamageParticleView *damageParticle;
@@ -69,6 +70,7 @@
 -(int) getX;
 -(int) getY;
 -(UIImageView *)getImageView;
+-(UIImageView *)getLaserImageView;
 -(ExplodeParticleView *)getExplodeParticle;
 -(DamageParticleView *)getDamageParticle;
 

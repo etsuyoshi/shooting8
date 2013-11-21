@@ -36,4 +36,5 @@ typedef NS_ENUM(NSInteger, WorldType) {
 -(void)doNext;
 -(UIImageView *)getImageView1;
 -(UIImageView *)getImageView2;
+-(void)oscillateEffect;
 @end
