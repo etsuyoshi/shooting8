@@ -389,6 +389,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     lifetime_count ++;
     if(!isAlive){
         dead_time ++;
+        NSLog(@"dead = %d", dead_time);
     }
     
     
@@ -491,7 +492,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
                 [beamArray removeObjectAtIndex:i];
             }
         }
-    }else{//レーザーモードの時
+    }else{//レーザーモードの時、なぜか一つだけ弾丸が消えない
 //        for(int i = 0; i < [beamArray count]; i++){
 //            if(![[beamArray objectAtIndex:i] getIsAlive]){
 //                [[beamArray objectAtIndex:i] die];
@@ -640,7 +641,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
             
             if([statusValue integerValue]){
                 weapon2Count = 500;
-                [self doNext];
+//                [self doNext];//?
             }else{
                 weapon2Count = 0;
             }

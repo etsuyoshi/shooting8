@@ -530,7 +530,7 @@ UIView *viewMyEffect;
         //ダメージを受けたときのイフェクト(画面を揺らす)=>縦方向に流れるアニメーション中なので難しい？
         
         
-        
+        NSLog(@"dead time = %d", [MyMachine getDeadTime]);
         
         //爆発から所定時間が経過しているか判定＝＞爆発パーティクルの消去
         if([MyMachine getDeadTime] >= explosionCycle){
