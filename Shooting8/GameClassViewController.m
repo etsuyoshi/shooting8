@@ -1109,8 +1109,8 @@ UIView *viewMyEffect;
                     
                     //攻撃によって敵が死んだらYES:生きてればNO
 //                    if([self giveDamageToEnemy:i damagae:(int)[_beam getPower] x:_xBeam y:_yBeam]){
-                    if([self giveDamageToEnemy:(int)i damage:3 x:(int)_xBeam y:(int)_yBeam]){
-                        continue;//弾丸モード(非レーザーモード)とは異なり、ビームループはないのでそのまま。
+                    if([self giveDamageToEnemy:(int)i damage:3 x:(int)_xEnemy y:(int)_yEnemy]){
+//                        continue;//弾丸モード(非レーザーモード)とは異なり、ビームループはないのでそのまま。
                     }
                 }
                 
@@ -2358,8 +2358,37 @@ UIView *viewMyEffect;
         [self enemyDieEffect:i];
         
         
+        int probabilityt = arc4random() % 100;
         //アイテム出現、アイテム生成
-        _item = [[ItemClass alloc] init:(countItem++) % 16 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+        if(probabilityt > 50){//50%の確率
+            _item = [[ItemClass alloc] init:ItemTypeYellowGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+        }else if(arc4random() % 3 == 0){//25%
+                 _item = [[ItemClass alloc] init:ItemTypeGreenGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+        }else if(arc4random() % 3 == 0){//12.5%
+            _item = [[ItemClass alloc] init:ItemTypeBlueGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+        }else if(arc4random() % 3 == 0){//6.25%
+            _item = [[ItemClass alloc] init:ItemTypePurpleGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+        }else if(arc4random() % 3 == 0){//3.125%
+            _item = [[ItemClass alloc] init:ItemTypeMagnet x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+        }else if(arc4random() % 3 == 0){//1.5125%
+            _item = [[ItemClass alloc] init:ItemTypeWeapon1 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+        }else if(arc4random() % 3 == 0){//0.7%
+            _item = [[ItemClass alloc] init:ItemTypeWeapon2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            
+        }else{//each-0.1(approximately)
+            _item = [[ItemClass alloc] init:arc4random() % 16 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+        }
+//        }else if(arc4random() % 2 == 0){//0.35%
+//            _item = [[ItemClass alloc] init:ItemTypeWeapon0 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];//bomb
+//        }else if(arc4random() % 2 == 0){//0.175%
+//            _item = [[ItemClass alloc] init:ItemTypeDeffense0 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+//        }else if(arc4random() % 2 == 0){//0.03%
+//            _item = [[ItemClass alloc] init:ItemTypeRedGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+//        }else if(arc4random() % 2 == 0){//0.35%
+//            _item = [[ItemClass alloc] init:ItemTypeTransparency x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+//        }else{
+//            _item = [[ItemClass alloc] init:arc4random() % 16 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+//        }
         //test:item
 //        _item = [[ItemClass alloc] init:ItemTypeTransparency x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
         

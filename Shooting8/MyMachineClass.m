@@ -491,6 +491,15 @@ int healCompleteCount;//1回当たりの回復表示終了判定
                 [beamArray removeObjectAtIndex:i];
             }
         }
+    }else{//レーザーモードの時
+//        for(int i = 0; i < [beamArray count]; i++){
+//            if(![[beamArray objectAtIndex:i] getIsAlive]){
+//                [[beamArray objectAtIndex:i] die];
+//                [beamArray removeObjectAtIndex:i];
+//                [[beamArray objectAtIndex:i] removeFromSuperview];
+//            }
+//        }
+//        [beamArray removeAllObjects];
     }
     
 }
@@ -631,6 +640,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
             
             if([statusValue integerValue]){
                 weapon2Count = 500;
+                [self doNext];
             }else{
                 weapon2Count = 0;
             }
