@@ -19,6 +19,7 @@
     int y_loc;
     int machine_type;//機体の型
     int hitPoint;
+    int maxHitPoint;
     int offensePower;//攻撃力
     int defensePower;//守備力：バリアー
     int mySize,bigSize,originalSize;
