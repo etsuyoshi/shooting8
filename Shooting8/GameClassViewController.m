@@ -1104,14 +1104,9 @@ UIView *viewMyEffect;
                     
                     //攻撃によって敵が死んだらYES:生きてればNO
 //                    if([self giveDamageToEnemy:i damagae:(int)[_beam getPower] x:_xBeam y:_yBeam]){
-                    if([self giveDamageToEnemy:(int)i damage:30 x:(int)_xBeam y:(int)_yBeam]){
-                        break;//当該iへの衝突判定を辞め、別の敵への判定(弾丸は最初から判定)に入る
-                    }else{
-                        continue;//no need?:同じ敵iに対して次の弾丸の衝突判定を行う
-                    };
-
-                    
-                    
+                    if([self giveDamageToEnemy:(int)i damage:3 x:(int)_xBeam y:(int)_yBeam]){
+                        continue;//弾丸モード(非レーザーモード)とは異なり、ビームループはないのでそのまま。
+                    }
                 }
                 
             }
@@ -1151,7 +1146,7 @@ UIView *viewMyEffect;
                             break;//当該iへの衝突判定を辞め、別の敵への判定(弾丸は最初から判定)に入る
                         }else{
                             continue;//no need?:同じ敵iに対して次の弾丸の衝突判定を行う
-                        };
+                        }
 
                         
 //                        break;//何の判定もせずににビーム[j]ループ脱出すると次以降のビームが敵に当たっている位置にいるのに衝突しないでスルーしてしまう
