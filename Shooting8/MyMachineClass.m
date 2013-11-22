@@ -195,18 +195,18 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     
     
     
-    if(defensePower >= 0){
+//    if(defensePower >= 0){
         if(hitPoint > 0){
             hitPoint -= damage;
-            if(hitPoint < 0){
+            if(hitPoint <= 0){
                 [self die:location];
             }
         }else{
-            [self die:location];
+//            [self die:location];
         }
-    }else{
-        defensePower --;
-    }
+//    }else{
+//        defensePower --;
+//    }
 }
 
 -(void) die:(CGPoint) location{
@@ -224,6 +224,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
                          [iv removeFromSuperview];
                      }];
     isAlive = false;
+    [iv removeFromSuperview];
     dead_time ++;
 }
 
@@ -625,8 +626,9 @@ int healCompleteCount;//1回当たりの回復表示終了判定
         case ItemTypeWeapon1:{//wpDiffuse
             //ビームが３列になるまでは追加取得可能(新規取得する毎にカウンターが初期化)
             if([statusValue integerValue]){
-                
+                NSLog(@"nB=%d", numOfBeam);
                 if(numOfBeam < 3){
+                    NSLog(@"++ nB=%d", numOfBeam);
                     weapon1Count = 500;
                     numOfBeam++;//max:3
                 }

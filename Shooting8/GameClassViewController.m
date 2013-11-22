@@ -530,8 +530,6 @@ UIView *viewMyEffect;
         //ダメージを受けたときのイフェクト(画面を揺らす)=>縦方向に流れるアニメーション中なので難しい？
         
         
-        NSLog(@"dead time = %d", [MyMachine getDeadTime]);
-        
         //爆発から所定時間が経過しているか判定＝＞爆発パーティクルの消去
         if([MyMachine getDeadTime] >= explosionCycle){
             NSLog(@"mymachine : set emitting no");
@@ -962,6 +960,7 @@ UIView *viewMyEffect;
                         break;
                     }
                     case ItemTypeDeffense1:{
+                        //追加取得可能なのでステータス判定しない
                         [MyMachine setStatus:@"1" key:ItemTypeDeffense1];
                         break;
                     }
@@ -989,9 +988,8 @@ UIView *viewMyEffect;
                         break;
                     }
                     case ItemTypeWeapon1:{//wpDiffuse
-                        if(![MyMachine getStatus:ItemTypeWeapon1]){
-                            [MyMachine setStatus:@"1" key:ItemTypeWeapon1];
-                        }
+                        //追加取得可能になるようにステータス判定なし(弾丸列数増加)
+                        [MyMachine setStatus:@"1" key:ItemTypeWeapon1];
                         break;
                     }
                     case ItemTypeWeapon2:{//wpLaser
@@ -1466,7 +1464,7 @@ UIView *viewMyEffect;
 #endif
     if(isYield){
         enemyCount ++;
-        NSLog(@"enemyCount %d", enemyCount);
+//        NSLog(@"enemyCount %d", enemyCount);
         int x = arc4random() % ((int)self.view.bounds.size.width - OBJECT_SIZE);
         
         EnemyClass *enemy = [[EnemyClass alloc]init:x size:OBJECT_SIZE];
@@ -2390,7 +2388,7 @@ UIView *viewMyEffect;
 //            _item = [[ItemClass alloc] init:arc4random() % 16 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
 //        }
         //test:item
-//        _item = [[ItemClass alloc] init:ItemTypeTransparency x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+//        _item = [[ItemClass alloc] init:ItemTypeWeapon1 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
         
         [ItemArray insertObject:_item atIndex:0];
         //現状全てのアイテムは手前に進んで消えるので先に発生(FIFO)したものから消去
