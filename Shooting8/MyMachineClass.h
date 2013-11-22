@@ -19,6 +19,7 @@
     int y_loc;
     int machine_type;//機体の型
     int hitPoint;
+    int laserPower;//レーザー威力(give enemy)
     int maxHitPoint;
     int offensePower;//攻撃力
     int defensePower;//守備力：バリアー
@@ -81,7 +82,10 @@
 -(void)yieldBeam:(int)beam_type init_x:(int)x init_y:(int)y;
 -(BeamClass *)getBeam:(int)i;
 -(int)getBeamCount;
+-(int)getAliveBeamCount;
 
 -(void)setOffensePow:(int)_val;
 -(void)setDefensePow:(int)_val;
+
+-(int)getLaserPower;
 @end

@@ -468,11 +468,11 @@ int tempCount = 0;
             CAAnimation *animationKeyFrame = [bombView.layer animationForKey:@"position"];
             if(animationKeyFrame){
                 //途中で終わらずにアニメーションが全て完了した場合
-                NSLog(@"bomb throwerd!!");
+//                NSLog(@"bomb throwerd!!");
                 //            [bombView removeFromSuperview];
             }else{
                 //途中で何らかの理由で遮られた場合
-                NSLog(@"animation key frame not exit");
+//                NSLog(@"animation key frame not exit");
             }
             
         }];
@@ -964,10 +964,10 @@ int tempCount = 0;
                     //            [self die];
 //                    [viewInArray removeFromSuperview];
 //                    [viewInArray.layer removeAnimationForKey:@"position"];   // 後始末:これをやるとviewが消える。
-                    NSLog(@"animation key frame already exit & die");
+//                    NSLog(@"animation key frame already exit & die");
                 }else{
                     //途中で何らかの理由で遮られた場合=>なぜかここに制御が移らない(既に終了している可能性濃厚)
-                    NSLog(@"animation key frame not exit");
+//                    NSLog(@"animation key frame not exit");
                 }
                 
             }];
@@ -1042,10 +1042,10 @@ int tempCount = 0;
                 //            [self die];
                 //                    [viewInArray removeFromSuperview];
                 //                    [viewInArray.layer removeAnimationForKey:@"position"];   // 後始末:これをやるとviewが消える。
-                NSLog(@"animation key frame already exit & die");
+//                NSLog(@"animation key frame already exit & die");
             }else{
                 //途中で何らかの理由で遮られた場合=>なぜかここに制御が移らない(既に終了している可能性濃厚)
-                NSLog(@"animation key frame not exit");
+//                NSLog(@"animation key frame not exit");
             }
             
         }];

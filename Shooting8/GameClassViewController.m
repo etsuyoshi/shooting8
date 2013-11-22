@@ -77,9 +77,9 @@
 
 #define STATUSBAR_MODE
 #define ENEMY_TEST
-//#ifdef ENEMY_TEST
 #define FREQ_ENEMY 10//Freq_Enemyカウントに一回発生
-//#endif
+
+#define MAX_ENEMY_NUM 50
 
 //#define COUNT_TEST
 
@@ -474,6 +474,7 @@ UIView *viewMyEffect;
 
 
 - (void)ordinaryAnimationStart{
+    
     //ユーザーインターフェース
     [self.view bringSubviewToFront:iv_frame];
     
@@ -503,11 +504,23 @@ UIView *viewMyEffect;
 
     //ビーム生成はタッチ検出場所で実行
     if([MyMachine getIsAlive] && isTouched){
-        [MyMachine yieldBeam:0 init_x:[MyMachine getX] init_y:[MyMachine getY]];
-        //ビームはFIFOなので最初のもののみを表示
-//        [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
-        for(int i = 0; i < [MyMachine getNumOfBeam];i++){
-            [self.view addSubview:[[MyMachine getBeam:i] getImageView]];//最初の１〜３個
+        if([MyMachine getAliveBeamCount] == 0){
+            
+            [MyMachine yieldBeam:0 init_x:[MyMachine getX] init_y:[MyMachine getY]];
+            //ビームはFIFOなので最初のもののみを表示
+            //        [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
+            for(int i = 0; i < [MyMachine getNumOfBeam];i++){
+                [self.view addSubview:[[MyMachine getBeam:i] getImageView]];//最初の１〜３個
+            }
+        }else if([[MyMachine getBeam:0] getY] <
+           [MyMachine getImageView].center.y - OBJECT_SIZE/2){//最後(index:i)の弾丸がキャラクターの近くになければ(近くにあると重なってしまう)
+            //上のブロックと全く同じ
+            [MyMachine yieldBeam:0 init_x:[MyMachine getX] init_y:[MyMachine getY]];
+            //ビームはFIFOなので最初のもののみを表示
+            //        [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
+            for(int i = 0; i < [MyMachine getNumOfBeam];i++){
+                [self.view addSubview:[[MyMachine getBeam:i] getImageView]];//最初の１〜３個
+            }
         }
     }
     
@@ -623,10 +636,10 @@ UIView *viewMyEffect;
                         if(animationKeyFrame){
                             //途中で終わらずにアニメーションが全て完了して
                             //            [self die];
-                            NSLog(@"animation key frame already exit & die");
+//                            NSLog(@"animation key frame already exit & die");
                         }else{
                             //途中で何らかの理由で遮られた場合
-                            NSLog(@"animation key frame not exit");
+//                            NSLog(@"animation key frame not exit");
                         }
                         
                     }];
@@ -958,7 +971,9 @@ UIView *viewMyEffect;
                     }
                     case ItemTypeDeffense0:{
                         if(![MyMachine getStatus:ItemTypeDeffense0]){
-                            [MyMachine setStatus:@"1" key:ItemTypeDeffense0];
+                            if(![MyMachine getStatus:ItemTypeBig]){//巨大化しているときにシールド不要
+                                [MyMachine setStatus:@"1" key:ItemTypeDeffense0];
+                            }
                         }
                         break;
                     }
@@ -1057,7 +1072,8 @@ UIView *viewMyEffect;
 //                    NSLog(@"size=%d", _sMine);
 //                    NSLog(@"die effect");
                     //敵機撃墜時のエフェクト
-                    [self enemyDieEffect:i];
+//                    [self enemyDieEffect:i];
+                    [self giveDamageToEnemy:i damage:5 x:_xEnemy y:_yEnemy];
                     
                 }
             }else if([MyMachine getStatus:ItemTypeTransparency]){
@@ -1112,7 +1128,7 @@ UIView *viewMyEffect;
                     
                     //攻撃によって敵が死んだらYES:生きてればNO
 //                    if([self giveDamageToEnemy:i damagae:(int)[_beam getPower] x:_xBeam y:_yBeam]){
-                    if([self giveDamageToEnemy:(int)i damage:3 x:(int)_xEnemy y:(int)_yEnemy]){
+                    if([self giveDamageToEnemy:(int)i damage:[MyMachine getLaserPower] x:(int)_xEnemy y:(int)_yEnemy]){
 //                        continue;//弾丸モード(非レーザーモード)とは異なり、ビームループはないのでそのまま。
                     }
                 }
@@ -1298,10 +1314,23 @@ UIView *viewMyEffect;
     
     //ビーム生成
     if([MyMachine getIsAlive] && isTouched){
-        [MyMachine yieldBeam:0 init_x:[MyMachine getX] init_y:[MyMachine getY]];
-        //ビームはFIFOなので最初のもののみを表示
-        for(int i = 0; i < [MyMachine getNumOfBeam];i++){
-            [self.view addSubview:[[MyMachine getBeam:i] getImageView]];//最初の１〜３個
+        if([MyMachine getAliveBeamCount] == 0){
+            
+            [MyMachine yieldBeam:0 init_x:[MyMachine getX] init_y:[MyMachine getY]];
+            //ビームはFIFOなので最初のもののみを表示
+            //        [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
+            for(int i = 0; i < [MyMachine getNumOfBeam];i++){
+                [self.view addSubview:[[MyMachine getBeam:i] getImageView]];//最初の１〜３個
+            }
+        }else if([[MyMachine getBeam:0] getY] <
+                 [MyMachine getImageView].center.y - OBJECT_SIZE/2){//最後(index:i)の弾丸がキャラクターの近くになければ(近くにあると重なってしまう)
+            //上のブロックと全く同じ
+            [MyMachine yieldBeam:0 init_x:[MyMachine getX] init_y:[MyMachine getY]];
+            //ビームはFIFOなので最初のもののみを表示
+            //        [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
+            for(int i = 0; i < [MyMachine getNumOfBeam];i++){
+                [self.view addSubview:[[MyMachine getBeam:i] getImageView]];//最初の１〜３個
+            }
         }
     }
 
@@ -1463,7 +1492,7 @@ UIView *viewMyEffect;
 //#endif
     
     //randomに発生
-    if(arc4random() % 20 == 0){
+    if(arc4random() % FREQ_ENEMY == 0){
         isYield = true;
     }
     
@@ -1481,7 +1510,7 @@ UIView *viewMyEffect;
         
         
         
-        if([EnemyArray count] > 50) {
+        if([EnemyArray count] > MAX_ENEMY_NUM) {
             [[[EnemyArray lastObject] getImageView] removeFromSuperview];
             //(パーティクルを生成していたら)パーティクルを消去
             [[[EnemyArray lastObject] getDamageParticle] removeFromSuperview];
@@ -1632,7 +1661,8 @@ UIView *viewMyEffect;
                                    go_component_width,
                                    go_height);
 //    [view_go addSubview:[CreateComponentClass createImageView:rect_score image:@"close"]];
-    UITextView *tv_score = [CreateComponentClass createTextView:rect_score text:@"score : 0"];
+    UITextView *tv_score = [CreateComponentClass createTextView:rect_score
+                                                           text:[NSString stringWithFormat:@"score : %d", beforeExp]];
     [tv_score setBackgroundColor:[UIColor clearColor]];
     [view_go addSubview:tv_score];
     
@@ -1743,13 +1773,16 @@ UIView *viewMyEffect;
 //        int goldCnt = 0;
         
         Boolean flagLevelUp = false;
-        
+        int goldCnt = 0;
+        int goldAdd = [GoldBoard getScore]/100==0?1:[GoldBoard getScore]/100;//大体100カウントで終わらせる
         //exp初期値
         [pv_score setProgress:(float)pvScoreValue/100.0f
                      animated:NO];
         for(int cnt = 0;cnt < loopCount ||
-                        cnt < [GoldBoard getScore]||
+                        goldCnt < [GoldBoard getScore]||
                         cnt < (float)enemyDown/(float)enemyCount*100;cnt++){
+            
+            goldCnt = MIN(goldCnt += goldAdd, [GoldBoard getScore]);
             for(int i = 0; i < 10;i++){
 //                NSLog(@"i = %d", i);//時間経過
                 NSLog(@"cnt = %d, i = %d, before-exp:%d, acquired:%d, after:%d, gold:%d, unit:%f, expUntileNextLevel:%d, level:%d, complete:%f, down:%d, count:%d",
@@ -1776,7 +1809,7 @@ UIView *viewMyEffect;
                 //経験値
                 if(cnt < loopCount-1){//最後のループのみ別処理(誤差修正のため)
                     tv_score.text = [NSString stringWithFormat:@"EXP : %d     level : %d",
-                                     pvScoreValue , level];
+                                     ABS(pvScoreValue) , level];
                     if(!flagLevelUp){
                         [pv_score setProgress:(float)pvScoreValue/expTilNextLevel//levelが上がったら一旦初期化
                                      animated:NO];
@@ -1790,19 +1823,20 @@ UIView *viewMyEffect;
                 }else{//unitが循環小数の場合(割り切れないので正確な値を示すために最終値をそのまま表示)
                     //初期値＋今回獲得スコア
                     tv_score.text = [NSString stringWithFormat:@"EXP : %d     level : %d",
-                                         exp + [ScoreBoard getScore], level];
+                                         ABS(exp) + [ScoreBoard getScore], level];
                 }
                 
                 //gold
-                if(cnt < [GoldBoard getScore]){
-                    tv_gold.text = [NSString stringWithFormat:@"GOLD : %d", cnt+1];
+                if(goldCnt < [GoldBoard getScore]){
+//                    goldCnt = (goldCnt + goldAdd > [GoldBoard getScore])?[GoldBoard getScore]:(goldCnt + goldAdd);
+                    tv_gold.text = [NSString stringWithFormat:@"GOLD : %d", goldCnt];
                     
                 }
                 
                 //complete
                 if(cnt < (float)enemyDown/(float)enemyCount*100){
                     if(enemyDown != enemyCount){
-                        tv_complete.text = [NSString stringWithFormat:@"complete : %d%%", cnt];
+                        tv_complete.text = [NSString stringWithFormat:@"complete : %d%%", MIN(cnt, 100)];
                         pv_complete.progress = (float)cnt / 100.0f;
                     }else{
                         tv_complete.text = [NSString stringWithFormat:@"complete : %d%%", 100];
@@ -2214,19 +2248,19 @@ UIView *viewMyEffect;
         CAAnimation *animationKeyFrame = [bombView.layer animationForKey:@"position"];
         if(animationKeyFrame){
             //途中で終わらずにアニメーションが全て完了した場合
-            NSLog(@"bomb throwed!!");
+//            NSLog(@"bomb throwed!!");
             
             //爆発エフェクト
-            float x = ((CALayer *)[bombView.layer presentationLayer]).position.x;
-            float y = ((CALayer *)[bombView.layer presentationLayer]).position.y;
-            NSLog(@"x = %f, y = %f", x, y);
+//            float x = ((CALayer *)[bombView.layer presentationLayer]).position.x;
+//            float y = ((CALayer *)[bombView.layer presentationLayer]).position.y;
+//            NSLog(@"x = %f, y = %f", x, y);
             [self ExplodeBombEffect:kEndPos];//CGPointMake(x, y)];//bombView.center];//((CALayer *)[bombView.layer presentationLayer]).position];
             
             [bombView removeFromSuperview];
             
         }else{
             //途中で何らかの理由で遮られた場合
-            NSLog(@"animation key frame not exit");
+//            NSLog(@"animation key frame not exit");
         }
         
     }];
@@ -2309,7 +2343,8 @@ UIView *viewMyEffect;
                                     point.y + bombSize * 0.4 >= _yEnemy - _sEnemy * 0.4 &&
                                     point.y - bombSize * 0.4 <= _yEnemy + _sEnemy * 0.4 ){
 
-                                     [self enemyDieEffect:i];//殲滅？
+//                                     [self enemyDieEffect:i];//殲滅？
+                                     [self giveDamageToEnemy:i damage:3 x:_xEnemy y:_yEnemy];
                                      
                                      
                                  }
@@ -2410,7 +2445,8 @@ UIView *viewMyEffect;
                                     point.y + bombSize * 0.4 >= _yEnemy - _sEnemy * 0.4 &&
                                     point.y - bombSize * 0.4 <= _yEnemy + _sEnemy * 0.4 ){
                                      
-                                     [self enemyDieEffect:i];//殲滅？orダメージ
+//                                     [self enemyDieEffect:i];//殲滅？orダメージ
+                                     [self giveDamageToEnemy:i damage:10 x:_xEnemy y:_xEnemy];
                                      
                                      
                                  }
@@ -2438,27 +2474,58 @@ UIView *viewMyEffect;
         //敵機撃墜時のエフェクト
         [self enemyDieEffect:i];
         
-        
-        int probabilityt = arc4random() % 100;
-        //アイテム出現、アイテム生成
-        if(probabilityt > 50){//50%の確率
-            _item = [[ItemClass alloc] init:ItemTypeYellowGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
-        }else if(arc4random() % 3 == 0){//25%
-                 _item = [[ItemClass alloc] init:ItemTypeGreenGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
-        }else if(arc4random() % 3 == 0){//12.5%
-            _item = [[ItemClass alloc] init:ItemTypeBlueGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
-        }else if(arc4random() % 3 == 0){//6.25%
-            _item = [[ItemClass alloc] init:ItemTypePurpleGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
-        }else if(arc4random() % 3 == 0){//3.125%
-            _item = [[ItemClass alloc] init:ItemTypeMagnet x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
-        }else if(arc4random() % 3 == 0){//1.5125%
-            _item = [[ItemClass alloc] init:ItemTypeWeapon1 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
-        }else if(arc4random() % 3 == 0){//0.7%
-            _item = [[ItemClass alloc] init:ItemTypeWeapon2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+        //特定ステータスではコインのみ
+        if([MyMachine getStatus:ItemTypeBig] ||
+           [MyMachine getStatus:ItemTypeBomb] ||
+           [MyMachine getStatus:ItemTypeMagnet] ||
+           [MyMachine getStatus:ItemTypeWeapon0] ||
+           [MyMachine getStatus:ItemTypeWeapon1] ||
+           [MyMachine getStatus:ItemTypeWeapon2]){
             
-        }else{//each-0.1(approximately)
-            _item = [[ItemClass alloc] init:arc4random() % 16 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
-        }
+            if(arc4random() % 100 >= 20){
+                _item = [[ItemClass alloc] init:ItemTypeYellowGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            }else if(arc4random() % 2 == 0){
+                _item = [[ItemClass alloc] init:ItemTypeGreenGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            }else if(arc4random() % 3 == 0){
+                _item = [[ItemClass alloc] init:ItemTypeBlueGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            }else if(arc4random() % 3 == 0){
+                _item = [[ItemClass alloc] init:ItemTypePurpleGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            }else if(arc4random() % 3 == 0){
+                _item = [[ItemClass alloc] init:ItemTypeMagnet x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            }else{
+                _item = [[ItemClass alloc] init:ItemTypeRedGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            }
+        }else{
+            
+            int probabilityt = arc4random() % 100;
+            //アイテム出現、アイテム生成
+            if(probabilityt > 20){//80%の確率
+                _item = [[ItemClass alloc] init:ItemTypeYellowGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            }else if(arc4random() % 3 == 0){
+                _item = [[ItemClass alloc] init:ItemTypeGreenGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            }else if(arc4random() % 3 == 0){
+                _item = [[ItemClass alloc] init:ItemTypeBlueGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            }else if(arc4random() % 3 == 0){
+                _item = [[ItemClass alloc] init:ItemTypePurpleGold x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            }else if(arc4random() % 3 == 0){
+                _item = [[ItemClass alloc] init:ItemTypeMagnet x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            }else if(arc4random() % 3 == 0){
+                _item = [[ItemClass alloc] init:ItemTypeWeapon1 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            }else if(arc4random() % 3 == 0){
+                _item = [[ItemClass alloc] init:ItemTypeWeapon2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+                
+            }else{//
+                
+                if([EnemyArray count] > MAX_ENEMY_NUM/2){//ピンチ=敵が多ければ:最大の半分以上
+                    if(arc4random() % 2 == 0){
+                        _item = [[ItemClass alloc] init:ItemTypeBig x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+                    }else if(arc4random() % 2 == 0){
+                        _item = [[ItemClass alloc] init:ItemTypeBomb x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+                    }else{
+                        _item = [[ItemClass alloc] init:arc4random() % 16 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+                    }
+                }
+            }
 //        }else if(arc4random() % 2 == 0){//0.35%
 //            _item = [[ItemClass alloc] init:ItemTypeWeapon0 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];//bomb
 //        }else if(arc4random() % 2 == 0){//0.175%
@@ -2472,6 +2539,8 @@ UIView *viewMyEffect;
 //        }
         //test:item
 //        _item = [[ItemClass alloc] init:ItemTypeWeapon1 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+        }
+        
         
         [ItemArray insertObject:_item atIndex:0];
         //現状全てのアイテムは手前に進んで消えるので先に発生(FIFO)したものから消去

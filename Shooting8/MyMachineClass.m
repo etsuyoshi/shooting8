@@ -39,6 +39,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     y_loc = 350;
     x_loc = x_init;
     maxHitPoint = 1000;
+    laserPower = 1;
     hitPoint = maxHitPoint;
     offensePower = 1;
     defensePower = 0;
@@ -182,7 +183,11 @@ int healCompleteCount;//1回当たりの回復表示終了判定
 }
 
 -(void)setDamage:(int)damage location:(CGPoint)location{
-    damageParticle = [[DamageParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, damage, damage)];
+    int _damage = damage;
+    if(defense0Count > 0){//defense0モードである時
+        _damage = (damage/2==0)?1:damage/2;
+    }
+    damageParticle = [[DamageParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, 30, 30)];
     [UIView animateWithDuration:0.5f
                      animations:^{
                          [damageParticle setAlpha:0.0f];//徐々に薄く
@@ -197,7 +202,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     
 //    if(defensePower >= 0){
         if(hitPoint > 0){
-            hitPoint -= damage;
+            hitPoint -= _damage;
             if(hitPoint <= 0){
                 [self die:location];
             }
@@ -446,12 +451,13 @@ int healCompleteCount;//1回当たりの回復表示終了判定
         /*
          *1列の場合は０が中心位置に、２列の場合は０が左、１が右、３列の場合、０が左、１が中心、２が右
          */
+        int _beamSize = 50;
         switch (numOfBeam) {
             case 1:{
                 [beamArray insertObject:[[BeamClass alloc] init:x
                                                          y_init:y
-                                                          width:50
-                                                         height:50]
+                                                          width:_beamSize
+                                                         height:_beamSize]
                                 atIndex:0];//全て最初に格納
                 
                 break;
@@ -461,8 +467,8 @@ int healCompleteCount;//1回当たりの回復表示終了判定
                 for(int i = 0; i < numOfBeam;i++){
                     [beamArray insertObject:[[BeamClass alloc] init:x+(20*pow(-1,i+1))//(30*(-1)^i)
                                                              y_init:y
-                                                              width:50
-                                                             height:50]
+                                                              width:_beamSize
+                                                             height:_beamSize]
                                     atIndex:0];//全て最初に格納
                 }
                 break;
@@ -472,8 +478,8 @@ int healCompleteCount;//1回当たりの回復表示終了判定
                 for(int i = 0; i < numOfBeam;i++){
                     [beamArray insertObject:[[BeamClass alloc] init:x+40*(i-1)//30*(i-1)
                                                              y_init:y
-                                                              width:50
-                                                             height:50]
+                                                              width:_beamSize
+                                                             height:_beamSize]
                                     atIndex:0];//全て最初に格納
                 }
                 break;
@@ -490,6 +496,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
 //    }
         for(int i = 0; i < [beamArray count] ; i++){
             if(![[beamArray objectAtIndex:i] getIsAlive]){
+                [[[beamArray objectAtIndex:i] getImageView] removeFromSuperview];
                 [beamArray removeObjectAtIndex:i];
             }
         }
@@ -511,6 +518,16 @@ int healCompleteCount;//1回当たりの回復表示終了判定
 
 -(int)getBeamCount{
     return [beamArray count];
+}
+
+-(int)getAliveBeamCount{
+    int c = 0;
+    for(int i = 0;i < [beamArray count];i++){
+        if([[beamArray objectAtIndex:i] getIsAlive]){
+            c ++;
+        }
+    }
+    return c;
 }
 
 -(void)setOffensePow:(int)_power{
@@ -626,9 +643,9 @@ int healCompleteCount;//1回当たりの回復表示終了判定
         case ItemTypeWeapon1:{//wpDiffuse
             //ビームが３列になるまでは追加取得可能(新規取得する毎にカウンターが初期化)
             if([statusValue integerValue]){
-                NSLog(@"nB=%d", numOfBeam);
+//                NSLog(@"nB=%d", numOfBeam);
                 if(numOfBeam < 3){
-                    NSLog(@"++ nB=%d", numOfBeam);
+//                    NSLog(@"++ nB=%d", numOfBeam);
                     weapon1Count = 500;
                     numOfBeam++;//max:3
                 }
@@ -642,7 +659,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
         case ItemTypeWeapon2:{//wpLaser
             
             if([statusValue integerValue]){
-                weapon2Count = 500;
+                weapon2Count = 100;
 //                [self doNext];//?
             }else{
                 weapon2Count = 0;
@@ -817,6 +834,10 @@ int healCompleteCount;//1回当たりの回復表示終了判定
                              [self flashImageView:duration repeatCount:count-1];
                          }
                      }];
+}
+
+-(int)getLaserPower{
+    return laserPower;
 }
 
 @end

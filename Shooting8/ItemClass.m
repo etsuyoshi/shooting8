@@ -171,10 +171,10 @@
         if(animationKeyFrame){
             //途中で終わらずにアニメーションが全て完了して
 //            [self die];
-            NSLog(@"animation key frame already exit & die");
+//            NSLog(@"animation key frame already exit & die");
         }else{
             //途中で何らかの理由で遮られた場合
-            NSLog(@"animation key frame not exit");
+//            NSLog(@"animation key frame not exit");
         }
         
     }];

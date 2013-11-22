@@ -55,7 +55,7 @@
 //    x_loc = mLayer.position.x;//中心座標
 //    y_loc = mLayer.position.y;//中心座標
 //    NSLog(@"yBeam = %d", y_loc);
-    y_loc -= height * 0.5;
+    y_loc -= height /3;
     iv.center = CGPointMake(x_loc, y_loc);
 //    x_loc += 0;//mySize/10 * (int)pow(-1, arc4random()%2) % 200;//単位時間当たりに左右3個体分の移動距離を進む
 //    iv = [[UIImageView alloc]initWithFrame:CGRectMake(x_loc - width/2, y_loc - height/2, width, height)];

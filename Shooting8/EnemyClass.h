@@ -29,7 +29,7 @@ typedef NS_ENUM(NSInteger, EnemyType) {
     int bomb_size;
     int dead_time;
     Boolean isAlive;
-    Boolean isDamaged;
+    int isDamaged;
     UIImageView *iv;
     CGRect rect;
     ExplodeParticleView *explodeParticle;
@@ -48,7 +48,6 @@ typedef NS_ENUM(NSInteger, EnemyType) {
 -(void)setSize:(int)s;
 -(int)getSize;
 
--(void)setIsDamaged:(Boolean)_isDamaged;
 -(void)doNext;
 
 -(void)die;

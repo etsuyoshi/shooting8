@@ -524,7 +524,7 @@
 				34F3007418218CBE0082DCBC /* Component */,
 				34F3007318218C350082DCBC /* ViewController */,
 				34F3007218218C2E0082DCBC /* Particle */,
-				34F3007118218C290082DCBC /* GameObject */,
+				34F3007118218C290082DCBC /* Object */,
 				34F3007018218C250082DCBC /* Board */,
 				342057E917F2B34C0084E99D /* MainStoryboard.storyboard */,
 				342057D817F2B34C0084E99D /* Supporting Files */,
@@ -860,7 +860,7 @@
 			name = Board;
 			sourceTree = "<group>";
 		};
-		34F3007118218C290082DCBC /* GameObject */ = {
+		34F3007118218C290082DCBC /* Object */ = {
 			isa = PBXGroup;
 			children = (
 				3467B72017FD5980004EEE94 /* PowerGaugeClass.h */,
@@ -876,7 +876,7 @@
 				342401FF17F6E8A100E06902 /* BeamClass.h */,
 				3424020017F6E8A100E06902 /* BeamClass.m */,
 			);
-			name = GameObject;
+			name = Object;
 			sourceTree = "<group>";
 		};
 		34F3007218218C2E0082DCBC /* Particle */ = {

@@ -16,7 +16,7 @@
 int unique_id;
 -(id) init:(int)x_init size:(int)size{
     unique_id++;
-    hitPoint = 50;
+    hitPoint = 3;
     mySize = size;
     y_loc = 0;//-mySize;//画面の外から発生させる
     x_loc = x_init;
@@ -24,7 +24,7 @@ int unique_id;
     lifetime_count = 0;
     dead_time = -1;//死亡したら0にして一秒後にparticleを消去する
     isAlive = true;
-    isDamaged = false;
+    isDamaged = 0;
     explodeParticle = nil;
     damageParticle  = nil;
     rect = CGRectMake(x_loc, y_loc, mySize, mySize);
@@ -69,7 +69,7 @@ int unique_id;
 }
 
 -(void)setDamage:(int)damage location:(CGPoint)location{
-    isDamaged = YES;
+    isDamaged = 100;//100count=1sec
     //particleを表示すると動作が重くなる
 //    damageParticle = [[DamageParticleView alloc] initWithFrame:CGRectMake(location.x, location.y, damage, damage)];
 //    [UIView animateWithDuration:0.5f
@@ -125,10 +125,6 @@ int unique_id;
 -(int)getSize{
     return mySize;
 }
-//done at setDamage method
--(void)setIsDamaged:(Boolean)_isDamaged{
-    isDamaged = _isDamaged;
-}
 -(void)doNext{
     //初動：最初に呼び出される時のみ
     if(lifetime_count == 0){
@@ -146,6 +142,7 @@ int unique_id;
                              [iv removeFromSuperview];
                          }];
     }
+    
 //    [self doNext:false];
 //}
 //-(void)doNext:(Boolean)isDamaged{
@@ -217,7 +214,12 @@ int unique_id;
     }
     
     //最後にisDamagedを通常時に戻してあげる
-    isDamaged = false;//ダメージを受けたときだけtrueにする
+//    isDamaged = false;//ダメージを受けたときだけtrueにする
+    
+    if(isDamaged > 0){
+        isDamaged --;
+    }
+    
 }
 
 -(int) getDeadTime{
