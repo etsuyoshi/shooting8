@@ -13,6 +13,12 @@
 }
 
 
+/*
+ *
+ *(NSString *)getValueFromDevice:(NSString)name=name属性の値を取得する
+ *(NSDictionary *)getAttrDict:
+ */
+
 -(id)init{
     self = [super init];
     
@@ -35,10 +41,11 @@
                                  @"exp",
                                  nil];
     
+    NSLog(@"search in the device");
     //初期値をdeviceにセットする
-    NSDictionary *_dict = [self getAttrDict];
-//    NSLog(@"ccc");//
+    NSDictionary *_dict = [self getAttrDict];//
 
+    //getAttrDictはデバイスから取得しているので以下は読み込んだ属性値をそのまま上書きしているだけなので不要
     for(int i = 0 ; i < [nameArray count] ; i++){
         [self setValueToDevice:[nameArray objectAtIndex:i]
                       strValue:[_dict objectForKey:[nameArray objectAtIndex:i]]];
@@ -78,6 +85,7 @@
 //            NSLog(@"test");
             
         }else{
+            NSLog(@"device search for %@, but no data...", [nameArray objectAtIndex:i]);
             //nullならそのまま
         }
     }

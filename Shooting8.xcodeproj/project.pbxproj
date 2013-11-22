@@ -520,20 +520,13 @@
 		342057D717F2B34C0084E99D /* Shooting8 */ = {
 			isa = PBXGroup;
 			children = (
+				3473AA07183F32EF002D94CC /* System */,
 				34F3007418218CBE0082DCBC /* Component */,
 				34F3007318218C350082DCBC /* ViewController */,
 				34F3007218218C2E0082DCBC /* Particle */,
 				34F3007118218C290082DCBC /* GameObject */,
 				34F3007018218C250082DCBC /* Board */,
-				347D276618167FA000498F68 /* BGMClass.h */,
-				347D276718167FA000498F68 /* BGMClass.m */,
-				342057E017F2B34C0084E99D /* AppDelegate.h */,
-				342057E117F2B34C0084E99D /* AppDelegate.m */,
 				342057E917F2B34C0084E99D /* MainStoryboard.storyboard */,
-				34FA1A2F180BC2460011E1CA /* AttrClass.h */,
-				34FA1A30180BC2460011E1CA /* AttrClass.m */,
-				348AD7EB180A9159007226EC /* DBAccessClass.h */,
-				348AD7EC180A9159007226EC /* DBAccessClass.m */,
 				342057D817F2B34C0084E99D /* Supporting Files */,
 			);
 			name = Shooting8;
@@ -633,6 +626,21 @@
 				3461FE6C183DDFAF00DB4546 /* laser01_01.png */,
 			);
 			name = laser;
+			sourceTree = "<group>";
+		};
+		3473AA07183F32EF002D94CC /* System */ = {
+			isa = PBXGroup;
+			children = (
+				34FA1A2F180BC2460011E1CA /* AttrClass.h */,
+				34FA1A30180BC2460011E1CA /* AttrClass.m */,
+				348AD7EB180A9159007226EC /* DBAccessClass.h */,
+				348AD7EC180A9159007226EC /* DBAccessClass.m */,
+				347D276618167FA000498F68 /* BGMClass.h */,
+				347D276718167FA000498F68 /* BGMClass.m */,
+				342057E017F2B34C0084E99D /* AppDelegate.h */,
+				342057E117F2B34C0084E99D /* AppDelegate.m */,
+			);
+			name = System;
 			sourceTree = "<group>";
 		};
 		347D26F118166DFC00498F68 /* number */ = {

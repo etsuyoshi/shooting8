@@ -1057,6 +1057,8 @@ UIView *viewMyEffect;
                     [self enemyDieEffect:i];
                     
                 }
+            }else if([MyMachine getStatus:ItemTypeTransparency]){
+                //do nothing...
             }else if(
                _xMine >= _xEnemy - _sEnemy * 0.4 &&
                _xMine <= _xEnemy + _sEnemy * 0.4 &&
@@ -1227,10 +1229,11 @@ UIView *viewMyEffect;
 //        }
         count += 0.01f;
         
-        if(count >= TIMEOVER_SECOND){
-            isGameMode = false;
-            [self exitProcess];//delayさせるとその間にprogressが進んでしまうので即座に表示
-        }
+        //終了モードは辞める(ユーザーが努力した分だけ進めるようにする)
+//        if(count >= TIMEOVER_SECOND){
+//            isGameMode = false;
+//            [self exitProcess];//delayさせるとその間にprogressが進んでしまうので即座に表示
+//        }
         
     }else{
         
@@ -1544,8 +1547,10 @@ UIView *viewMyEffect;
             [[[EnemyArray objectAtIndex:i] getExplodeParticle] removeFromSuperview];
             [[[EnemyArray objectAtIndex:i] getDamageParticle] removeFromSuperview];
             
-            //画面からは消去せず(消去しても良いが)、配列から削除してメモリ解放
+            //画面からは消去しなくても良いが、配列から削除してメモリ解放
+            [[[EnemyArray objectAtIndex:i] getImageView] removeFromSuperview];
             [EnemyArray removeObjectAtIndex:i];
+            
         }
     }
     
@@ -1976,13 +1981,13 @@ UIView *viewMyEffect;
     int beforeExp = [[attr getValueFromDevice:@"exp"] intValue];
     int beforeLevel = [[attr getValueFromDevice:@"level"] intValue];
     [attr addExp:[ScoreBoard getScore]];//setValutToDevice@exp & setValueToDevice@levelを両方同時に実行
-    //    [attr setValueToDevice:@"exp" strValue:[NSString stringWithFormat:@"%d", afterExp]];
-    //    [attr setValueToDevice:@"level" strValue:[NSString stringWithFormat:@"%d", afterLevel]];
     int afterExp = [[attr getValueFromDevice:@"exp"] intValue];
     int afterLevel = [[attr getValueFromDevice:@"level"] intValue];
     NSLog(@"ゲーム前経験値%d, 今回獲得スコア%d => ゲーム後経験値%d", beforeExp, [ScoreBoard getScore], afterExp);
     NSLog(@"ゲーム前レベル%d　=> ゲーム後レベル%d", beforeLevel, afterLevel);
-
+    [attr setValueToDevice:@"exp" strValue:[NSString stringWithFormat:@"%d", afterExp]];
+    [attr setValueToDevice:@"level" strValue:[NSString stringWithFormat:@"%d", afterLevel]];
+    
     
     //_/_/_/_/_/_/端末情報更新完了_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     
@@ -2279,7 +2284,7 @@ UIView *viewMyEffect;
     [self.view addSubview:uivBomb];
 }
 
-
+//item-Bombを取得した時に画面上に爆発が発生する
 -(void)smallBombEffectRepeat:(int)repeatCount point:(CGPoint)point{//sub-effect of itemBombEffect
     int bombSize = 150;
     UIImageView *uivBomb = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0,
