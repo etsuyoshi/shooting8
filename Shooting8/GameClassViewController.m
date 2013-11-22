@@ -1569,6 +1569,18 @@ UIView *viewMyEffect;
     //敵機撃破率
     
     
+    
+    
+    //描画用に更新前データを保存しておく
+    AttrClass *attr = [[AttrClass alloc]init];
+    int beforeLevel = [[attr getValueFromDevice:@"level"] intValue];
+    int beforeExp = [[attr getValueFromDevice:@"exp"] intValue];
+    
+    //デバイスデータ更新＆サーバー通信＝＞exitボタン押下時に実行してしまうと、menu画面で正しい値が表示されなくなってしまう
+    [self performSelector:@selector(sendRequestToServer) withObject:nil afterDelay:0.1];
+    
+
+    
     int go_component_width = 250;
     
     //全体のフレーム
@@ -1710,10 +1722,10 @@ UIView *viewMyEffect;
     //上限まで達したら再度ゼロにして足していくが、次のレベルにおいても上限に達する場合はそこで停止しておく
     dispatch_async(globalQueue, ^{
         //ここでは情報を取得しておくに留める(更新は別の場所で実施)
-        AttrClass *attr = [[AttrClass alloc]init];
-        int level = [[attr getValueFromDevice:@"level"] intValue];
-        int exp = [[attr getValueFromDevice:@"exp"] intValue];
-        int expTilNextLevel = [attr getMaxExpAtTheLevel:level];
+//        AttrClass *attr = [[AttrClass alloc]init];
+        int level = beforeLevel;//[[attr getValueFromDevice:@"level"] intValue];//既に更新済なので古いデータを使う
+        int exp = beforeExp;//[[attr getValueFromDevice:@"exp"] intValue];//既に更新済なので古いデータを使う
+        int expTilNextLevel = [attr getMaxExpAtTheLevel:beforeLevel];//非更新データなのでアクセス
         
         
 //        float unit = (float)expTilNextLevel / 100.0f;//progressViewの100分割ユニット＝最初のレベルで固定
@@ -1808,10 +1820,10 @@ UIView *viewMyEffect;
 -(void)pushExit{
     //終了ボタン押下時対応=>サーバー接続してゲーム回数を更新
     
-    // インジケーター表示
-    [self showActivityIndicator];
-    //サーバー通信
-    [self performSelector:@selector(sendRequestToServer) withObject:nil afterDelay:0.1];
+//    // インジケーター表示
+//    [self showActivityIndicator];
+//    //サーバー通信
+//    [self performSelector:@selector(sendRequestToServer) withObject:nil afterDelay:0.1];
     
     
     [self exit];
@@ -1935,6 +1947,11 @@ UIView *viewMyEffect;
 //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 //サーバーに登録するためにhttp通信
 -(void)sendRequestToServer{
+    
+    // インジケーター表示：メニューがないので意味ない？
+//    [self showActivityIndicator];
+    
+    
     DBAccessClass *dbac = [[DBAccessClass alloc]init];
     AttrClass *attr = [[AttrClass alloc]init];
     NSString *_id = [attr getIdFromDevice];
@@ -1947,7 +1964,8 @@ UIView *viewMyEffect;
     NSUserDefaults* score_defaults =
     [NSUserDefaults standardUserDefaults];
     //    [id_defaults removeObjectForKey:@"user_id"];//値を削除：テスト用
-    int max_score = [score_defaults integerForKey:@"max_score"];
+//    int max_score = [score_defaults integerForKey:@"max_score"];
+    int max_score = [[attr getValueFromDevice:@"score"] intValue];
     NSLog(@"now score = %d, max_score = %d", [ScoreBoard getScore], max_score);
     //今回取得したスコアが前回までの最高得点を上回れば更新
     if([ScoreBoard getScore] > max_score){
@@ -1980,13 +1998,16 @@ UIView *viewMyEffect;
     //exp&levelをupdate
     int beforeExp = [[attr getValueFromDevice:@"exp"] intValue];
     int beforeLevel = [[attr getValueFromDevice:@"level"] intValue];
-    [attr addExp:[ScoreBoard getScore]];//setValutToDevice@exp & setValueToDevice@levelを両方同時に実行
+    //経験値とレベルの両方を更新
+    [attr addExp:[ScoreBoard getScore]];
+    //上記addExpにより下記setValutToDevice@exp & setValueToDevice@levelを両方同時に実行
+//    [attr setValueToDevice:@"exp" strValue:[NSString stringWithFormat:@"%d", afterExp]];
+//    [attr setValueToDevice:@"level" strValue:[NSString stringWithFormat:@"%d", afterLevel]];
+
     int afterExp = [[attr getValueFromDevice:@"exp"] intValue];
     int afterLevel = [[attr getValueFromDevice:@"level"] intValue];
     NSLog(@"ゲーム前経験値%d, 今回獲得スコア%d => ゲーム後経験値%d", beforeExp, [ScoreBoard getScore], afterExp);
     NSLog(@"ゲーム前レベル%d　=> ゲーム後レベル%d", beforeLevel, afterLevel);
-    [attr setValueToDevice:@"exp" strValue:[NSString stringWithFormat:@"%d", afterExp]];
-    [attr setValueToDevice:@"level" strValue:[NSString stringWithFormat:@"%d", afterLevel]];
     
     
     //_/_/_/_/_/_/端末情報更新完了_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
@@ -2029,8 +2050,8 @@ UIView *viewMyEffect;
           [dbac getValueFromDB:_id column:@"exp"]
           );
     
-    // インジケーター非表示(このメソッドを表示する際に表示済)
-    [self hideActivityIndicator];
+    // インジケーター非表示(このメソッドを表示する際に表示済)：メニューがないので意味ない？
+//    [self hideActivityIndicator];
     
 }
 
@@ -2052,7 +2073,7 @@ UIView *viewMyEffect;
 }
 
 /*
- * インジケーター非表示
+ * インジケーター非表示:メニュー非表示モードなので、画面中心に薄く表示される程度が良い？->rotate-animate?
  */
 - (void)hideActivityIndicator
 {

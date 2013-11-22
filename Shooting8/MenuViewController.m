@@ -277,7 +277,7 @@ AttrClass *attr;
                                        W_MOST_UPPER_COMPONENT,
                                        H_MOST_UPPER_COMPONENT);
     UITextView *tvScoreLabel = [CreateComponentClass createTextView:rectScoreLabel
-                                                               text:@"Score."
+                                                               text:@"Exp."
                                                                font:@"AmericanTypewriter-Bold"
                                                                size:15
                                                           textColor:[UIColor whiteColor]
@@ -290,7 +290,9 @@ AttrClass *attr;
                                         Y_MOST_UPPER_COMPONENT + H_MOST_UPPER_COMPONENT - 30,
                                         W_MOST_UPPER_COMPONENT,
                                         H_MOST_UPPER_COMPONENT);
-    NSString *strExp = [NSString stringWithFormat:@"%09d", [[attr getValueFromDevice:@"exp"] intValue]];
+    NSString *strExp = [NSString stringWithFormat:@"%09d", [[attr getValueFromDevice:@"exp"]
+                                                            intValue]];
+    
     UITextView *tvScoreAmount = [CreateComponentClass createTextView:rectScoreAmount
                                                                 text:strExp
                                                                 font:@"AmericanTypewriter-Bold"
