@@ -105,7 +105,7 @@
 CGRect rect_frame, rect_myMachine, rect_enemyBeam, rect_beam_launch;
 UIImageView *iv_frame, *iv_myMachine, *iv_enemyBeam, *iv_beam_launch;//, *iv_background1, *iv_background2;
 
-
+AttrClass *attr;
 
 UIView *_loadingView;
 UIActivityIndicatorView *_indicator;
@@ -217,6 +217,9 @@ UIView *viewMyEffect;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    //いつでもデータを取り出せるようにグローバルに保存しておく：最初の一度だけにする
+    attr = [[AttrClass alloc]init];//実際に使うのは最後のデータ表示部分@sendRequest...
     
     flagItemTrigger = false;
     
@@ -1571,8 +1574,8 @@ UIView *viewMyEffect;
     
     
     
-    //描画用に更新前データを保存しておく
-    AttrClass *attr = [[AttrClass alloc]init];
+    //描画用に使うため、更新前データを保存しておく
+//    AttrClass *attr = [[AttrClass alloc]init];
     int beforeLevel = [[attr getValueFromDevice:@"level"] intValue];
     int beforeExp = [[attr getValueFromDevice:@"exp"] intValue];
     
@@ -1953,16 +1956,60 @@ UIView *viewMyEffect;
     
     
     DBAccessClass *dbac = [[DBAccessClass alloc]init];
-    AttrClass *attr = [[AttrClass alloc]init];
+//    AttrClass *attr = [[AttrClass alloc]init];
     NSString *_id = [attr getIdFromDevice];
     
     
     
     
     //_/_/_/_/_/端末情報更新開始：得点とゴールドを端末に記録させる=>時間がある時にAttrClassに代行！！_/_/_/_/_/_/_/_/_/_/
+    
+    
+    //ゲーム回数
+    int newGameCnt = [[attr getValueFromDevice:@"gameCnt"] intValue] + 1;
+    NSLog(@"gameCnt = %@ => %d, updating..", [attr getValueFromDevice:@"gameCnt"], newGameCnt);
+    [attr setValueToDevice:@"gameCnt" strValue:[NSString stringWithFormat:@"%d", newGameCnt]];
+    
+    //最終ゲーム実行時間:http://www.objectivec-iphone.com/foundation/NSDate/components.html
+    NSString *strLogin = [NSString stringWithFormat:@""];
+    // 現在日付を取得
+    NSDate *now = [NSDate date];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSUInteger flags;
+    NSDateComponents *comps;
+    
+    // 年・月・日を取得
+    flags = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
+    comps = [calendar components:flags fromDate:now];
+    NSString *year = [NSString stringWithFormat:@"%04d", comps.year];
+    NSString *month = [NSString stringWithFormat:@"%02d", comps.month];
+    NSString *day = [NSString stringWithFormat:@"%02d", comps.day];
+    NSLog(@"%@年 %@月 %@日",year,month,day);
+    strLogin = [NSString stringWithFormat:@"%@%@%@%@", strLogin, year, month, day];
+    
+    // 時・分・秒を取得
+    flags = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+    comps = [calendar components:flags fromDate:now];
+    NSString *hour = [NSString stringWithFormat:@"%d", comps.hour];
+    NSString *minute = [NSString stringWithFormat:@"%d", comps.minute];
+    NSString *second = [NSString stringWithFormat:@"%d", comps.second];
+    NSLog(@"%@時 %@分 %@秒", hour, minute, second);
+    strLogin = [NSString stringWithFormat:@"%@%@%@%@", strLogin, hour, minute, second];
+    
+    // 曜日
+    comps = [calendar components:NSWeekdayCalendarUnit fromDate:now];
+    NSArray *arrayWeekName = [[NSArray alloc]initWithObjects:
+                             @"sun", @"mon", @"tue", @"wed", @"thu", @"fri", @"sat", nil];
+    NSString *weekday = arrayWeekName[comps.weekday - 1];//comps.weekday; // 曜日(1が日曜日 7が土曜日)
+    NSLog(@"曜日: %@", weekday);
+    strLogin = [NSString stringWithFormat:@"%@%@", strLogin, weekday];
+    [attr setValueToDevice:@"login" strValue:strLogin];
+    
+    
+    
     //前回最高得点を取得する
-    NSUserDefaults* score_defaults =
-    [NSUserDefaults standardUserDefaults];
+//    NSUserDefaults* score_defaults =
+//    [NSUserDefaults standardUserDefaults];
     //    [id_defaults removeObjectForKey:@"user_id"];//値を削除：テスト用
 //    int max_score = [score_defaults integerForKey:@"max_score"];
     int max_score = [[attr getValueFromDevice:@"score"] intValue];
@@ -1971,10 +2018,17 @@ UIView *viewMyEffect;
     if([ScoreBoard getScore] > max_score){
         //update
         max_score = [ScoreBoard getScore];
-        [score_defaults setInteger:max_score forKey:@"max_score"];
-        NSLog(@"score update! => %d", [score_defaults integerForKey:@"max_score"]);
+//        [score_defaults setInteger:max_score forKey:@"max_score"];
+        [attr setValueToDevice:@"score" strValue:[NSString stringWithFormat:@"%d", [ScoreBoard getScore]]];
+//        NSLog(@"score update! => %d", [score_defaults integerForKey:@"max_score"]);
+        NSLog(@"score update! => %d", [[attr getValueFromDevice:@"score"] intValue]);
         
         //congrat!! view appear!effect!!
+        
+        //世界の10位を上回ったら更新
+//        if( [ScoreBoard getScore] > tenth_world_record){
+//            fill_out_your_name!
+//        }
         
         
         
@@ -1983,13 +2037,16 @@ UIView *viewMyEffect;
     }
     
     //累積ゴールドを取得して累積計算
-    NSUserDefaults* gold_defaults = [NSUserDefaults standardUserDefaults];
-    int before_gold = [gold_defaults integerForKey:@"gold_score"];
+//    NSUserDefaults* gold_defaults = [NSUserDefaults standardUserDefaults];
+//    int before_gold = [gold_defaults integerForKey:@"gold_score"];
+    int before_gold = [[attr getValueFromDevice:@"gold"] intValue];
     int after_gold = before_gold + [GoldBoard getScore];
     NSLog(@"now gold = %d, before_gold = %d, so after_gold = %d", [GoldBoard getScore], before_gold, after_gold);
     //    if([GoldBoard getScore] < before_gold){
-    [gold_defaults setInteger:after_gold forKey:@"gold_score"];
-    NSLog(@"gold update! => %d ... this comment is annouced regardless updating!", [score_defaults integerForKey:@"gold_score"]);
+//    [gold_defaults setInteger:after_gold forKey:@"gold_score"];
+    [attr setValueToDevice:@"gold" strValue:[NSString stringWithFormat:@"%d", after_gold]];
+//    NSLog(@"gold update! => %d ... this comment is annouced regardless updating!", [score_defaults integerForKey:@"gold_score"]);
+    NSLog(@"gold update! => %d ... this comment is annouced regardless updating!", [[attr getValueFromDevice:@"gold"] intValue]);
     //    }else{
     //        NSLog(@"be going ...");
     //    }
