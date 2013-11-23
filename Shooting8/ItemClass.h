@@ -35,6 +35,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 //    ItemType *type;
     int width;
     int height;
+    int lifetime_count;
     Boolean isMagnetMode;
     Boolean isAlive;
     UIImageView *iv;

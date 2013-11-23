@@ -66,9 +66,9 @@
     //    NSLog(@"更新後 y = %d", y_loc);
     //    rect = CGRectMake(x_loc, y_loc, mySize, mySize);
     //    iv = [[UIImageView alloc]initWithFrame:rect];
-    if(y_loc <= -height/2 || !isAlive){
+    if(y_loc <= -height*2){// || !isAlive){
         [self die];
-        [iv removeFromSuperview];
+//        [iv removeFromSuperview];
     }
 }
 

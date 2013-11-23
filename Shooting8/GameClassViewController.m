@@ -588,6 +588,8 @@ UIView *viewMyEffect;
     for(int i = 0; i < [MyMachine getBeamCount];i++){
         if([[MyMachine getBeam:i] getIsAlive]){
             [[MyMachine getBeam:i] doNext];
+        }else{
+            [[[MyMachine getBeam:i] getImageView] removeFromSuperview];
         }
     }
      
@@ -2392,7 +2394,7 @@ UIView *viewMyEffect;
                          [uivBomb removeFromSuperview];
                          
                          //連続した小爆発(爆発周りの敵にダメージ)
-                         [self smallBombEffectRepeat:10 point:CGPointMake(arc4random() % (int)                                                                             self.view.bounds.size.width, arc4random() % (int)(self.view.bounds.size.height*0.8f))];
+                         [self smallBombEffectRepeat:10 point:CGPointMake(arc4random() % (int)self.view.bounds.size.width, arc4random() % (int)(self.view.bounds.size.height*0.8f))];
                      }];
     [self.view addSubview:uivBomb];
 }
@@ -2537,10 +2539,10 @@ UIView *viewMyEffect;
 //        }else{
 //            _item = [[ItemClass alloc] init:arc4random() % 16 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
 //        }
-        //test:item
-//        _item = [[ItemClass alloc] init:ItemTypeWeapon1 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
         }
         
+        //test:item
+        _item = [[ItemClass alloc] init:ItemTypeWeapon2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
         
         [ItemArray insertObject:_item atIndex:0];
         //現状全てのアイテムは手前に進んで消えるので先に発生(FIFO)したものから消去

@@ -28,7 +28,7 @@
     return [self init:type x_init:(int)x_init y_init:(int)y_init width:(int)w height:(int)h];
 }
 -(id) init:(ItemType)_type x_init:(int)x_init y_init:(int)y_init width:(int)w height:(int)h{
-    
+    lifetime_count = 0;
     isMagnetMode = false;
     y_loc = y_init;
     x_loc = x_init;
@@ -387,27 +387,29 @@
 //          x_loc, y_loc);
     
     //動線上に新規キラキラ発生
-//    if(arc4random() % 3 ==0){//generate every count
-//        movingParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)
-//                                                   particleType:ParticleTypeMoving];
-////        [movingParticle setParticleType:ParticleTypeMoving];
-//        [movingParticle setIsEmitting:3];
-//
-//        
-//        
-//        [UIView animateWithDuration:1.0f
-//                         animations:^{
+    if(lifetime_count % 50 ==0){//generate every count
+        movingParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)
+                                                   particleType:ParticleTypeMoving];
+//        [movingParticle setParticleType:ParticleTypeMoving];
+        [movingParticle setIsEmitting:3];
+
+        
+        
+        [UIView animateWithDuration:0.49f
+                         animations:^{
 //                             [movingParticle setAlpha:0.0f];//徐々に薄く
-//                         }
-//                         completion:^(BOOL finished){
-//                             [movingParticle setIsEmitting:NO];
-//                             [movingParticle removeFromSuperview];
-//                         }];
-////        [kiraMovingArray insertObject:movingParticle atIndex:0];//FIFO
-//        isOccurringParticle = true;
-//    
-//    }
+                         }
+                         completion:^(BOOL finished){
+                             [movingParticle setIsEmitting:NO];
+                             [movingParticle removeFromSuperview];
+                         }];
+//        [kiraMovingArray insertObject:movingParticle atIndex:0];//FIFO
+        isOccurringParticle = true;
     
+    }
+    
+    
+    lifetime_count ++;
     return isOccurringParticle;
     
     
