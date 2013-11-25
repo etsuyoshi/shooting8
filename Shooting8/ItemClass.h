@@ -43,11 +43,11 @@ typedef NS_ENUM(NSInteger, ItemType) {
     KiraParticleView *occurredParticle;
     KiraParticleView *killedParticle;
     KiraParticleView *movingParticle;
-    NSMutableArray *kiraMovingArray;//FIFO=>取り出す時に分かりやすいようにfromコントローラ
+//    NSMutableArray *kiraMovingArray;//FIFO=>取り出す時に分かりやすいようにfromコントローラ
     
     NSMutableArray *arrayViewKira;
-    UIImageView *ivHealEffect;
-    int healCompleteCount;
+    UIImageView *ivKira;
+    int countKira;
 }
 
 @property(nonatomic) ItemType type;
@@ -72,9 +72,9 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(UIImageView *)getImageView;
 -(ItemType)getType;
 -(void)setType:(ItemType)type;
--(KiraParticleView *)getMovingParticle:(int)kiraNo;
--(KiraParticleView *)getOccurredParticle;
--(KiraParticleView *)getKilledParticle;
+//-(KiraParticleView *)getMovingParticle:(int)kiraNo;
+//-(KiraParticleView *)getOccurredParticle;
+//-(KiraParticleView *)getKilledParticle;
 
 
 @end

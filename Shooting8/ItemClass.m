@@ -13,6 +13,9 @@
 @implementation ItemClass
 
 @synthesize type;
+NSArray *arrayUIImageKira;//UIImage-array
+CGRect rectKira;
+int numCell;
 
 
 -(id) init:(int)x_init y_init:(int)y_init width:(int)w height:(int)h{
@@ -37,14 +40,25 @@
     height = h;
     isAlive = true;
     arrayViewKira = [[NSMutableArray alloc]init];
-    
+    numCell = 10;
+    arrayUIImageKira = [[NSArray alloc] initWithObjects:
+       [UIImage imageNamed:@"img03.png"],
+       [UIImage imageNamed:@"img04.png"],
+       [UIImage imageNamed:@"img05.png"],
+       [UIImage imageNamed:@"img06.png"],
+       [UIImage imageNamed:@"img07.png"],
+       [UIImage imageNamed:@"img08.png"],
+       [UIImage imageNamed:@"img09.png"],
+       [UIImage imageNamed:@"img10.png"],
+       [UIImage imageNamed:@"img11.png"],
+       nil];
     //アイテム生成時のパーティクルの初期化
     occurredParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)];
     [occurredParticle setLifeSpan:10];
     [occurredParticle setParticleType:ParticleTypeOccurred];
     
     //アイテム動線上にランダムに発生するパーティクル格納配列：doNext内で要素生成＆格納
-    kiraMovingArray = [[NSMutableArray alloc]init];
+//    kiraMovingArray = [[NSMutableArray alloc]init];
     
 //    http://stackoverflow.com/questions/9395914/switch-with-typedef-enum-type-from-string
     type = _type;
@@ -161,56 +175,59 @@
     iv.center = CGPointMake(x_loc, y_loc);
 //    [iv moveBoundDuration:0 option:0];
     
+//    
+//    
+//    CGPoint kStartPos = iv.center;//((CALayer *)[iv.layer presentationLayer]).position;
+//    CGPoint kEndPos = CGPointMake(kStartPos.x + arc4random() % 100 - 50,//iv.bounds.size.width,
+//                                  iv.superview.bounds.size.height + height);//480);//
+//    [CATransaction begin];
+//    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+//    [CATransaction setCompletionBlock:^{//終了処理
+//        CAAnimation* animationKeyFrame = [iv.layer animationForKey:@"position"];
+//        if(animationKeyFrame){
+//            //途中で終わらずにアニメーションが全て完了して
+////            [self die];
+////            NSLog(@"animation key frame already exit & die");
+//        }else{
+//            //途中で何らかの理由で遮られた場合
+////            NSLog(@"animation key frame not exit");
+//        }
+//        
+//    }];
+//    
+//    {
+//        
+//        // CAKeyframeAnimationオブジェクトを生成
+//        CAKeyframeAnimation *animation;
+//        animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+//        animation.fillMode = kCAFillModeForwards;
+//        animation.removedOnCompletion = NO;
+//        animation.duration = 1.0;
+//        
+//        // 放物線のパスを生成
+//        //    CGFloat jumpHeight = kStartPos.y * 0.2;
+//        CGPoint peakPos = CGPointMake((kStartPos.x + kEndPos.x)/2, kStartPos.y * 0.05);//test
+//        CGMutablePathRef curvedPath = CGPathCreateMutable();
+//        CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
+//        CGPathAddCurveToPoint(curvedPath, NULL,
+//                              peakPos.x, peakPos.y,
+//                              (peakPos.x + kEndPos.x)/2, (peakPos.y + kEndPos.y)/2,
+//                              kEndPos.x, kEndPos.y);
+//        
+//        // パスをCAKeyframeAnimationオブジェクトにセット
+//        animation.path = curvedPath;
+//        
+//        // パスを解放
+//        CGPathRelease(curvedPath);
+//        
+//        // レイヤーにアニメーションを追加
+//        [iv.layer addAnimation:animation forKey:@"position"];
+//        
+//    }
+//    [CATransaction commit];
+
     
     
-    CGPoint kStartPos = iv.center;//((CALayer *)[iv.layer presentationLayer]).position;
-    CGPoint kEndPos = CGPointMake(kStartPos.x + arc4random() % 100 - 50,//iv.bounds.size.width,
-                                  500);//iv.superview.bounds.size.height);//480);//
-    [CATransaction begin];
-    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
-    [CATransaction setCompletionBlock:^{//終了処理
-        CAAnimation* animationKeyFrame = [iv.layer animationForKey:@"position"];
-        if(animationKeyFrame){
-            //途中で終わらずにアニメーションが全て完了して
-//            [self die];
-//            NSLog(@"animation key frame already exit & die");
-        }else{
-            //途中で何らかの理由で遮られた場合
-//            NSLog(@"animation key frame not exit");
-        }
-        
-    }];
-    
-    {
-        
-        // CAKeyframeAnimationオブジェクトを生成
-        CAKeyframeAnimation *animation;
-        animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
-        animation.fillMode = kCAFillModeForwards;
-        animation.removedOnCompletion = NO;
-        animation.duration = 1.0;
-        
-        // 放物線のパスを生成
-        //    CGFloat jumpHeight = kStartPos.y * 0.2;
-        CGPoint peakPos = CGPointMake((kStartPos.x + kEndPos.x)/2, kStartPos.y * 0.05);//test
-        CGMutablePathRef curvedPath = CGPathCreateMutable();
-        CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
-        CGPathAddCurveToPoint(curvedPath, NULL,
-                              peakPos.x, peakPos.y,
-                              (peakPos.x + kEndPos.x)/2, (peakPos.y + kEndPos.y)/2,
-                              kEndPos.x, kEndPos.y);
-        
-        // パスをCAKeyframeAnimationオブジェクトにセット
-        animation.path = curvedPath;
-        
-        // パスを解放
-        CGPathRelease(curvedPath);
-        
-        // レイヤーにアニメーションを追加
-        [iv.layer addAnimation:animation forKey:@"position"];
-        
-    }
-    [CATransaction commit];
     
 //methodology1
 //    [CATransaction begin];//up
@@ -372,6 +389,59 @@
  *アイテム移動中にパーティクルが発生したらtrueを返す
  */
 -(Boolean)doNext{
+    if(lifetime_count == 0){
+        
+        
+        CGPoint kStartPos = iv.center;//((CALayer *)[iv.layer presentationLayer]).position;
+        CGPoint kEndPos = CGPointMake(kStartPos.x + arc4random() % 100 - 50,//iv.bounds.size.width,
+                                      iv.superview.bounds.size.height + height);//480);//
+        [CATransaction begin];
+        [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+        [CATransaction setCompletionBlock:^{//終了処理
+            CAAnimation* animationKeyFrame = [iv.layer animationForKey:@"position"];
+            if(animationKeyFrame){
+                //途中で終わらずにアニメーションが全て完了して
+                //            [self die];
+                //            NSLog(@"animation key frame already exit & die");
+            }else{
+                //途中で何らかの理由で遮られた場合
+                //            NSLog(@"animation key frame not exit");
+            }
+            
+        }];
+        
+        {
+            
+            // CAKeyframeAnimationオブジェクトを生成
+            CAKeyframeAnimation *animation;
+            animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+            animation.fillMode = kCAFillModeForwards;
+            animation.removedOnCompletion = NO;
+            animation.duration = 1.0;
+            
+            // 放物線のパスを生成
+            //    CGFloat jumpHeight = kStartPos.y * 0.2;
+            CGPoint peakPos = CGPointMake((kStartPos.x + kEndPos.x)/2, kStartPos.y * 0.05);//test
+            CGMutablePathRef curvedPath = CGPathCreateMutable();
+            CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
+            CGPathAddCurveToPoint(curvedPath, NULL,
+                                  peakPos.x, peakPos.y,
+                                  (peakPos.x + kEndPos.x)/2, (peakPos.y + kEndPos.y)/2,
+                                  kEndPos.x, kEndPos.y);
+            
+            // パスをCAKeyframeAnimationオブジェクトにセット
+            animation.path = curvedPath;
+            
+            // パスを解放
+            CGPathRelease(curvedPath);
+            
+            // レイヤーにアニメーションを追加
+            [iv.layer addAnimation:animation forKey:@"position"];
+            
+        }
+        [CATransaction commit];
+    }
+    
 //    NSLog(@"donext at item class");
     Boolean isOccurringParticle = false;
     
@@ -380,7 +450,7 @@
     x_loc = mLayer.position.x;//中心座標
     y_loc = mLayer.position.y;//中心座標
     
-    if(y_loc > 400){
+    if(y_loc >= iv.superview.bounds.size.height + height){
         [self die];
     }
 //    NSLog(@"process : %d , %d",
@@ -481,14 +551,14 @@
     return iv;
 }
 
--(KiraParticleView *)getMovingParticle:(int)kiraNo{//アイテムが動いている時のパーティクル
-//    return movingParticle;
-    if(kiraNo < [kiraMovingArray count]){
-        NSLog(@"output : kira array %@", [kiraMovingArray objectAtIndex:kiraNo]);
-        return [kiraMovingArray objectAtIndex:kiraNo];
-    }
-    return nil;
-}
+//-(KiraParticleView *)getMovingParticle:(int)kiraNo{//アイテムが動いている時のパーティクル
+////    return movingParticle;
+//    if(kiraNo < [kiraMovingArray count]){
+//        NSLog(@"output : kira array %@", [kiraMovingArray objectAtIndex:kiraNo]);
+//        return [kiraMovingArray objectAtIndex:kiraNo];
+//    }
+//    return nil;
+//}
 
 -(KiraParticleView *)getOccurredParticle{//アイテム発生時のパーティクル
     
@@ -500,40 +570,30 @@
     return killedParticle;
 }
 
+/*
+ *動線上に表示される疑似パーティクル(実際にはiv中心から上部へ向かって表示)
+ */
 -(void)drawKira{
-    CGRect rectHeal;
-    int numCell = 30;
-    healCompleteCount = 0;
-    NSArray *imgArrayHeal = [[NSArray alloc] initWithObjects:
-                                 [UIImage imageNamed:@"img03.png"],
-                                 [UIImage imageNamed:@"img04.png"],
-                                 [UIImage imageNamed:@"img05.png"],
-                                 [UIImage imageNamed:@"img06.png"],
-                                 [UIImage imageNamed:@"img07.png"],
-                                 [UIImage imageNamed:@"img08.png"],
-                                 [UIImage imageNamed:@"img09.png"],
-                                 [UIImage imageNamed:@"img10.png"],
-                                 [UIImage imageNamed:@"img11.png"],
-                                 nil];
+    countKira = 0;
     for(int i = 0; i < numCell;i++){
         //回復時アニメーション->frame:主人公の左上起点基準
         //        int y = - (arc4random() % originalSize);
         //        NSLog(@"y = %d", y);
-        rectHeal= CGRectMake(0,//- (arc4random() % originalSize),//左端
+        rectKira= CGRectMake(0,//- (arc4random() % originalSize),//左端
                              0,//- (arc4random() % originalSize),//上端
                              arc4random() % width, arc4random() % width);
-        ivHealEffect = [[UIImageView alloc] initWithFrame:rectHeal];
-        ivHealEffect.center = CGPointMake(width/4 + (arc4random() % (width/2)),//中心付近から
+        ivKira = [[UIImageView alloc] initWithFrame:rectKira];
+        ivKira.center = CGPointMake(width/4 + (arc4random() % (width/2)),//中心付近から
                                           arc4random() % (width/2));//上端付近から(降下)
         //        ivHealEffect.center = CGPointMake(0, 0);//test;zero-start
-        ivHealEffect.animationImages = imgArrayHeal;
-        ivHealEffect.animationRepeatCount = 0;
-        ivHealEffect.alpha = MIN(exp(((float)(arc4random() % 100))*4.0f / 100.0f - 1),1);//0-1の指数関数(１の確率が４分の３)
-        ivHealEffect.animationDuration = 1.0f; // アニメーション全体で1秒（＝各画像描画間隔は「枚数」分の１秒）
-        [ivHealEffect startAnimating]; // アニメーション開始!!(アイテム取得時に実行)
+        ivKira.animationImages = arrayUIImageKira;
+        ivKira.animationRepeatCount = 0;
+        ivKira.alpha = MIN(exp(((float)(arc4random() % 100))*4.0f / 100.0f - 1),1);//0-1の指数関数(１の確率が４分の３)
+        ivKira.animationDuration = 1.0f; // アニメーション全体で1秒（＝各画像描画間隔は「枚数」分の１秒）
+        [ivKira startAnimating]; // アニメーション開始!!(アイテム取得時に実行)
         
         //上記で設定したUIImageViewを配列格納
-        [arrayViewKira addObject:ivHealEffect];
+        [arrayViewKira addObject:ivKira];
         
         //格納されたUIImageViewを描画
         [iv addSubview:[arrayViewKira objectAtIndex:i]];
@@ -549,7 +609,7 @@
         y0 = ((UIImageView*)[arrayViewKira objectAtIndex:i]).center.y;
         moveX = arc4random() % width/2 - width/2;//変化量は全体の±1/4
         //移動距離には熱関数を使い、かつy0が小さい程、移動を大きくする(温度係数を2にする):２分の１の確率でwidth移動
-        moveY = width * MIN(exp(((float)(arc4random() % 100))*2.0f / 100.0f - 1), 1);
+        moveY = width*2 * MIN(exp(((float)(arc4random() % 100))*2.0f / 100.0f - 1), 1);
         
         //test:move
         //        moveX = mySize/2;
@@ -566,11 +626,11 @@
                          }
                          completion:^(BOOL finished){
                              if(finished){
-                                 healCompleteCount++;
+                                 countKira++;
 //                                 NSLog(@"heacomplete = %d", healCompleteCount);
                                  [[arrayViewKira objectAtIndex:i] removeFromSuperview];
                                  //                                 [healEffectArray removeObjectAtIndex:i];
-                                 if(healCompleteCount == [arrayViewKira count]){//最後完了後
+                                 if(countKira == [arrayViewKira count]){//最後完了後
                                      [arrayViewKira removeAllObjects];
                                  }
                              }
