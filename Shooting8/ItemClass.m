@@ -53,9 +53,9 @@ int numCell;
        [UIImage imageNamed:@"img11.png"],
        nil];
     //アイテム生成時のパーティクルの初期化
-    occurredParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)];
-    [occurredParticle setLifeSpan:10];
-    [occurredParticle setParticleType:ParticleTypeOccurred];
+//    occurredParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)];
+//    [occurredParticle setLifeSpan:10];
+//    [occurredParticle setParticleType:ParticleTypeOccurred];
     
     //アイテム動線上にランダムに発生するパーティクル格納配列：doNext内で要素生成＆格納
 //    kiraMovingArray = [[NSMutableArray alloc]init];
@@ -515,6 +515,7 @@ int numCell;
 //    NSLog(@"isMagnetMode = %d", isMagnetMode);
     
     
+    
     isAlive = false;
 }
 -(void) setLocation:(CGPoint)loc{
@@ -560,15 +561,15 @@ int numCell;
 //    return nil;
 //}
 
--(KiraParticleView *)getOccurredParticle{//アイテム発生時のパーティクル
-    
-    return occurredParticle;
-}
-
--(KiraParticleView *)getKilledParticle{//アイテムが消滅した時のパーティクル
-    
-    return killedParticle;
-}
+//-(KiraParticleView *)getOccurredParticle{//アイテム発生時のパーティクル
+//    
+//    return occurredParticle;
+//}
+//
+//-(KiraParticleView *)getKilledParticle{//アイテムが消滅した時のパーティクル
+//    
+//    return killedParticle;
+//}
 
 /*
  *動線上に表示される疑似パーティクル(実際にはiv中心から上部へ向かって表示)

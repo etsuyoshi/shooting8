@@ -40,14 +40,16 @@ typedef NS_ENUM(NSInteger, ItemType) {
     Boolean isAlive;
     UIImageView *iv;
     CGRect rect;
-    KiraParticleView *occurredParticle;
-    KiraParticleView *killedParticle;
-    KiraParticleView *movingParticle;
+//    KiraParticleView *occurredParticle;
+//    KiraParticleView *killedParticle;
+//    KiraParticleView *movingParticle;
 //    NSMutableArray *kiraMovingArray;//FIFO=>取り出す時に分かりやすいようにfromコントローラ
     
     NSMutableArray *arrayViewKira;
     UIImageView *ivKira;
     int countKira;
+    
+    UIImageView *ivDied;
 }
 
 @property(nonatomic) ItemType type;

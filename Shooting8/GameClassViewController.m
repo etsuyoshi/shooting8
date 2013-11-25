@@ -2600,6 +2600,18 @@ UIView *viewMyEffect;
         return NO;//continue;//次のビームの衝突判定へ(ビームループ内でこの後何もしなければこのcontinueはなくても良い)
         
     }
+}
+
+
+-(void)dispEffectItemAcq{
+    UIImageView *ivItemAcq = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, OBJECT_SIZE * 10, OBJECT_SIZE* 10)];
+    ivItemAcq.center = [MyMachine getImageView].center;
+    ivItemAcq.image = [UIImage imageNamed:@"img11.png"];
+    
+    ivItemAcq.alpha = 1.0f;//MIN(exp(((float)(arc4random() % 100))*4.0f / 100.0f - 1),1);//0-1の指数関数(１の確率が４分の３)
+    
+    //上記で設定したUIImageViewを配列格納
+    [viewMyEffect addSubview:ivItemAcq];
     
 }
 
