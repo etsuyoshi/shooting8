@@ -67,8 +67,9 @@
     //    rect = CGRectMake(x_loc, y_loc, mySize, mySize);
     //    iv = [[UIImageView alloc]initWithFrame:rect];
     if(y_loc <= -height*2){// || !isAlive){
+        NSLog(@"die at %d according to frame out", y_loc);
         [self die];
-//        [iv removeFromSuperview];
+//        [iv removeFromSuperview];//集約する
     }
 }
 
@@ -78,6 +79,7 @@
 
 -(void) die{
     isAlive = false;
+//    [iv removeFromSuperview];
 }
 -(void) setLocation:(CGPoint)loc{
     x_loc = (int)loc.x;

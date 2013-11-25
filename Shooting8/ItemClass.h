@@ -43,7 +43,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
     KiraParticleView *occurredParticle;
     KiraParticleView *killedParticle;
     KiraParticleView *movingParticle;
-//    NSMutableArray *kiraMovingArray;//FIFO=>取り出す時に分かりやすいようにfromコントローラ
+    NSMutableArray *kiraMovingArray;//FIFO=>取り出す時に分かりやすいようにfromコントローラ
 
 }
 

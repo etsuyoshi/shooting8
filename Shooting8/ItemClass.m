@@ -14,6 +14,8 @@
 
 @synthesize type;
 
+NSMutableArray *arrayViewKira;
+
 -(id) init:(int)x_init y_init:(int)y_init width:(int)w height:(int)h{
     type = arc4random() % 10;//[NSNumber numberWithInt:arc4random()];
     if(type <= 2){
@@ -35,6 +37,7 @@
     width = w;
     height = h;
     isAlive = true;
+    arrayViewKira = [[NSMutableArray alloc]init];
     
     //アイテム生成時のパーティクルの初期化
     occurredParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)];
@@ -42,7 +45,7 @@
     [occurredParticle setParticleType:ParticleTypeOccurred];
     
     //アイテム動線上にランダムに発生するパーティクル格納配列：doNext内で要素生成＆格納
-//    kiraMovingArray = [[NSMutableArray alloc]init];
+    kiraMovingArray = [[NSMutableArray alloc]init];
     
 //    http://stackoverflow.com/questions/9395914/switch-with-typedef-enum-type-from-string
     type = _type;
@@ -372,12 +375,6 @@
 -(Boolean)doNext{
 //    NSLog(@"donext at item class");
     Boolean isOccurringParticle = false;
-    //移動
-//    y_loc += 10;
-    
-    //引寄せアイテム発動中でなければ
-//    iv.center = CGPointMake(x_loc, y_loc);
-    
     
     //ivはmoveBoundDurationによって自動アニメーション：各時刻の値をパラメータに格納
     CALayer *mLayer = [iv.layer presentationLayer];
@@ -388,22 +385,23 @@
     
     //動線上に新規キラキラ発生
     if(lifetime_count % 50 ==0){//generate every count
+//    if(true){
         movingParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)
                                                    particleType:ParticleTypeMoving];
 //        [movingParticle setParticleType:ParticleTypeMoving];
-        [movingParticle setIsEmitting:3];
-
+        [movingParticle setIsEmitting:30];
+        [movingParticle setAlpha:1.0f];
         
-        
+        //up(down) , alpha = 0.0f, then remove.
         [UIView animateWithDuration:0.49f
                          animations:^{
-//                             [movingParticle setAlpha:0.0f];//徐々に薄く
+                             [movingParticle setAlpha:0.0f];//徐々に薄く
                          }
                          completion:^(BOOL finished){
                              [movingParticle setIsEmitting:NO];
                              [movingParticle removeFromSuperview];
                          }];
-//        [kiraMovingArray insertObject:movingParticle atIndex:0];//FIFO
+        [kiraMovingArray insertObject:movingParticle atIndex:0];//FIFO
         isOccurringParticle = true;
     
     }
@@ -440,7 +438,7 @@
 //                         
 //                     }];
     
-    NSLog(@"isMagnetMode = %d", isMagnetMode);
+//    NSLog(@"isMagnetMode = %d", isMagnetMode);
     
     
     isAlive = false;
@@ -480,11 +478,12 @@
 }
 
 -(KiraParticleView *)getMovingParticle:(int)kiraNo{//アイテムが動いている時のパーティクル
-    return movingParticle;
-//    if(kiraNo < [kiraMovingArray count]){
-//        return [kiraMovingArray objectAtIndex:kiraNo];
-//    }
-//    return nil;
+//    return movingParticle;
+    if(kiraNo < [kiraMovingArray count]){
+        NSLog(@"output : kira array %@", [kiraMovingArray objectAtIndex:kiraNo]);
+        return [kiraMovingArray objectAtIndex:kiraNo];
+    }
+    return nil;
 }
 
 -(KiraParticleView *)getOccurredParticle{//アイテム発生時のパーティクル

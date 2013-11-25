@@ -249,8 +249,40 @@ int healCompleteCount;//1回当たりの回復表示終了判定
 -(int)getSize{
     return mySize;
 }
+-(void)setBeamArrayClear{
+//    NSLog(@"setBeamArrayClear start");
+//    for(int i = 0; i < [beamArray count] ; i++){
+    for(int i = [beamArray count] - 1;i >= 0;i--){
+//NSLog(@"c=%d, i=%d, a=%d, %@",[beamArray count], i, [[beamArray objectAtIndex:i]getIsAlive], [[beamArray objectAtIndex:i] getImageView].superview);
+        if(![[beamArray objectAtIndex:i] getIsAlive]){
+            [[[beamArray objectAtIndex:i] getImageView] removeFromSuperview];
+            [beamArray removeObjectAtIndex:i];
+        }
+        
+//        if([beamArray count] == 0){//no need
+////            NSLog(@"break");
+//            break;
+//        }
+    }
+//    NSLog(@"setBeamArrayClear complete");
+}
+
 
 -(void)doNext{
+//    NSLog(@"donext start");
+    for(int i = 0; i < [beamArray count];i++){
+        if([[beamArray objectAtIndex:i] getIsAlive]){
+            [(BeamClass *)[beamArray objectAtIndex:i] doNext];
+        }else{
+            //これをすると点滅
+            //            [[[MyMachine getBeam:i] getImageView] removeFromSuperview];
+        }
+    }
+
+    //死んでいる弾丸を画面から削除して配列から削除
+    [self setBeamArrayClear];
+    
+//    NSLog(@"donext set beam array complete");
     
     //    [iv removeFromSuperview];
     //    NSLog(@"更新前 y = %d", y_loc);
@@ -315,8 +347,11 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     
     if(weapon1Count > 0){
         weapon1Count --;
+        if(weapon1Count == 0){
+            numOfBeam = 1;
+        }
     }else{
-        numOfBeam = 1;
+//        numOfBeam = 1;
         [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeWeapon1]];
     }
     
@@ -329,7 +364,11 @@ int healCompleteCount;//1回当たりの回復表示終了判定
             //            }
         }
         weapon2Count --;
+        if(weapon2Count == 0){
+            numOfBeam = 1;
+        }
     }else{
+        
         [ivLaser removeFromSuperview];
         [status setObject:@"0" forKey:[NSNumber numberWithInt:ItemTypeWeapon2]];
     }
@@ -395,10 +434,11 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     lifetime_count ++;
     if(!isAlive){
         dead_time ++;
-        NSLog(@"dead = %d", dead_time);
+//        NSLog(@"dead = %d", dead_time);
     }
     
     
+//    NSLog(@"complete donext");
 }
 
 -(int) getDeadTime{
@@ -444,8 +484,9 @@ int healCompleteCount;//1回当たりの回復表示終了判定
 }
 
 -(void)yieldBeam:(int)beam_type init_x:(int)x init_y:(int)y{
+//    NSLog(@"start yield beam at weapon2count : %d", weapon2Count);
     if(weapon2Count == 0){
-        
+//        NSLog(@"start yield beam");
         //    BeamClass *beam = [[BeamClass alloc] init:x y_init:y width:50 height:50];
         //ビーム配列は先入先出(FIFO)
         /*
@@ -494,24 +535,49 @@ int healCompleteCount;//1回当たりの回復表示終了判定
 //        [beamArray removeLastObject];
 ////        [beamArray addObject:beam];
 //    }
-        for(int i = 0; i < [beamArray count] ; i++){
-            if(![[beamArray objectAtIndex:i] getIsAlive]){
-                [[[beamArray objectAtIndex:i] getImageView] removeFromSuperview];
-                [beamArray removeObjectAtIndex:i];
-            }
-        }
-    }else{//レーザーモードの時、なぜか一つだけ弾丸が消えない
-//        for(int i = 0; i < [beamArray count]; i++){
+//        
+//        [self setBeamArrayClear];
+//    }else{//レーザーモードの時、なぜか一つだけ弾丸が消えない
+//        for(int i = 0; i < [beamArray count] ; i++){
+//            NSLog(@"c=%d, i=%d, a=%d, %@",[beamArray count], i, [[beamArray objectAtIndex:i]getIsAlive], [[beamArray objectAtIndex:i] getImageView].superview);
+//            [[beamArray objectAtIndex:i] die];
 //            if(![[beamArray objectAtIndex:i] getIsAlive]){
-//                [[beamArray objectAtIndex:i] die];
+//                [[[beamArray objectAtIndex:i] getImageView] removeFromSuperview];
 //                [beamArray removeObjectAtIndex:i];
-//                [[beamArray objectAtIndex:i] removeFromSuperview];
+//            }
+//            
+//            if([beamArray count] == 0){
+//                NSLog(@"break");
+//                break;
+//            }
+//        }
+        
+//        for(int i = [beamArray count]-1; i >= 0; i--){
+//            NSLog(@"%d, %d, %@", i, [[beamArray objectAtIndex:i]getIsAlive], [[beamArray objectAtIndex:i] getImageView].superview);
+//            if(![[beamArray objectAtIndex:i] getIsAlive]){
+//                NSLog(@")
+            
+//            NSLog(@"%d, %d", i, [[beamArray objectAtIndex:i]getIsAlive]);
+//            [[beamArray objectAtIndex:i] die];
+//            if(![[beamArray objectAtIndex:i] getIsAlive]){
+////                [[beamArray objectAtIndex:i] die];
+//                NSLog(@"removeView");
+//                [[[beamArray objectAtIndex:i] getImageView] removeFromSuperview];
+//                NSLog(@"removeObject");
+//                [beamArray removeObjectAtIndex:i];
+//                NSLog(@"remove complete");
+//            }
+//            
+//            if([beamArray count] == 0){
+//                break;
 //            }
 //        }
 //        [beamArray removeAllObjects];
     }
     
+    
 }
+
 -(BeamClass *)getBeam:(int)i{
     return (BeamClass *)[beamArray objectAtIndex:i];
 }
@@ -661,7 +727,14 @@ int healCompleteCount;//1回当たりの回復表示終了判定
             if([statusValue integerValue]){
                 weapon2Count = 100;
 //                [self doNext];//?
+                numOfBeam = 0;
+                //弾丸を全て削除
+                for(int i = 0 ;i < [beamArray count];i++){
+                    [[beamArray objectAtIndex:i] die];
+                }
+//                [self setBeamArrayClear];
             }else{
+                numOfBeam = 1;
                 weapon2Count = 0;
             }
             break;
@@ -680,7 +753,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     return numOfBeam;
 }
 -(void)defense0Effect{
-    NSLog(@"defense0 mode");
+//    NSLog(@"defense0 mode");
     ivDefense0 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, mySize, mySize)];
     ivDefense0.center = CGPointMake(mySize/2, mySize/2);
     ivDefense0.animationImages = imgArrayDefense0;
@@ -691,7 +764,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     
     [iv addSubview:ivDefense0];
     
-    NSLog(@"defense0 mode complete");
+//    NSLog(@"defense0 mode complete");
 }
 -(void)healEffectInit:(int)numCell{
     

@@ -502,16 +502,21 @@ UIView *viewMyEffect;
     //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
     [self yieldEnemy];
 
+    
     //ビーム生成はタッチ検出場所で実行
     if([MyMachine getIsAlive] && isTouched){
+        //弾丸が画面上になければ無条件に弾丸を出す
         if([MyMachine getAliveBeamCount] == 0){
-            
+//            NSLog(@"before yield beam");
             [MyMachine yieldBeam:0 init_x:[MyMachine getX] init_y:[MyMachine getY]];
             //ビームはFIFOなので最初のもののみを表示
             //        [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
+//            NSLog(@"after yield beam");
             for(int i = 0; i < [MyMachine getNumOfBeam];i++){
+//                NSLog(@"%d", i);
                 [self.view addSubview:[[MyMachine getBeam:i] getImageView]];//最初の１〜３個
             }
+//            NSLog(@"after add beam to superview");
         }else if([[MyMachine getBeam:0] getY] <
            [MyMachine getImageView].center.y - OBJECT_SIZE/2){//最後(index:i)の弾丸がキャラクターの近くになければ(近くにあると重なってしまう)
             //上のブロックと全く同じ
@@ -540,15 +545,13 @@ UIView *viewMyEffect;
     if([MyMachine getIsAlive] ||
        [MyMachine getDeadTime] < explosionCycle){
         
-        
         [MyMachine doNext];//設定されたtype、x_loc,y_locプロパティでUIImageViewを作成する
         
         //ダメージを受けたときのイフェクト(画面を揺らす)=>縦方向に流れるアニメーション中なので難しい？
         
-        
         //爆発から所定時間が経過しているか判定＝＞爆発パーティクルの消去
         if([MyMachine getDeadTime] >= explosionCycle){
-            NSLog(@"mymachine : set emitting no");
+//            NSLog(@"mymachine : set emitting no");
             
             isGameMode = false;
             [self exitProcess];///////////////////////
@@ -583,16 +586,17 @@ UIView *viewMyEffect;
         }
     }
     
-    //自機ビームの進行
+    //自機ビームの進行->mymachine donextで実行
     //旧形式
-    for(int i = 0; i < [MyMachine getBeamCount];i++){
-        if([[MyMachine getBeam:i] getIsAlive]){
-            [[MyMachine getBeam:i] doNext];
-        }else{
-            [[[MyMachine getBeam:i] getImageView] removeFromSuperview];
-        }
-    }
-     
+//    for(int i = 0; i < [MyMachine getBeamCount];i++){
+//        if([[MyMachine getBeam:i] getIsAlive]){
+//            [[MyMachine getBeam:i] doNext];
+//        }else{
+//            //これをすると点滅
+////            [[[MyMachine getBeam:i] getImageView] removeFromSuperview];
+//        }
+//    }
+    
     
     //アイテムの進行=[アイテム自体の移動 & 生成したパーティクルの時間経過:寿命判定は別途]
     for(int i = 0 ; i< [ItemArray count]; i ++){
@@ -600,7 +604,7 @@ UIView *viewMyEffect;
             if([(ItemClass *)[ItemArray objectAtIndex:i] doNext]){//移動とパーティクル発生判定：同時実行
 //                NSLog(@"create particle");
                 //動線上パーティクルの格納と表示
-                [self.view addSubview:[[ItemArray objectAtIndex:i] getMovingParticle:0]] ;//生成したparticleは自動消滅
+//                [self.view addSubview:[[ItemArray objectAtIndex:i] getMovingParticle:0]] ;//生成したparticleは自動消滅
 //                [KiraArray insertObject:[((ItemClass*)[ItemArray objectAtIndex:i]) getMovingParticle:0] atIndex:0];
 //                [self.view addSubview:[KiraArray objectAtIndex:0]];
             }
@@ -941,7 +945,7 @@ UIView *viewMyEffect;
                         if(![MyMachine getStatus:ItemTypeMagnet]){
                             [MyMachine setStatus:@"1" key:ItemTypeMagnet];//あまり意味ない？
                             
-                            NSLog(@"get isMagnetMode :true");
+//                            NSLog(@"get isMagnetMode :true");
                             [MyMachine setStatus:@"1" key:ItemTypeMagnet];
 //                            isMagnetMode = true;
 //                            countMagnet = 500;//500カウント=5sec
@@ -1041,7 +1045,7 @@ UIView *viewMyEffect;
         }
     }
     
-    
+//    NSLog(@"敵機衝突判定");
     
     //敵機の衝突判定:against自機＆ビーム
     for(int i = [EnemyArray count] - 1; i >= 0 ;i-- ) {//全ての生存している敵に対して発生した順番に衝突判定
@@ -1053,7 +1057,7 @@ UIView *viewMyEffect;
                 [[EnemyArray objectAtIndex:i] die];
                 continue;
             }
-            //                NSLog(@"敵衝突生存確認完了");
+//            NSLog(@"敵衝突生存確認完了");
             
             _enemy = [EnemyArray objectAtIndex:i];
             _xEnemy = [_enemy getX];
@@ -1087,7 +1091,7 @@ UIView *viewMyEffect;
                _yEnemy + _sEnemy * 0.4 >= _yMine)
                      {
                 
-                NSLog(@"自機と敵機との衝突");
+//                NSLog(@"自機と敵機との衝突");
                 //ダメージの設定
                 [MyMachine setDamage:10 location:CGPointMake([MyMachine getX],[MyMachine getY])];
                 //ヒットポイントのセット
@@ -1119,6 +1123,7 @@ UIView *viewMyEffect;
                 }
             }
         
+//            NSLog(@"laser judgement");
             
             //レーザーモードの場合：レーザーと敵機の衝突判定
             if([MyMachine getStatus:ItemTypeWeapon2]){//レーザーモードの場合
@@ -1137,8 +1142,11 @@ UIView *viewMyEffect;
                 
             }
             
+//            NSLog(@"beam judgement");
+            
             //敵機とビームの衝突判定
             for(int j = 0 ; j < [MyMachine getBeamCount];j++){
+//                NSLog(@"beam%d judgement against enemy%d",j, i);
                 _beam = [MyMachine getBeam:j];
                 
                 if([_beam getIsAlive]){
@@ -1163,9 +1171,13 @@ UIView *viewMyEffect;
                        _yBeam - _sBeam * 0.5 >= _yEnemy - _sEnemy * 0.5 &&
                        _yBeam + _sBeam * 0.5 <= _yEnemy + _sEnemy * 0.5 ){
                         
-                        
+                        //dieと同時にremovefromSuperviewせずに集約する(画面外に出てもdieするため)
+//                        NSLog(@"%d", [[MyMachine getBeam:j] getIsAlive]);
                         [[MyMachine getBeam:j] die];//衝突したらビームは消去
-                        [[[MyMachine getBeam:j] getImageView] removeFromSuperview];//画面削除
+//                        NSLog(@"%d", [[MyMachine getBeam:j] getIsAlive]);
+//                        NSLog(@"%d is die according to hit enemy at x=%d, y=%d",
+//                              j,_xEnemy, _yEnemy);
+//                        [[[MyMachine getBeam:j] getImageView] removeFromSuperview];//画面削除
                         
                         //攻撃によって敵が死んだらYES:生きてればNO
                         if([self giveDamageToEnemy:i damage:[_beam getPower] x:_xEnemy y:_yEnemy]){
@@ -1180,11 +1192,12 @@ UIView *viewMyEffect;
                     }//ビーム衝突判定(位置判定)
                 }//if(_beam isAlive)
             }//for(int j = 0 ; j < [MyMachine getBeamCount];j++)：ビームループ
+//            NSLog(@"complete beam loop");
         }else{//if([(EnemyClass *)[EnemyArray objectAtIndex:i] getIsAlive])
             [EnemyArray removeObjectAtIndex:i];
         }
     }//for(int i = 0; i < [EnemyArray count] ;i++ )：敵ループ
-    
+//    NSLog(@"complete enemy-loop");
     
     
     //powergaugeを回転させる
@@ -1215,6 +1228,7 @@ UIView *viewMyEffect;
     
 //    if((int)count % 10 == 0){
         [self garvageCollection];
+//    NSLog(@"complete garvageCollection");
 //    }
     
     
@@ -1240,7 +1254,9 @@ UIView *viewMyEffect;
         [BackGround startAnimation:3.0f];//3sec-Round
     }
     if(isGameMode){
+//        NSLog(@"count = %f", count);
         [self ordinaryAnimationStart];
+//        NSLog(@"complete ordinaryAnimation");
         //一定時間経過するとゲームオーバー
 //        if(count >= TIMEOVER_SECOND || ![MyMachine getIsAlive]){
 //            NSLog(@"gameover");
@@ -1321,9 +1337,12 @@ UIView *viewMyEffect;
             [MyMachine yieldBeam:0 init_x:[MyMachine getX] init_y:[MyMachine getY]];
             //ビームはFIFOなので最初のもののみを表示
             //        [self.view addSubview:[[MyMachine getBeam:0] getImageView]];
+//            NSLog(@"after yield beam numOfBeam = %d", [MyMachine getNumOfBeam]);
             for(int i = 0; i < [MyMachine getNumOfBeam];i++){
+//                                NSLog(@"%d", i);
                 [self.view addSubview:[[MyMachine getBeam:i] getImageView]];//最初の１〜３個
             }
+//            NSLog(@"complete add beam to supverview");
         }else if([[MyMachine getBeam:0] getY] <
                  [MyMachine getImageView].center.y - OBJECT_SIZE/2){//最後(index:i)の弾丸がキャラクターの近くになければ(近くにあると重なってしまう)
             //上のブロックと全く同じ
@@ -1418,7 +1437,7 @@ UIView *viewMyEffect;
     if ([self.navigationController.viewControllers indexOfObject:self]==NSNotFound) {
         // back button was pressed.  We know this is true because self is no longer
         // in the navigation stack.
-        NSLog(@"pressed back button");
+//        NSLog(@"pressed back button");
         [tm invalidate];
     }
     [super viewWillDisappear:animated];
@@ -1787,8 +1806,8 @@ UIView *viewMyEffect;
             goldCnt = MIN(goldCnt += goldAdd, [GoldBoard getScore]);
             for(int i = 0; i < 10;i++){
 //                NSLog(@"i = %d", i);//時間経過
-                NSLog(@"cnt = %d, i = %d, before-exp:%d, acquired:%d, after:%d, gold:%d, unit:%f, expUntileNextLevel:%d, level:%d, complete:%f, down:%d, count:%d",
-                      cnt, i, exp, [ScoreBoard getScore], exp + [ScoreBoard getScore], [GoldBoard getScore], unit, expTilNextLevel, level, (float)enemyDown/enemyCount, enemyDown, enemyCount);
+//                NSLog(@"cnt = %d, i = %d, before-exp:%d, acquired:%d, after:%d, gold:%d, unit:%f, expUntileNextLevel:%d, level:%d, complete:%f, down:%d, count:%d",
+//                      cnt, i, exp, [ScoreBoard getScore], exp + [ScoreBoard getScore], [GoldBoard getScore], unit, expTilNextLevel, level, (float)enemyDown/enemyCount, enemyDown, enemyCount);
             }
             if(cnt < 100){
                 if(pvScoreValue + unit < expTilNextLevel){
@@ -2003,7 +2022,7 @@ UIView *viewMyEffect;
     
     //ゲーム回数
     int newGameCnt = [[attr getValueFromDevice:@"gameCnt"] intValue] + 1;
-    NSLog(@"gameCnt = %@ => %d, updating..", [attr getValueFromDevice:@"gameCnt"], newGameCnt);
+//    NSLog(@"gameCnt = %@ => %d, updating..", [attr getValueFromDevice:@"gameCnt"], newGameCnt);
     [attr setValueToDevice:@"gameCnt" strValue:[NSString stringWithFormat:@"%d", newGameCnt]];
     
     //最終ゲーム実行時間:http://www.objectivec-iphone.com/foundation/NSDate/components.html
@@ -2539,10 +2558,12 @@ UIView *viewMyEffect;
 //        }else{
 //            _item = [[ItemClass alloc] init:arc4random() % 16 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
 //        }
+            //test:item2
+            _item = [[ItemClass alloc] init:ItemTypeWeapon2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
         }
         
-        //test:item
-        _item = [[ItemClass alloc] init:ItemTypeWeapon2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+//        //test:item
+//        _item = [[ItemClass alloc] init:ItemTypeWeapon2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
         
         [ItemArray insertObject:_item atIndex:0];
         //現状全てのアイテムは手前に進んで消えるので先に発生(FIFO)したものから消去
