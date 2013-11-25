@@ -450,7 +450,7 @@ int numCell;
     x_loc = mLayer.position.x;//中心座標
     y_loc = mLayer.position.y;//中心座標
     
-    if(y_loc >= iv.superview.bounds.size.height + height){
+    if(y_loc >= iv.superview.bounds.size.height){
         [self die];
     }
 //    NSLog(@"process : %d , %d",
