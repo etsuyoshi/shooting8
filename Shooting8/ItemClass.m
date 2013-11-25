@@ -14,7 +14,6 @@
 
 @synthesize type;
 
-NSMutableArray *arrayViewKira;
 
 -(id) init:(int)x_init y_init:(int)y_init width:(int)w height:(int)h{
     type = arc4random() % 10;//[NSNumber numberWithInt:arc4random()];
@@ -37,7 +36,7 @@ NSMutableArray *arrayViewKira;
     width = w;
     height = h;
     isAlive = true;
-    arrayViewKira = [[NSMutableArray alloc]init];
+    healEffectArray = [[NSMutableArray alloc]init];
     
     //アイテム生成時のパーティクルの初期化
     occurredParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)];
@@ -386,22 +385,23 @@ NSMutableArray *arrayViewKira;
     //動線上に新規キラキラ発生
     if(lifetime_count % 50 ==0){//generate every count
 //    if(true){
-        movingParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)
-                                                   particleType:ParticleTypeMoving];
-//        [movingParticle setParticleType:ParticleTypeMoving];
-        [movingParticle setIsEmitting:30];
-        [movingParticle setAlpha:1.0f];
-        
-        //up(down) , alpha = 0.0f, then remove.
-        [UIView animateWithDuration:0.49f
-                         animations:^{
-                             [movingParticle setAlpha:0.0f];//徐々に薄く
-                         }
-                         completion:^(BOOL finished){
-                             [movingParticle setIsEmitting:NO];
-                             [movingParticle removeFromSuperview];
-                         }];
-        [kiraMovingArray insertObject:movingParticle atIndex:0];//FIFO
+//        movingParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)
+//                                                   particleType:ParticleTypeMoving];
+////        [movingParticle setParticleType:ParticleTypeMoving];
+//        [movingParticle setIsEmitting:30];
+//        [movingParticle setAlpha:1.0f];
+//        
+//        //up(down) , alpha = 0.0f, then remove.
+//        [UIView animateWithDuration:0.49f
+//                         animations:^{
+//                             [movingParticle setAlpha:0.0f];//徐々に薄く
+//                         }
+//                         completion:^(BOOL finished){
+//                             [movingParticle setIsEmitting:NO];
+//                             [movingParticle removeFromSuperview];
+//                         }];
+//        [kiraMovingArray insertObject:movingParticle atIndex:0];//FIFO
+//        [self drawKira];
         isOccurringParticle = true;
     
     }
@@ -496,5 +496,82 @@ NSMutableArray *arrayViewKira;
     return killedParticle;
 }
 
+-(void)drawKira{
+    CGRect rectHeal;
+    int numCell = 30;
+    healCompleteCount = 0;
+    NSArray *imgArrayHeal = [[NSArray alloc] initWithObjects:
+                                 [UIImage imageNamed:@"img03.png"],
+                                 [UIImage imageNamed:@"img04.png"],
+                                 [UIImage imageNamed:@"img05.png"],
+                                 [UIImage imageNamed:@"img06.png"],
+                                 [UIImage imageNamed:@"img07.png"],
+                                 [UIImage imageNamed:@"img08.png"],
+                                 [UIImage imageNamed:@"img09.png"],
+                                 [UIImage imageNamed:@"img10.png"],
+                                 [UIImage imageNamed:@"img11.png"],
+                                 nil];
+    for(int i = 0; i < numCell;i++){
+        //回復時アニメーション->frame:主人公の左上起点基準
+        //        int y = - (arc4random() % originalSize);
+        //        NSLog(@"y = %d", y);
+        rectHeal= CGRectMake(0,//- (arc4random() % originalSize),//左端
+                             0,//- (arc4random() % originalSize),//上端
+                             arc4random() % width, arc4random() % width);
+        ivHealEffect = [[UIImageView alloc] initWithFrame:rectHeal];
+        ivHealEffect.center = CGPointMake(width/4 + (arc4random() % (width/2)),//中心付近から
+                                          arc4random() % (width/2));//上端付近から(降下)
+        //        ivHealEffect.center = CGPointMake(0, 0);//test;zero-start
+        ivHealEffect.animationImages = imgArrayHeal;
+        ivHealEffect.animationRepeatCount = 0;
+        ivHealEffect.alpha = MIN(exp(((float)(arc4random() % 100))*4.0f / 100.0f - 1),1);//0-1の指数関数(１の確率が４分の３)
+        ivHealEffect.animationDuration = 1.0f; // アニメーション全体で1秒（＝各画像描画間隔は「枚数」分の１秒）
+        [ivHealEffect startAnimating]; // アニメーション開始!!(アイテム取得時に実行)
+        
+        //上記で設定したUIImageViewを配列格納
+        [healEffectArray addObject:ivHealEffect];
+        
+        //格納されたUIImageViewを描画
+        [iv addSubview:[healEffectArray objectAtIndex:i]];
+    }
+    
+    /*
+     *同時に全ての配列に格納されたセルを降らせる
+     */
+    //    NSLog(@"healeffect repeat");
+    int x0, y0, moveX, moveY;
+    for(int i = 0; i < [healEffectArray count];i++){
+        x0 = ((UIImageView*)[healEffectArray objectAtIndex:i]).center.x;
+        y0 = ((UIImageView*)[healEffectArray objectAtIndex:i]).center.y;
+        moveX = arc4random() % width/4 - width/4;//変化量は全体の±1/4
+        //移動距離には熱関数を使い、かつy0が小さい程、移動を大きくする(温度係数を2にする):２分の１の確率でwidth移動
+        moveY = width * MIN(exp(((float)(arc4random() % 100))*2.0f / 100.0f - 1), 1);
+        
+        //test:move
+        //        moveX = mySize/2;
+        //        moveY = mySize/2;
+        [UIView animateWithDuration:0.4f * MIN(exp(((float)(arc4random()%10))*4.0f/10.0f-1), 1.0f)//0.4f
+                              delay:0//0.2f*exp((float)(arc4random()%10)/10.0f-1)//((float)(arc4random() % 10) /10.0f)//max0.1
+         //                            options:UIViewAnimationOptionCurveLinear
+                            options:UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             ((UIImageView*)[healEffectArray objectAtIndex:i]).center = CGPointMake(x0 + moveX, y0 + moveY);//down
+                             //                             ((UIImageView*)[healEffectArray objectAtIndex:i]).center = CGPointMake(0,  0);//down
+                             
+                             ((UIImageView*)[healEffectArray objectAtIndex:i]).alpha = 0.0f;
+                         }
+                         completion:^(BOOL finished){
+                             if(finished){
+                                 healCompleteCount++;
+                                 [[healEffectArray objectAtIndex:i] removeFromSuperview];
+                                 //                                 [healEffectArray removeObjectAtIndex:i];
+                                 if(healCompleteCount == [healEffectArray count]){//最後完了後
+                                     [healEffectArray removeAllObjects];
+                                 }
+                             }
+                         }];
+    }
+    
+}
 
 @end

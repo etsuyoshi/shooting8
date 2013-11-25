@@ -895,6 +895,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     return ivLaser;
 }
 
+//transparant-mode
 -(void)flashImageView:(float)duration repeatCount:(int)count{
     float newAlpha = (iv.alpha>0.9)?0.2f:1.0f;
     
