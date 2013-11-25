@@ -45,7 +45,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
     KiraParticleView *movingParticle;
     NSMutableArray *kiraMovingArray;//FIFO=>取り出す時に分かりやすいようにfromコントローラ
     
-    NSMutableArray *healEffectArray;
+    NSMutableArray *arrayViewKira;
     UIImageView *ivHealEffect;
     int healCompleteCount;
 }

@@ -36,7 +36,7 @@
     width = w;
     height = h;
     isAlive = true;
-    healEffectArray = [[NSMutableArray alloc]init];
+    arrayViewKira = [[NSMutableArray alloc]init];
     
     //アイテム生成時のパーティクルの初期化
     occurredParticle = [[KiraParticleView alloc]initWithFrame:CGRectMake(x_loc, y_loc, 10, 10)];
@@ -379,6 +379,10 @@
     CALayer *mLayer = [iv.layer presentationLayer];
     x_loc = mLayer.position.x;//中心座標
     y_loc = mLayer.position.y;//中心座標
+    
+    if(y_loc > 400){
+        [self die];
+    }
 //    NSLog(@"process : %d , %d",
 //          x_loc, y_loc);
     
@@ -401,7 +405,7 @@
 //                             [movingParticle removeFromSuperview];
 //                         }];
 //        [kiraMovingArray insertObject:movingParticle atIndex:0];//FIFO
-//        [self drawKira];
+        [self drawKira];
         isOccurringParticle = true;
     
     }
@@ -529,10 +533,10 @@
         [ivHealEffect startAnimating]; // アニメーション開始!!(アイテム取得時に実行)
         
         //上記で設定したUIImageViewを配列格納
-        [healEffectArray addObject:ivHealEffect];
+        [arrayViewKira addObject:ivHealEffect];
         
         //格納されたUIImageViewを描画
-        [iv addSubview:[healEffectArray objectAtIndex:i]];
+        [iv addSubview:[arrayViewKira objectAtIndex:i]];
     }
     
     /*
@@ -540,33 +544,34 @@
      */
     //    NSLog(@"healeffect repeat");
     int x0, y0, moveX, moveY;
-    for(int i = 0; i < [healEffectArray count];i++){
-        x0 = ((UIImageView*)[healEffectArray objectAtIndex:i]).center.x;
-        y0 = ((UIImageView*)[healEffectArray objectAtIndex:i]).center.y;
-        moveX = arc4random() % width/4 - width/4;//変化量は全体の±1/4
+    for(int i = 0; i < [arrayViewKira count];i++){
+        x0 = ((UIImageView*)[arrayViewKira objectAtIndex:i]).center.x;
+        y0 = ((UIImageView*)[arrayViewKira objectAtIndex:i]).center.y;
+        moveX = arc4random() % width/2 - width/2;//変化量は全体の±1/4
         //移動距離には熱関数を使い、かつy0が小さい程、移動を大きくする(温度係数を2にする):２分の１の確率でwidth移動
         moveY = width * MIN(exp(((float)(arc4random() % 100))*2.0f / 100.0f - 1), 1);
         
         //test:move
         //        moveX = mySize/2;
         //        moveY = mySize/2;
-        [UIView animateWithDuration:0.4f * MIN(exp(((float)(arc4random()%10))*4.0f/10.0f-1), 1.0f)//0.4f
+        [UIView animateWithDuration:1.4f * MIN(exp(((float)(arc4random()%10))*4.0f/10.0f-1), 1.0f)//0.4f
                               delay:0//0.2f*exp((float)(arc4random()%10)/10.0f-1)//((float)(arc4random() % 10) /10.0f)//max0.1
          //                            options:UIViewAnimationOptionCurveLinear
                             options:UIViewAnimationOptionCurveEaseOut
                          animations:^{
-                             ((UIImageView*)[healEffectArray objectAtIndex:i]).center = CGPointMake(x0 + moveX, y0 + moveY);//down
+                             ((UIImageView*)[arrayViewKira objectAtIndex:i]).center = CGPointMake(x0 + moveX, y0 - moveY);//down
                              //                             ((UIImageView*)[healEffectArray objectAtIndex:i]).center = CGPointMake(0,  0);//down
                              
-                             ((UIImageView*)[healEffectArray objectAtIndex:i]).alpha = 0.0f;
+                             ((UIImageView*)[arrayViewKira objectAtIndex:i]).alpha = 0.0f;
                          }
                          completion:^(BOOL finished){
                              if(finished){
                                  healCompleteCount++;
-                                 [[healEffectArray objectAtIndex:i] removeFromSuperview];
+//                                 NSLog(@"heacomplete = %d", healCompleteCount);
+                                 [[arrayViewKira objectAtIndex:i] removeFromSuperview];
                                  //                                 [healEffectArray removeObjectAtIndex:i];
-                                 if(healCompleteCount == [healEffectArray count]){//最後完了後
-                                     [healEffectArray removeAllObjects];
+                                 if(healCompleteCount == [arrayViewKira count]){//最後完了後
+                                     [arrayViewKira removeAllObjects];
                                  }
                              }
                          }];

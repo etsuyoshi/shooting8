@@ -77,7 +77,7 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     iv.animationImages = imgArray;
     iv.animationRepeatCount = 0;
     iv.animationDuration = 1.0f; // アニメーション全体で1秒（＝各間隔は0.5秒）
-    [iv startAnimating]; // アニメーション開始!!
+    [iv startAnimating]; // アニメーション開始
     
     //laser-relatings
     CGRect rectLaser = CGRectMake(0, 0, 200, 500);

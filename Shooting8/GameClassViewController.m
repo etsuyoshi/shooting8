@@ -899,6 +899,7 @@ UIView *viewMyEffect;
 //                NSLog(@"Item acquired");
                 [[[ItemArray objectAtIndex:itemCount] getImageView] removeFromSuperview];
                 [[ItemArray objectAtIndex:itemCount] die];
+//                NSLog(@"num item = %d", [ItemArray count]);
                 //アイテム取得時のパーティクル表示
 //                [self.view addSubview:[[ItemArray objectAtIndex:itemCount] getKilledParticle]];
                 
