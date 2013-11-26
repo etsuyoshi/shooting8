@@ -208,6 +208,11 @@ UIView *viewMyEffect;
     if (self) {
         // Custom initialization
     }
+    
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(pressedHomeButton)
+                                                 name: @"didEnterBackground"
+                                               object: nil];
     return self;
 }
 //ステータスバー非表示の一環
@@ -322,6 +327,7 @@ UIView *viewMyEffect;
     EnemyArray = [[NSMutableArray alloc]init];
     
     //背景インスタンス定義
+    NSLog(@"init background instance from game view controller");
     BackGround = [[BackGroundClass alloc]init:WorldTypeForest
                                         width:self.view.bounds.size.width
                                        height:self.view.bounds.size.height];
@@ -329,6 +335,8 @@ UIView *viewMyEffect;
     
     [self.view addSubview:[BackGround getImageView1]];
     [self.view addSubview:[BackGround getImageView2]];
+    [self.view bringSubviewToFront:[BackGround getImageView1]];
+    [self.view bringSubviewToFront:[BackGround getImageView2]];
     
     
 //    [(UIImageView *)[BackGround getImageView1] moveTo:CGPointMake(0, 400)
@@ -1245,6 +1253,14 @@ UIView *viewMyEffect;
     // Dispose of any resources that can be recreated.
 }
 
+
+-(void)pressedHomeButton{
+    //homeボタンが押された時
+    //以下応急処置：ユーザー表示画面(UIView)は作成必要
+    [self onClickedStopButton];//isGameMode = false;も実行
+//    [self exitProcess];
+}
+
 /**
  *tmインスタンスによって一定時間呼び出されるメソッド
  *一定間隔呼び出しは[tm invalidate];によって停止される
@@ -1252,6 +1268,7 @@ UIView *viewMyEffect;
 - (void)time:(NSTimer*)timer{
 //    NSLog(@"magnetMode = %d", isMagnetMode);
     if(count == 0){
+        NSLog(@"start animation from game class view controller");
         [BackGround startAnimation:3.0f];//3sec-Round
     }
     if(isGameMode){
@@ -1631,9 +1648,8 @@ UIView *viewMyEffect;
     int beforeExp = [[attr getValueFromDevice:@"exp"] intValue];
     
     //デバイスデータ更新＆サーバー通信＝＞exitボタン押下時に実行してしまうと、menu画面で正しい値が表示されなくなってしまう
-    [self performSelector:@selector(sendRequestToServer) withObject:nil afterDelay:0.1];
+    [self performSelector:@selector(sendRequestToServer) withObject:nil afterDelay:0.1f];
     
-
     
     int go_component_width = 250;
     
@@ -2560,7 +2576,7 @@ UIView *viewMyEffect;
 //            _item = [[ItemClass alloc] init:arc4random() % 16 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
 //        }
             //test:item2
-//            _item = [[ItemClass alloc] init:ItemTypeWeapon2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            _item = [[ItemClass alloc] init:ItemTypeWeapon2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
         }
         
 //        //test:item
@@ -2627,5 +2643,6 @@ UIView *viewMyEffect;
     [self.view bringSubviewToFront:ivItemAcq];
     
 }
+
 
 @end

@@ -98,17 +98,6 @@ AttrClass *attr;
 {
     [super viewDidLoad];
     
-    backGround = [[BackGroundClass alloc]init:WorldTypeForest
-                                        width:self.view.bounds.size.width
-                                       height:self.view.bounds.size.height];
-    
-    
-    [self.view addSubview:[backGround getImageView1]];
-    [self.view addSubview:[backGround getImageView2]];
-    [self.view sendSubviewToBack:[backGround getImageView1]];
-    [self.view sendSubviewToBack:[backGround getImageView2]];
-    
-    [backGround startAnimation:8.0f];//3sec-Round
     
     // ステータスバーを非表示にする:plistでの処理はiOS7以降非推奨
     if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)])
@@ -198,6 +187,20 @@ AttrClass *attr;
 	// Do any additional setup after loading the view.
 }
 -(void)viewDidAppear:(BOOL)animated{
+    
+    
+    backGround = [[BackGroundClass alloc]init:WorldTypeForest
+                                        width:self.view.bounds.size.width
+                                       height:self.view.bounds.size.height];
+    
+    
+    [self.view addSubview:[backGround getImageView1]];
+    [self.view addSubview:[backGround getImageView2]];
+    [self.view bringSubviewToFront:[backGround getImageView1]];
+    [self.view bringSubviewToFront:[backGround getImageView2]];
+    
+    [backGround startAnimation:1.0f];//3sec-Round
+    
     
     //時間を遅らせてBGM
     [self performSelector:@selector(playBGM) withObject:nil afterDelay:0.3];
@@ -464,6 +467,12 @@ AttrClass *attr;
     // Dispose of any resources that can be recreated.
 }
 
+-(void)gotoGame{
+    GameClassViewController *gameView = [[GameClassViewController alloc] init];
+    [self presentViewController: gameView animated:YES completion: nil];
+
+}
+
 -(void)pushed_button:(id)sender
 {
     NSLog(@"%d", [sender tag]);
@@ -473,6 +482,9 @@ AttrClass *attr;
     switch([sender tag]){
         case 0:{
             NSLog(@"start games");
+            
+            //background stop
+            [backGround stopAnimation];
             
             //BGM STOP
 //            if( !audioPlayer.playing ){
@@ -491,8 +503,9 @@ AttrClass *attr;
             TestViewController *tvc = [[TestViewController alloc]init];
             [self presentViewController: tvc animated:YES completion: nil];
 #else
-            GameClassViewController *gameView = [[GameClassViewController alloc] init];
-            [self presentViewController: gameView animated:YES completion: nil];
+            //background stopAnimation(0.01sec必要)を実行しないとゲーム画面でアニメーションが開始されない(既存のiv animationが残っているため)
+            //stopAnimationを実行するための0.01sを稼ぐためにここで0.1s-Delayさせる
+            [self performSelector:@selector(gotoGame) withObject:nil afterDelay:0.1f];
 #endif
             //参考戻る時(時間経過等ゲーム終了時で)：[self dismissModalViewControllerAnimated:YES];=>deprecated
 //            NSLog(@"return");

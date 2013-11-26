@@ -170,6 +170,7 @@
 		34C16CCF181C2D9000650A40 /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34C16CCE181C2D9000650A40 /* TestViewController.m */; };
 		34C16CD1181C4E9400650A40 /* sabaki_hmix.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34C16CD0181C4E9400650A40 /* sabaki_hmix.mp3 */; };
 		34C84E771822568200E4B074 /* snow.png in Resources */ = {isa = PBXBuildFile; fileRef = 34C84E761822568200E4B074 /* snow.png */; };
+		34CA55751844323100F9657A /* laser01_03_rep.png in Resources */ = {isa = PBXBuildFile; fileRef = 34CA55741844323100F9657A /* laser01_03_rep.png */; };
 		34D09F541838B1B90039D78E /* chara01.png in Resources */ = {isa = PBXBuildFile; fileRef = 34D09F531838B1B90039D78E /* chara01.png */; };
 		34D30EC2181EDB25006D05F0 /* WingBow.png in Resources */ = {isa = PBXBuildFile; fileRef = 34D30EC1181EDB25006D05F0 /* WingBow.png */; };
 		34D55FC9183C939600788533 /* bomb012.png in Resources */ = {isa = PBXBuildFile; fileRef = 34D55FC8183C939600788533 /* bomb012.png */; };
@@ -405,6 +406,7 @@
 		34C16CCE181C2D9000650A40 /* TestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 		34C16CD0181C4E9400650A40 /* sabaki_hmix.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = sabaki_hmix.mp3; sourceTree = "<group>"; };
 		34C84E761822568200E4B074 /* snow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = snow.png; sourceTree = "<group>"; };
+		34CA55741844323100F9657A /* laser01_03_rep.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = laser01_03_rep.png; sourceTree = "<group>"; };
 		34D09F531838B1B90039D78E /* chara01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chara01.png; sourceTree = "<group>"; };
 		34D30EC1181EDB25006D05F0 /* WingBow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WingBow.png; sourceTree = "<group>"; };
 		34D55FC8183C939600788533 /* bomb012.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bomb012.png; sourceTree = "<group>"; };
@@ -623,6 +625,7 @@
 			isa = PBXGroup;
 			children = (
 				34ADDFDA183DF2F500448813 /* laser01_01_2.png */,
+				34CA55741844323100F9657A /* laser01_03_rep.png */,
 				3461FE6C183DDFAF00DB4546 /* laser01_01.png */,
 			);
 			name = laser;
@@ -1059,6 +1062,7 @@
 				3488ACC8183D272F00833F93 /* img07.png in Resources */,
 				34D09F541838B1B90039D78E /* chara01.png in Resources */,
 				3440529C182BBC1A0049AE46 /* coin_yellow.png in Resources */,
+				34CA55751844323100F9657A /* laser01_03_rep.png in Resources */,
 				34F53376181BBEDC00FB9470 /* bgm_menu_683.mp3 in Resources */,
 				348D635E17FE1A1100A3049B /* cross.png in Resources */,
 				348D636017FE1A9D00A3049B /* ribrary.png in Resources */,
