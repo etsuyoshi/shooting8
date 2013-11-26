@@ -133,12 +133,8 @@ int imageMargin;
                          iv_background1.center =
                             CGPointMake(x1, y1 + originalFrameSize);
 
-//                            CGPointMake(iv_background1.bounds.size.width/2,
-//                                        iv_background1.center.y + originalFrameSize);
                          iv_background2.center =
                             CGPointMake(x2, y2 + originalFrameSize);
-//                            CGPointMake(iv_background2.bounds.size.width/2,
-//                                        iv_background2.center.y + originalFrameSize);
                      }
                      completion:^(BOOL finished){
                          NSLog(@"background animation finished=%@, secs=%f", finished?@"true":@"false", secs);

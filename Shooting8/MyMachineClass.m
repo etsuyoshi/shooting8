@@ -83,12 +83,23 @@ int healCompleteCount;//1回当たりの回復表示終了判定
     CGRect rectLaser = CGRectMake(0, 0, 200, 500);
     ivLaser = [[UIImageView alloc] initWithFrame:rectLaser];
     NSArray *arrayLaserImg = [[NSArray alloc] initWithObjects:
-                              [UIImage imageNamed:@"laser01_03_rep.png"],
-                              [UIImage imageNamed:@"laser01_03_rep.png"],
+                              [UIImage imageNamed:@"laser_r01.png"],
+                              [UIImage imageNamed:@"laser_r02.png"],
+                              [UIImage imageNamed:@"laser_r03.png"],
                               nil];
+//    NSArray *arrayLaserImg = [[NSArray alloc] initWithObjects:
+//                              [UIImage imageNamed:@"laser_g01.png"],
+//                              [UIImage imageNamed:@"laser_g02.png"],
+//                              [UIImage imageNamed:@"laser_g03.png"],
+//                              nil];
+//    NSArray *arrayLaserImg = [[NSArray alloc] initWithObjects:
+//                              [UIImage imageNamed:@"laser_b01.png"],
+//                              [UIImage imageNamed:@"laser_b02.png"],
+//                              [UIImage imageNamed:@"laser_b03.png"],
+//                              nil];
     ivLaser.animationImages = arrayLaserImg;
     ivLaser.animationRepeatCount = 0;
-    ivLaser.animationDuration = 1.0f;
+    ivLaser.animationDuration = 0.3f;
     [ivLaser startAnimating];
     
     //heal-relatings

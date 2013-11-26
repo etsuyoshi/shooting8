@@ -401,8 +401,8 @@ int numCell;
             CAAnimation* animationKeyFrame = [iv.layer animationForKey:@"position"];
             if(animationKeyFrame){
                 //途中で終わらずにアニメーションが全て完了して
-                //            [self die];
-                //            NSLog(@"animation key frame already exit & die");
+//                [self die];
+//            NSLog(@"animation key frame already exit & die");
             }else{
                 //途中で何らかの理由で遮られた場合
                 //            NSLog(@"animation key frame not exit");
@@ -450,7 +450,8 @@ int numCell;
     x_loc = mLayer.position.x;//中心座標
     y_loc = mLayer.position.y;//中心座標
     
-    if(y_loc >= iv.superview.bounds.size.height){
+    if(y_loc >= iv.superview.bounds.size.height - height/2){//upper-than-destination
+//    if(y_loc >= iv.superview.bounds.size.height - height*2){//test:die
         [self die];
     }
 //    NSLog(@"process : %d , %d",

@@ -1328,14 +1328,19 @@ UIView *viewMyEffect;
                                      [MyMachine getImageView].center.y + point.y);
 //    [MyMachine setX:movedPoint.x];
 //    [MyMachine setY:movedPoint.y];
-    [MyMachine setLocation:CGPointMake(movedPoint.x, movedPoint.y)];
-    [MyMachine getImageView].center = movedPoint;
-    [gr setTranslation:CGPointZero inView:[MyMachine getImageView]];
     
-    
-    //エフェクト描画用frame
-    viewMyEffect.center = movedPoint;
-    [gr setTranslation:CGPointZero inView:viewMyEffect];
+    if(movedPoint.x >= 0 && movedPoint.x <= self.view.bounds.size.width &&
+       movedPoint.y >= 0 && movedPoint.y <= self.view.bounds.size.height){
+        
+        [MyMachine setLocation:CGPointMake(movedPoint.x, movedPoint.y)];
+        [MyMachine getImageView].center = movedPoint;
+        [gr setTranslation:CGPointZero inView:[MyMachine getImageView]];
+        
+        
+        //エフェクト描画用frame
+        viewMyEffect.center = movedPoint;
+        [gr setTranslation:CGPointZero inView:viewMyEffect];
+    }
     
     
     
@@ -2576,7 +2581,7 @@ UIView *viewMyEffect;
 //            _item = [[ItemClass alloc] init:arc4random() % 16 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
 //        }
             //test:item2
-            _item = [[ItemClass alloc] init:ItemTypeWeapon2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+//            _item = [[ItemClass alloc] init:ItemTypeWeapon2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
         }
         
 //        //test:item
