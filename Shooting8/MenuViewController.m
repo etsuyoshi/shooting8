@@ -411,6 +411,9 @@ AttrClass *attr;
 //                                                   tag:[[[tagArray objectAtIndex:row] objectAtIndex:col ] intValue]//COMPONENT_00でも可
 //                                                 frame:rect_bt];
 //            [bt addTarget:self action:@selector(pushed_button:) forControlEvents:UIControlEventTouchUpInside];
+            
+            
+            
             UIButton *bt = [CreateComponentClass createQBButton:ButtonTypeWithImage
                                                            rect:rect_bt
                                                           image:[[imageFileArray objectAtIndex:row] objectAtIndex:col]
@@ -421,12 +424,49 @@ AttrClass *attr;
             bt.tag = [[[tagArray objectAtIndex:row] objectAtIndex:col] intValue];
             [self.view addSubview:bt];
             
+            
+            
+
+            
 //            NSLog(@"row = %d, col = %d, x = %d, y = %d, image = %@",
 //                  row, col,
 //                  (int)rect_bt.origin.x, (int)rect_bt.origin.y,
 //                  [[imageFileArray objectAtIndex:row] objectAtIndex:col]);
         }
     }
+    
+    //test
+//    UIButton *buttonC = [UIButton buttonWithType:UIButtonTypeCustom];
+//    UIButton *buttonC = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+//    buttonC.frame = CGRectMake(5, 360, 50, 55);
+//    [buttonC setBackgroundColor:[UIColor blackColor]];
+//    [buttonC setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    [buttonC setTitleColor:[UIColor blueColor] forState:UIControlStateSelected];
+//    [buttonC setTitle:@"Button Title" forState:UIControlStateNormal];
+//    [buttonC addTarget:self action:@selector(pushed_button:) forControlEvents:UIControlEventTouchUpInside];
+//    [buttonC setBackgroundImage:[UIImage imageNamed:@"blue_item_yuri_big2.png"]
+//                       forState:UIControlStateNormal];
+//    [buttonC setImage:[UIImage imageNamed:@"blue_item_yuri_big2.png"]
+//             forState:UIControlStateSelected];
+//    
+//    [buttonC setBackgroundImage:[UIImage imageNamed:@"cross.png"]
+//                       forState:UIControlStateHighlighted];
+    
+    
+//    [self.view addSubview:buttonC];
+//    [self.view bringSubviewToFront:buttonC];
+    
+    
+    UIButton *buttonD = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    buttonD.frame = CGRectMake(7, 362, 46, 46);
+    [buttonD setBackgroundColor:[UIColor grayColor]];
+    [buttonD setBackgroundImage:[UIImage imageNamed:@"frame_01on.png"]
+                       forState:UIControlStateSelected];
+//                       forState:UIControlStateHighlighted];
+    [buttonD setBackgroundImage:[UIImage imageNamed:@"frame_01off.png"]
+                       forState:UIControlStateNormal];
+    [self.view addSubview:buttonD];
+//    [self]
     
     //スタートボタン表示部分
     CGRect rect_start = CGRectMake(x_frame_center - W_BT_START/2,

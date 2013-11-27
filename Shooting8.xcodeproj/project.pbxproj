@@ -54,6 +54,8 @@
 		342057EE17F2B34C0084E99D /* InitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 342057ED17F2B34C0084E99D /* InitViewController.m */; };
 		342057FA17F2B8810084E99D /* GameClassViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 342057F917F2B8810084E99D /* GameClassViewController.m */; };
 		3420AB961827AA9200AB0A84 /* UIView+Animation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3420AB951827AA9200AB0A84 /* UIView+Animation.m */; };
+		342231961845A09700055ADF /* frame_01off.png in Resources */ = {isa = PBXBuildFile; fileRef = 342231941845A09700055ADF /* frame_01off.png */; };
+		342231971845A09700055ADF /* frame_01on.png in Resources */ = {isa = PBXBuildFile; fileRef = 342231951845A09700055ADF /* frame_01on.png */; };
 		3424020117F6E8A100E06902 /* BeamClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 3424020017F6E8A100E06902 /* BeamClass.m */; };
 		3429D90E180FBD1A005CDFCE /* close.png in Resources */ = {isa = PBXBuildFile; fileRef = 3429D90D180FBD1A005CDFCE /* close.png */; };
 		342C03AB17F4604E0023C11F /* nothing32.png in Resources */ = {isa = PBXBuildFile; fileRef = 342C039D17F4604E0023C11F /* nothing32.png */; };
@@ -282,6 +284,8 @@
 		342057F917F2B8810084E99D /* GameClassViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameClassViewController.m; sourceTree = "<group>"; };
 		3420AB941827AA9200AB0A84 /* UIView+Animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Animation.h"; sourceTree = "<group>"; };
 		3420AB951827AA9200AB0A84 /* UIView+Animation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Animation.m"; sourceTree = "<group>"; };
+		342231941845A09700055ADF /* frame_01off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frame_01off.png; sourceTree = "<group>"; };
+		342231951845A09700055ADF /* frame_01on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frame_01on.png; sourceTree = "<group>"; };
 		342401FF17F6E8A100E06902 /* BeamClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamClass.h; sourceTree = "<group>"; };
 		3424020017F6E8A100E06902 /* BeamClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamClass.m; sourceTree = "<group>"; };
 		3429D90D180FBD1A005CDFCE /* close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = close.png; sourceTree = "<group>"; };
@@ -550,6 +554,7 @@
 		342057D817F2B34C0084E99D /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				342231931845A08600055ADF /* UI */,
 				34518645183B9F4A00DDD6D2 /* bomb */,
 				342CA73B1824400000F072E0 /* Tool */,
 				34A2B1BB181F9DEC00CB97F2 /* bullet */,
@@ -595,6 +600,15 @@
 				34C09EDA18009C5E00E4A4D8 /* yellow_item_thunder.png */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		342231931845A08600055ADF /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				342231941845A09700055ADF /* frame_01off.png */,
+				342231951845A09700055ADF /* frame_01on.png */,
+			);
+			name = UI;
 			sourceTree = "<group>";
 		};
 		342CA73B1824400000F072E0 /* Tool */ = {
@@ -1135,6 +1149,7 @@
 				34CA558418447A9B00F9657A /* laser_g03.png in Resources */,
 				3488ACC7183D272F00833F93 /* img06.png in Resources */,
 				348AD7F3180ACD52007226EC /* back_desert.png in Resources */,
+				342231971845A09700055ADF /* frame_01on.png in Resources */,
 				34A1ED3F181CCDF20007471C /* FireBow.png in Resources */,
 				348AD7F5180ACD52007226EC /* back_nangoku.png in Resources */,
 				3488ACCA183D272F00833F93 /* img09.png in Resources */,
@@ -1178,6 +1193,7 @@
 				34CA558518447A9B00F9657A /* laser_r01.png in Resources */,
 				34A2275D182A4E900050CFDB /* tool_small_cookie.png in Resources */,
 				340A4643181E412200D9B005 /* SpaceBow.png in Resources */,
+				342231961845A09700055ADF /* frame_01off.png in Resources */,
 				347D277518169B3700498F68 /* small_four.png in Resources */,
 				3488ACC6183D272F00833F93 /* img05.png in Resources */,
 				347D277618169B3700498F68 /* small_nine.png in Resources */,
