@@ -18,7 +18,8 @@
 //#define EXPLOSTION_TEST
 //#define BOMB_TEST
 //#define MYMACHINE_TEST
-#define BUTTON_TEST
+//#define BUTTON_TEST
+#define BACKGROUND_TEST
 
 
 
@@ -29,6 +30,7 @@
 #import "TestViewController.h"
 #import "UIView+Animation.h"
 #import "Effect.h"
+#import "BackGroundClass.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface TestViewController ()
@@ -60,6 +62,7 @@ CALayer *mylayer;
 UIView *viewLayerTest;
 ExplodeParticleView *explodeParticle;
 
+BackGroundClass *BackGround;
 
 int tempCount = 0;
 
@@ -575,6 +578,25 @@ int tempCount = 0;
                                                               target:self
                                                             selector:nil]];
         
+    }
+#elif defined BACKGROUND_TEST
+    if(counter == 0){
+        
+        
+        BackGround = [[BackGroundClass alloc]init:WorldTypeForest
+                                            width:self.view.bounds.size.width
+                                           height:self.view.bounds.size.height];
+        
+        
+        [self.view addSubview:[BackGround getImageView1]];
+        [self.view addSubview:[BackGround getImageView2]];
+        [self.view bringSubviewToFront:[BackGround getImageView1]];
+        [self.view bringSubviewToFront:[BackGround getImageView2]];
+        
+        [BackGround startAnimation:3.0f];
+        
+    }else if((int)counter % 10 == 0){
+        NSLog(@"oscillate");
     }
 #else
     NSLog(@"aaa");

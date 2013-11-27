@@ -118,16 +118,16 @@ AttrClass *attr;
     //タイトル配列
     titleArray = [NSMutableArray arrayWithObjects:
                   [NSArray arrayWithObjects:
-                   @"wpn",
+                   @"wpn",//
                    @"drgn",
-                   @"heal",
+                   @"heal",//INN:try-count recover
                    @"配合",
                    nil],
                   [NSArray arrayWithObjects:
                    @"buy",
-                   @"item",
-                   @"set",
-                   @"gold",
+                   @"item",//
+                   @"set",//
+                   @"gold",//
                    nil],
                   nil];
 //    imageFile = [[NSMutableArray alloc]init];
