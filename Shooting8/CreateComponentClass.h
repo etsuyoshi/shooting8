@@ -11,7 +11,10 @@
 
 typedef NS_ENUM(NSInteger, ButtonType) {
     ButtonTypeDefault = 0,          // default
-    ButtonTypeWithImage            // imageDefault
+    ButtonTypeWithImage,            // imageDefault
+    ButtonTypeOrange,
+    ButtonTypeBlue,
+    ButtonTypeGreen
 };
 
 @interface CreateComponentClass : NSObject{
@@ -80,4 +83,12 @@ typedef NS_ENUM(NSInteger, ButtonType) {
                     target:(id)target
                  selector1:(NSString *)selector1
                  selector2:(NSString *)selector2;
+
+
++(UIButton *)createMenuButton:(ButtonType)type
+                         rect:(CGRect)rect
+                       target:(id)target
+                     selector:(NSString *)selector;
+
++(UIButton *)createGradButton;
 @end

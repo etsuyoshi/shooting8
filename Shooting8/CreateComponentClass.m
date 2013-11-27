@@ -248,7 +248,7 @@
         [qbBtn setTitle:title forState:UIControlStateNormal];
         [qbBtn addTarget:target
                   action:NSSelectorFromString(selName)
-    forControlEvents:UIControlEventTouchUpInside];
+        forControlEvents:UIControlEventTouchUpInside];
         return qbBtn;
     }
     
@@ -348,6 +348,92 @@
     [superView addSubview:sv];
     return superView;
 
+}
+
++(UIButton *)createMenuButton:(ButtonType)type
+                         rect:(CGRect)rect
+                       target:(id)target
+                     selector:(NSString *)selector{
+    UIButton *buttonD = [UIButton buttonWithType:UIButtonTypeCustom];
+    buttonD.frame = rect;//CGRectMake(7, 362, 46, 46);
+    if(type == ButtonTypeBlue){
+        [buttonD setBackgroundImage:[UIImage imageNamed:@"btn_g_on2.png"]
+                           forState:UIControlStateHighlighted];
+        [buttonD setBackgroundImage:[UIImage imageNamed:@"btn_g_off2.png"]
+                           forState:UIControlStateNormal];
+    }else if(type == ButtonTypeGreen){
+        [buttonD setBackgroundImage:[UIImage imageNamed:@"btn_g_on.png"]
+                           forState:UIControlStateHighlighted];
+        [buttonD setBackgroundImage:[UIImage imageNamed:@"btn_g_off.png"]
+                           forState:UIControlStateNormal];
+    }else if(type == ButtonTypeOrange){
+        [buttonD setBackgroundImage:[UIImage imageNamed:@"btn_glasjdf.png"]
+                           forState:UIControlStateHighlighted];
+        [buttonD setBackgroundImage:[UIImage imageNamed:@"btn_g_on.png"]
+                           forState:UIControlStateNormal];
+    }else{
+        return nil;
+    }
+    [buttonD addTarget:target
+                action:NSSelectorFromString(selector)
+      forControlEvents:UIControlEventTouchUpInside];
+    
+    return buttonD;
+    
+}
+
+
++(UIButton *)createGradButton{
+    //http://d.hatena.ne.jp/Kazzz/20120912/p1
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    btn.frame = CGRectMake(10, 10, 300, 460);//100, 100, 150, 150);
+    CAGradientLayer* gradient = [CAGradientLayer layer];
+    gradient.frame = btn.bounds;//self.view.bounds;
+    NSMutableArray *array = [NSMutableArray arrayWithObjects:
+                             (id)[[UIColor colorWithRed:0/255.0f
+                                                  green:103.0f/255.0f
+                                                   blue:100.0f/255.0f
+                                                  alpha:1.0f] CGColor],//start
+                             (id)[[UIColor colorWithRed:0.0f/255.0f
+                                                  green:153.0f/255.0f
+                                                   blue:70.0f/255.0f
+                                                  alpha:1.0f] CGColor],//end
+                             nil];
+    
+    //test:grad
+//    for(int i = 0; i < 255;i++){
+//        [array insertObject:(id)[[UIColor colorWithRed:0/255.0f
+//                                                 green:103.0f/255.0f
+//                                                  blue:100.0f/255.0f
+//                                                 alpha:1.0f]
+//                                 CGColor]
+//                    atIndex:0];
+//    }
+    
+    
+//    [array addObject:nil];
+//                             (id)[[UIColor colorWithRed:91.0f/255.0f green:153.0f/255.0f blue:100.0f/255.0f
+//                                                  alpha:1.0f] CGColor],
+//                             (id)[[UIColor colorWithRed:1 green:250.0f/255.0f blue:224.0f/255.0f
+//                                                  alpha:1.0f] CGColor],
+//                             nil];
+    gradient.colors = array;
+    
+//    [NSArray arrayWithObjects:
+//                       (id)[[UIColor colorWithRed:91.0f/255.0f green:153.0f/255.0f blue:100.0f/255.0f
+//                                            alpha:1.0f] CGColor],
+//                       (id)[[UIColor colorWithRed:1 green:250.0f/255.0f blue:224.0f/255.0f
+//                                            alpha:1.0f] CGColor],
+////                       (id)[[UIColor redColor] CGColor], //開始色
+////                       (id)[[UIColor blueColor] CGColor], //終了色
+////                       (id)[[UIColor yellowColor] CGColor], //終了色
+//                       nil];
+    [gradient setStartPoint:CGPointMake(0.5, 0.0)];
+    [gradient setEndPoint:CGPointMake(0.5, 1.0)]; // 0 degree
+//    [self.view.layer insertSublayer:gradient atIndex:0];
+    [btn.layer insertSublayer:gradient atIndex:0];
+    
+    return btn;
 }
 
 @end

@@ -17,7 +17,8 @@
 //#define TRACK_TEST
 //#define EXPLOSTION_TEST
 //#define BOMB_TEST
-#define MYMACHINE_TEST
+//#define MYMACHINE_TEST
+#define BUTTON_TEST
 
 
 
@@ -558,7 +559,23 @@ int tempCount = 0;
         NSLog(@"complete");
     }
 
+#elif defined BUTTON_TEST
     
+    if(counter == 0){
+        
+        NSLog(@"button test");
+        
+        [self.view addSubview:[CreateComponentClass createMenuButton:ButtonTypeBlue
+                                                                rect:CGRectMake(7, 262, 46, 46)
+                                                              target:self
+                                                            selector:nil]];
+        
+        [self.view addSubview:[CreateComponentClass createMenuButton:ButtonTypeGreen
+                                                                rect:CGRectMake(7, 362, 46, 46)
+                                                              target:self
+                                                            selector:nil]];
+        
+    }
 #else
     NSLog(@"aaa");
     //nothing
