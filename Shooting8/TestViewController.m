@@ -196,7 +196,8 @@ int tempCount = 0;
     
     BackGround = [[BackGroundClass2 alloc]init:WorldTypeForest
                                          width:self.view.bounds.size.width
-                                        height:self.view.bounds.size.height];
+                                        height:self.view.bounds.size.height
+                                          secs:3];
     
     
     [self.view addSubview:[BackGround getImageView1]];
@@ -677,6 +678,8 @@ int tempCount = 0;
         
     }else if((int)counter % 10 == 0){
         NSLog(@"oscillate");
+        [BackGround oscillateEffect];
+        
     }
 #else
     NSLog(@"aaa");
