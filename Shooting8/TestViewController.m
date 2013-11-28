@@ -30,7 +30,7 @@
 #import "TestViewController.h"
 #import "UIView+Animation.h"
 #import "Effect.h"
-#import "BackGroundClass.h"
+#import "BackGroundClass2.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface TestViewController ()
@@ -62,7 +62,7 @@ CALayer *mylayer;
 UIView *viewLayerTest;
 ExplodeParticleView *explodeParticle;
 
-BackGroundClass *BackGround;
+BackGroundClass2 *BackGround;
 
 int tempCount = 0;
 
@@ -583,7 +583,7 @@ int tempCount = 0;
     if(counter == 0){
         
         
-        BackGround = [[BackGroundClass alloc]init:WorldTypeForest
+        BackGround = [[BackGroundClass2 alloc]init:WorldTypeForest
                                             width:self.view.bounds.size.width
                                            height:self.view.bounds.size.height];
         
@@ -592,6 +592,10 @@ int tempCount = 0;
         [self.view addSubview:[BackGround getImageView2]];
         [self.view bringSubviewToFront:[BackGround getImageView1]];
         [self.view bringSubviewToFront:[BackGround getImageView2]];
+        
+//        UIView *filter = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 480)];
+//        [filter setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.8f]];
+//        [self.view addSubview:filter];
         
         [BackGround startAnimation:3.0f];
         

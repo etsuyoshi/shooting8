@@ -56,6 +56,7 @@
 		3420AB961827AA9200AB0A84 /* UIView+Animation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3420AB951827AA9200AB0A84 /* UIView+Animation.m */; };
 		3422319E1845B5C400055ADF /* btn_g_off2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3422319C1845B5C400055ADF /* btn_g_off2.png */; };
 		3422319F1845B5C400055ADF /* btn_g_on2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3422319D1845B5C400055ADF /* btn_g_on2.png */; };
+		342231A21845EDAF00055ADF /* BackGroundClass2.m in Sources */ = {isa = PBXBuildFile; fileRef = 342231A11845EDAF00055ADF /* BackGroundClass2.m */; };
 		3424020117F6E8A100E06902 /* BeamClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 3424020017F6E8A100E06902 /* BeamClass.m */; };
 		3429D90E180FBD1A005CDFCE /* close.png in Resources */ = {isa = PBXBuildFile; fileRef = 3429D90D180FBD1A005CDFCE /* close.png */; };
 		342C03AB17F4604E0023C11F /* nothing32.png in Resources */ = {isa = PBXBuildFile; fileRef = 342C039D17F4604E0023C11F /* nothing32.png */; };
@@ -286,6 +287,8 @@
 		3420AB951827AA9200AB0A84 /* UIView+Animation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Animation.m"; sourceTree = "<group>"; };
 		3422319C1845B5C400055ADF /* btn_g_off2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_g_off2.png; sourceTree = "<group>"; };
 		3422319D1845B5C400055ADF /* btn_g_on2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_g_on2.png; sourceTree = "<group>"; };
+		342231A01845EDAF00055ADF /* BackGroundClass2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackGroundClass2.h; sourceTree = "<group>"; };
+		342231A11845EDAF00055ADF /* BackGroundClass2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackGroundClass2.m; sourceTree = "<group>"; };
 		342401FF17F6E8A100E06902 /* BeamClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamClass.h; sourceTree = "<group>"; };
 		3424020017F6E8A100E06902 /* BeamClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamClass.m; sourceTree = "<group>"; };
 		3429D90D180FBD1A005CDFCE /* close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = close.png; sourceTree = "<group>"; };
@@ -910,6 +913,8 @@
 				34FA999D17FBCEEF00317D83 /* ItemClass.m */,
 				342401FF17F6E8A100E06902 /* BeamClass.h */,
 				3424020017F6E8A100E06902 /* BeamClass.m */,
+				342231A01845EDAF00055ADF /* BackGroundClass2.h */,
+				342231A11845EDAF00055ADF /* BackGroundClass2.m */,
 			);
 			name = Object;
 			sourceTree = "<group>";
@@ -1259,6 +1264,7 @@
 				348AD7ED180A9159007226EC /* DBAccessClass.m in Sources */,
 				34FA1A31180BC2460011E1CA /* AttrClass.m in Sources */,
 				340C7613180D37E500169658 /* CreateComponentClass.m in Sources */,
+				342231A21845EDAF00055ADF /* BackGroundClass2.m in Sources */,
 				3476D05E180DE6B800839BD8 /* QBFlatButton.m in Sources */,
 				34A6A1A3180EF48F006F26D6 /* ItemListViewController.m in Sources */,
 				3436369C180FDA8B005A5C01 /* FontTestViewController.m in Sources */,
