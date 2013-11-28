@@ -56,6 +56,11 @@ NSMutableArray *uiArray;
 UIImageView *ivAnimateEffect;
 #endif
 
+#ifdef BACKGROUND_TEST
+UIImageView *notif;
+CABasicAnimation * appearance;
+#endif
+
 int counter;
 UIView *circleView;
 CALayer *mylayer;
@@ -580,24 +585,44 @@ int tempCount = 0;
         
     }
 #elif defined BACKGROUND_TEST
-    if(counter == 0){
+    if(counter % 10 == 0){
+        
+        NSLog(@"back-ground -test execute");
+//        BackGround = [[BackGroundClass2 alloc]init:WorldTypeForest
+//                                            width:self.view.bounds.size.width
+//                                           height:self.view.bounds.size.height];
+//        
+//        
+//        [self.view addSubview:[BackGround getImageView1]];
+//        [self.view addSubview:[BackGround getImageView2]];
+//        [self.view bringSubviewToFront:[BackGround getImageView1]];
+//        [self.view bringSubviewToFront:[BackGround getImageView2]];
+//        
+////        UIView *filter = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 480)];
+////        [filter setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.8f]];
+////        [self.view addSubview:filter];
+//        
+//        [BackGround startAnimation:3.0f];
         
         
-        BackGround = [[BackGroundClass2 alloc]init:WorldTypeForest
-                                            width:self.view.bounds.size.width
-                                           height:self.view.bounds.size.height];
+        notif = [[UIImageView alloc] initWithFrame:CGRectMake(200, 200, 100, 100)];
+        [notif setBackgroundColor:[UIColor colorWithRed:0 green:1.0f blue:0 alpha:0.9f]];
+        [self.view addSubview:notif];
         
+//        appearance =[CABasicAnimation animationWithKeyPath:@"transform.translation.y"];
+        appearance = [CABasicAnimation animationWithKeyPath:@"position"];
+        [appearance setValue:@"animation1" forKey:@"id"];
+        appearance.delegate = self;
+        [UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
+        appearance.duration = 0.5;
+//        appearance.fromValue = [NSNumber numberWithFloat:0];
+//        appearance.toValue = [NSNumber numberWithFloat:340];
+//        appearance.fromValue = nil;
+        appearance.repeatCount = 1;
+        appearance.fillMode = kCAFillModeForwards;
+        appearance.removedOnCompletion = NO;
+        [notif.layer addAnimation:appearance forKey:@"transform.translation.y"];
         
-        [self.view addSubview:[BackGround getImageView1]];
-        [self.view addSubview:[BackGround getImageView2]];
-        [self.view bringSubviewToFront:[BackGround getImageView1]];
-        [self.view bringSubviewToFront:[BackGround getImageView2]];
-        
-//        UIView *filter = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 480)];
-//        [filter setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.8f]];
-//        [self.view addSubview:filter];
-        
-        [BackGround startAnimation:3.0f];
         
     }else if((int)counter % 10 == 0){
         NSLog(@"oscillate");
@@ -614,6 +639,28 @@ int tempCount = 0;
 #endif
     counter ++;
 }
+
+
+#ifdef BACKGROUND_TEST
+-(void)animationDidStop:(CAAnimation *)theAnimation2 finished:(BOOL)flag {
+    NSLog(@"1 animation did stop method call");
+    if([[theAnimation2 valueForKey:@"id"] isEqual:@"animation1"]) {
+        NSLog(@"2 animation did stop method call");
+        CABasicAnimation * theAnimation=[CABasicAnimation animationWithKeyPath:@"transform.translation.y"];
+        theAnimation.duration = 0.5;
+        theAnimation.fromValue = [NSNumber numberWithFloat:0];
+        theAnimation.toValue = [NSNumber numberWithFloat:10];
+        theAnimation.repeatCount = 3;
+        theAnimation.autoreverses = YES;
+        theAnimation.fillMode = kCAFillModeForwards;
+        theAnimation.removedOnCompletion = NO;
+        NSLog(@"appearance beginTime=%f, duration=%f",
+              appearance.beginTime, appearance.duration);
+        theAnimation.beginTime = appearance.beginTime + appearance.duration;
+        [notif.layer addAnimation:theAnimation forKey:@"transform.translation.y"];
+    }
+}
+#endif
 
 -(void)effectTest{
     //uiv-center-circle->radius:Smaller
