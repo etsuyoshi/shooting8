@@ -130,10 +130,10 @@ int imageMargin;
     int x0 = iv_background1.bounds.size.width/2;
     int y0 = originalFrameSize;
     //アニメーション中の場合
-    int x1 = ((CALayer *)[iv_background1.layer presentationLayer]).position.x;
-    int y1 = ((CALayer *)[iv_background1.layer presentationLayer]).position.y;
-    int x2 = ((CALayer *)[iv_background2.layer presentationLayer]).position.x;
-    int y2 = ((CALayer *)[iv_background2.layer presentationLayer]).position.y;
+//    int x1 = ((CALayer *)[iv_background1.layer presentationLayer]).position.x;
+//    int y1 = ((CALayer *)[iv_background1.layer presentationLayer]).position.y;
+//    int x2 = ((CALayer *)[iv_background2.layer presentationLayer]).position.x;
+//    int y2 = ((CALayer *)[iv_background2.layer presentationLayer]).position.y;
     
     NSLog(@"stop animation");
     [UIView animateWithDuration:0.001f
@@ -152,9 +152,9 @@ int imageMargin;
 }
 
 -(void)animation1:(float)secs{
-    int y1 = iv_background1.center.y;//((CALayer *)[iv_background1.layer presentationLayer]).position.y;
-    int x1 = iv_background1.center.x;//((CALayer *)[iv_background1.layer presentationLayer]).position.x;
-    NSLog(@"x1=%d, y1=%d", x1, y1);
+//    int y1 = iv_background1.center.y;//((CALayer *)[iv_background1.layer presentationLayer]).position.y;
+//    int x1 = iv_background1.center.x;//((CALayer *)[iv_background1.layer presentationLayer]).position.x;
+//    NSLog(@"x1=%d, y1=%d", x1, y1);
 //    [UIView animateWithDuration:secs
 //                          delay:0
 //                        options:UIViewAnimationOptionCurveLinear//constant-speed
@@ -178,8 +178,11 @@ int imageMargin;
     //cabasicanimationで中間地点を指定しない
     //recursiveに
     
-    CGPoint kStartPos = iv_background1.center;//((CALayer *)[iv_background1.layer presentationLayer]).position;//
-    CGPoint kEndPos = CGPointMake(x1,y1 + originalFrameSize);
+    CGPoint kStartPos =CGPointMake(iv_background1.bounds.size.width/2,
+                                   -2 * originalFrameSize);
+    //iv_background1.center;//((CALayer *)[iv_background1.layer presentationLayer]).position;//
+    CGPoint kEndPos = CGPointMake(iv_background1.bounds.size.width/2,
+                                  2 * originalFrameSize);
     
     [CATransaction begin];
     [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
@@ -188,16 +191,18 @@ int imageMargin;
         if(animationKeyFrame){
             NSLog(@"1 layer=%f,iv=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
                   iv_background1.center.y);
+            [iv_background1.layer removeAnimationForKey:@"position"];
 //            if(iv_background1.center.y >= 2*originalFrameSize){
-            if(((CALayer *)[iv_background1.layer presentationLayer]).position.y >= 2*originalFrameSize){
-//                [self stopAnimation];
-                iv_background1.center = CGPointMake(x1, -2*originalFrameSize);
-                NSLog(@"2 layer=%f,iv=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
-                      iv_background1.center.y);
-            }
-            iv_background1.center = CGPointMake(x1, ((CALayer *)[iv_background1.layer presentationLayer]).position.y);
-            NSLog(@"3 layer=%f,iv=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
-                  iv_background1.center.y);
+//            if(((CALayer *)[iv_background1.layer presentationLayer]).position.y >= 2*originalFrameSize){
+////                [self stopAnimation];
+//                [iv_background1.layer removeAnimationForKey:@"position"];
+////                iv_background1.center = CGPointMake(x1, 0);//-2*originalFrameSize);
+//                NSLog(@"2 layer=%f,iv=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
+//                      iv_background1.center.y);
+//            }
+//            iv_background1.center = CGPointMake(x1, ((CALayer *)[iv_background1.layer presentationLayer]).position.y);
+//            NSLog(@"3 layer=%f,iv=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
+//                  iv_background1.center.y);
             [self animation1:secs];
         }else{
             
@@ -214,10 +219,10 @@ int imageMargin;
         animation.fillMode = kCAFillModeForwards;
         animation.removedOnCompletion = NO;
         animation.duration = secs;
-//        animation.repeatCount = HUGE_VALF;
+        animation.repeatCount = 0;//repeat infinitely
         
         // アニメーションの始点と終点をセット
-//        animation.fromValue = [NSValue valueWithCGPoint:kStartPos];//CGPointMake(0, 0)]; // 始点
+        animation.fromValue = [NSValue valueWithCGPoint:kStartPos];//CGPointMake(0, 0)]; // 始点
         animation.toValue = [NSValue valueWithCGPoint:kEndPos];//CGPointMake(320, 480)]; // 終点
         
         
@@ -246,30 +251,112 @@ int imageMargin;
 }
 
 -(void)animation2:(float)secs{
-    int y2 = iv_background2.center.y;//((CALayer *)[iv_background1.layer presentationLayer]).position.y;
-    int x2 = iv_background2.center.x;//((CALayer *)[iv_background1.layer presentationLayer]).position.x;
-    [UIView animateWithDuration:secs
-                          delay:0
-                        options:UIViewAnimationOptionCurveLinear//constant-speed
-                     animations:^{
-                         iv_background2.center =
-                            CGPointMake(x2, y2 + originalFrameSize);
-                     }
-                     completion:^(BOOL finished){
-                         if(finished){
-                             if(iv_background2.center.y >= 2*originalFrameSize){
-                                 iv_background2.center = CGPointMake(x2, -2 * originalFrameSize);
-                             }
-                             NSLog(@"recursive at 2, y = %f", iv_background2.center.y);
-                             [self animation2:secs];
-                         }
-                     }];
+    NSLog(@"animation2 start");
+    CGPoint kStartPos2 = CGPointMake(iv_background2.center.x,
+                                     -2 * originalFrameSize);
+    CGPoint kEndPos2 = CGPointMake(iv_background2.center.x,
+                                   2 * originalFrameSize);
+    [CATransaction begin];
+    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+    [CATransaction setCompletionBlock:^{
+        CAAnimation *animationKeyFrame = [iv_background2.layer animationForKey:@"position"];
+        if(animationKeyFrame){
+            NSLog(@"finisheded 2 recursive animation");
+            [iv_background2.layer removeAnimationForKey:@"position"];
+            [self animation2:secs];
+        }
+    }];
+    
+    {
+        CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"position"];
+        animation.fillMode = kCAFillModeForwards;
+        animation.removedOnCompletion = NO;
+        animation.duration = secs;
+        animation.fromValue = [NSValue valueWithCGPoint:kStartPos2];
+        animation.toValue = [NSValue valueWithCGPoint:kEndPos2];
+        [iv_background2.layer addAnimation:animation
+                                    forKey:@"position"];
+    }
+    [CATransaction commit];
+    
+    
+//    int y2 = iv_background2.center.y;//((CALayer *)[iv_background1.layer presentationLayer]).position.y;
+//    int x2 = iv_background2.center.x;//((CALayer *)[iv_background1.layer presentationLayer]).position.x;
+//    [UIView animateWithDuration:secs
+//                          delay:0
+//                        options:UIViewAnimationOptionCurveLinear//constant-speed
+//                     animations:^{
+//                         iv_background2.center =
+//                            CGPointMake(x2, y2 + originalFrameSize);
+//                     }
+//                     completion:^(BOOL finished){
+//                         if(finished){
+//                             if(iv_background2.center.y >= 2*originalFrameSize){
+//                                 iv_background2.center = CGPointMake(x2, -2 * originalFrameSize);
+//                             }
+//                             NSLog(@"recursive at 2, y = %f", iv_background2.center.y);
+//                             [self animation2:secs];
+//                         }
+//                     }];
 }
 
 -(void)startAnimation:(float)secs{
-    [self animation1:secs];
-    [self animation2:secs];
+    //1*original->2*original
+    //moving-distance=1*original : duration=routine/4
+    CGPoint kStartPos1 = iv_background1.center;
+    CGPoint kEndPos1 = CGPointMake(iv_background1.center.x,
+                                   iv_background1.center.y + originalFrameSize);
+    [CATransaction begin];
+    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+    [CATransaction setCompletionBlock:^{
+        CAAnimation *animationKeyFrame = [iv_background1.layer animationForKey:@"position"];
+        if(animationKeyFrame){
+            NSLog(@"finish first animation then calling sequential animation method");
+            [iv_background1.layer removeAnimationForKey:@"position"];
+            [self animation1:(float)secs];
+        }
+    }];
     
+    {
+        CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"position"];
+        animation.fillMode = kCAFillModeForwards;
+        animation.removedOnCompletion = NO;
+        animation.duration = (float)secs/4;
+        animation.fromValue = [NSValue valueWithCGPoint:kStartPos1];
+        animation.toValue = [NSValue valueWithCGPoint:kEndPos1];
+        [iv_background1.layer addAnimation:animation
+                                    forKey:@"position"];
+    }
+    [CATransaction commit];
+    
+    
+
+    //-1*original->2*original
+    //moving-distance=3*original : duration=routine*3/4
+    CGPoint kStartPos2 = iv_background2.center;
+    CGPoint kEndPos2 = CGPointMake(iv_background2.center.x,
+                                   iv_background2.center.y + originalFrameSize);
+    [CATransaction begin];
+    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+    [CATransaction setCompletionBlock:^{
+        CAAnimation *animationKeyFrame = [iv_background2.layer animationForKey:@"position"];
+        if(animationKeyFrame){
+            NSLog(@"finish first animation then calling sequential animation method");
+            [iv_background2.layer removeAnimationForKey:@"position"];
+            [self animation2:secs];
+        }
+    }];
+    
+    {
+        CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"position"];
+        animation.fillMode = kCAFillModeForwards;
+        animation.removedOnCompletion = NO;
+        animation.duration = (float)secs*3/4;
+        animation.fromValue = [NSValue valueWithCGPoint:kStartPos2];
+        animation.toValue = [NSValue valueWithCGPoint:kEndPos2];
+        [iv_background2.layer addAnimation:animation
+                                    forKey:@"position"];
+    }
     
 //    int y1 = iv_background1.center.y;//((CALayer *)[iv_background1.layer presentationLayer]).position.y;
 //    int x1 = iv_background1.center.x;//((CALayer *)[iv_background1.layer presentationLayer]).position.x;
