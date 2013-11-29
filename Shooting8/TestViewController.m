@@ -692,7 +692,7 @@ int tempCount = 0;
             
 //            [BackGround addIvOscillate];
             [self.view addSubview:[BackGround getIvOscillate1]];
-            [self.view addSubview:[BackGround getIvOscillate1]];
+            [self.view addSubview:[BackGround getIvOscillate2]];
             [self.view bringSubviewToFront:[BackGround getIvOscillate1]];
             [self.view bringSubviewToFront:[BackGround getIvOscillate2]];
             [BackGround oscillateEffect:10];
