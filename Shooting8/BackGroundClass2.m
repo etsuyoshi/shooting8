@@ -18,9 +18,12 @@ int imageMargin;
     
     return self;
 }
--(id)init:(WorldType)_type width:(int)width height:(int)height secs:(int)secs{
+-(id)init:(WorldType)_type width:(int)width height:(int)height secs:(float)secs{
     oscillateWidth = 5;
+    /*速度調整用変数：通常gSecsに従ってanimさせるが、(アイテム取得等の)外部調整によりnewSecsを編集し、適切なタイミングでgSecsとnewSecsが異なるかどうか判定し、異なれば速さを調整(1,2同時に速度調整するため)
+     */
     gSecs = secs;
+    newSecs = secs;
     self = [super init];
     imageMargin = 5;
     originalFrameSize = height;//フレーム縦サイズ
@@ -213,28 +216,28 @@ int imageMargin;
 
 -(void)oscillateEffect:(int)count{
     
-    //    iv_oscillate1.center = ((CALayer *)[iv_background1.layer presentationLayer]).position;
-    //    iv_oscillate2.center = ((CALayer *)[iv_background2.layer presentationLayer]).position;
-    //理想的にはiv_oscillateXはiv_backgroundX上にのっけて、コントローラー側でself.view addSubviewしないようにする
-    //    if(iv_oscillate1.superview == nil ||
-    //       iv_oscillate2.superview == nil){
-    ////        [iv_background1 addSubview:iv_oscillate1];
-    ////        [iv_background2 addSubview:iv_oscillate2];
-    ////        iv_oscillate1.center = CGPointMake(iv_background1.bounds.size.width/2,
-    ////                                           iv_background1.bounds.size.height/2);
-    ////        iv_oscillate2.center = CGPointMake(iv_background2.bounds.size.width/2,
-    ////                                           iv_background2.bounds.size.height/2);
-    //
-    //        [iv_background1.superview addSubview:iv_oscillate1];
-    //        [iv_background2.superview addSubview:iv_oscillate2];
-    //        [iv_background1.superview bringSubviewToFront:iv_oscillate1];
-    //        [iv_background2.superview bringSubviewToFront:iv_oscillate2];
-    //    }else{
-    //        NSLog(@"iv_ocsillate1 is already added on %@", iv_oscillate1.superview);
-    //        NSLog(@"iv_ocsillate2 is already added on %@", iv_oscillate2.superview);
-    //    }
-    
-    //    CGPoint kStartPos1 = iv_oscillate1.center;
+//    iv_oscillate1.center = ((CALayer *)[iv_background1.layer presentationLayer]).position;
+//    iv_oscillate2.center = ((CALayer *)[iv_background2.layer presentationLayer]).position;
+//理想的にはiv_oscillateXはiv_backgroundX上にのっけて、コントローラー側でself.view addSubviewしないようにする
+//    if(iv_oscillate1.superview == nil ||
+//       iv_oscillate2.superview == nil){
+////        [iv_background1 addSubview:iv_oscillate1];
+////        [iv_background2 addSubview:iv_oscillate2];
+////        iv_oscillate1.center = CGPointMake(iv_background1.bounds.size.width/2,
+////                                           iv_background1.bounds.size.height/2);
+////        iv_oscillate2.center = CGPointMake(iv_background2.bounds.size.width/2,
+////                                           iv_background2.bounds.size.height/2);
+//
+//        [iv_background1.superview addSubview:iv_oscillate1];
+//        [iv_background2.superview addSubview:iv_oscillate2];
+//        [iv_background1.superview bringSubviewToFront:iv_oscillate1];
+//        [iv_background2.superview bringSubviewToFront:iv_oscillate2];
+//    }else{
+//        NSLog(@"iv_ocsillate1 is already added on %@", iv_oscillate1.superview);
+//        NSLog(@"iv_ocsillate2 is already added on %@", iv_oscillate2.superview);
+//    }
+
+//    CGPoint kStartPos1 = iv_oscillate1.center;
     
     
     [self oscillate1:count];
@@ -332,7 +335,7 @@ int imageMargin;
     }
     [CATransaction commit];
 }
--(void)animation1:(float)secs start:(int)y0{
+-(void)animation1:(int)y0{
     
     //一定速度に
     //cabasicanimationで中間地点を指定しない
@@ -359,7 +362,7 @@ int imageMargin;
             NSLog(@"recursive1 layer=%f,iv=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
                   iv_background1.center.y);
             //recurrent構造にせずにrepeatCount=HUGE_VALにすれば繰り返し実行
-            [self animation1:secs start:-2*originalFrameSize];
+            [self animation1:-2*originalFrameSize];
         }else{
             //ここには制御が移らない
 //            NSLog(@"強制終了");
@@ -377,28 +380,8 @@ int imageMargin;
         CABasicAnimation * animation = [CABasicAnimation animationWithKeyPath:@"position"];
         animation.fillMode = kCAFillModeForwards;
         animation.removedOnCompletion = NO;
-        animation.duration = (float)secs * (2*originalFrameSize-y0)/(4*originalFrameSize);
+        animation.duration = (float)gSecs * (2*originalFrameSize-y0)/(4*originalFrameSize);
 //        animation.repeatCount = HUGE_VAL;
-        
-        //below validate in case of CAKeyframeAnimation
-//        CGMutablePathRef curvedPath = CGPathCreateMutable();
-//        CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
-//        CGPoint wayPos1 = CGPointMake((kStartPos.x + kEndPos.x)/3,
-//                                     (kStartPos.y + kEndPos.y)/3);
-//        CGPoint wayPos2 = CGPointMake((kStartPos.x + kEndPos.x)*2/3,
-//                                      (kStartPos.y + kEndPos.y)*2/3);
-//        CGPathAddCurveToPoint(curvedPath, NULL,
-//                              wayPos1.x, wayPos1.y,
-////                              kLeftPos1.x, kLeftPos1.y,
-//                              wayPos2.x, wayPos2.y,
-////                              kRightPos1.x, kRightPos1.y,
-//                              kEndPos.x, kEndPos.y);
-//        
-//        // パスをCAKeyframeAnimationオブジェクトにセット
-//        animation.path = curvedPath;
-//        
-//        // パスを解放
-//        CGPathRelease(curvedPath);
         
         animation.fromValue = [NSValue valueWithCGPoint:kStartPos];
         animation.toValue = [NSValue valueWithCGPoint:kEndPos];
@@ -411,7 +394,7 @@ int imageMargin;
     
 }
 
--(void)animation2:(float)secs start:(int)y2{
+-(void)animation2:(int)y2{
     NSLog(@"animation2 start");
     CGPoint kStartPos2 = CGPointMake(iv_background2.center.x,
                                      y2);//-2 * originalFrameSize);
@@ -425,7 +408,7 @@ int imageMargin;
             NSLog(@"finisheded 2 recursive animation");
             [iv_background2.layer removeAnimationForKey:@"position"];
             //recurrent構造にせずにrepeatCount=HUGE_VALにすれば無限ループ
-            [self animation2:secs start:-2 * originalFrameSize];
+            [self animation2:-2 * originalFrameSize];
         }
     }];
     
@@ -434,7 +417,7 @@ int imageMargin;
         animation.fillMode = kCAFillModeForwards;
         animation.removedOnCompletion = NO;
 //        animation.duration = secs;
-        animation.duration = (float)secs * (2 * originalFrameSize - y2)/(4*originalFrameSize);
+        animation.duration = (float)gSecs * (2 * originalFrameSize - y2)/(4*originalFrameSize);
 //        animation.repeatCount = HUGE_VAL;
         animation.fromValue = [NSValue valueWithCGPoint:kStartPos2];
         animation.toValue = [NSValue valueWithCGPoint:kEndPos2];
@@ -446,15 +429,16 @@ int imageMargin;
     
 }
 
--(void)startAnimation:(float)secs{//no need arg -> alternatives:gSecs
+
+-(void)startAnimation{
     NSLog(@"start animation method call");
     //1*original->2*original
     //moving-distance=1*original : duration=routine/4
-    [self animation1:secs start:iv_background1.center.y];
+    [self animation1:iv_background1.center.y];
     
     //-1*original->2*original
     //moving-distance=3*original : duration=routine*3/4
-    [self animation2:secs start:iv_background2.center.y];
+    [self animation2:iv_background2.center.y];
 //    CGPoint kStartPos1 = iv_background1.center;
 //    CGPoint kEndPos1 = CGPointMake(iv_background1.center.x,
 //                                   2 * originalFrameSize);
@@ -596,8 +580,9 @@ int imageMargin;
     return iv_background2;
 }
 
--(int)getY1{
-    return ((CALayer *)[iv_background1.layer presentationLayer]).position.y;
+
+-(void)setSpeed:(float)secs{
+    newSecs = secs;
 }
 
 @end

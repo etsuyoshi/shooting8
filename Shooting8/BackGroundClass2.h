@@ -23,7 +23,8 @@ typedef NS_ENUM(NSInteger, WorldType) {
     
     int y_loc1;
     int y_loc2;
-    int gSecs;
+    float gSecs;
+    float newSecs;
     int originalFrameSize;
     NSString *imageName;
     UIImageView *iv_background1;
@@ -34,15 +35,15 @@ typedef NS_ENUM(NSInteger, WorldType) {
 @property(nonatomic) WorldType wType;
 
 -(id)init;
--(id)init:(WorldType)_type width:(int)width height:(int)height secs:(int)secs;
+-(id)init:(WorldType)_type width:(int)width height:(int)height secs:(float)secs;
 -(void)stopAnimation;
 -(void)pauseAnimations;
--(void)startAnimation:(float)secs;
+-(void)startAnimation;
 -(void)doNext;
 -(UIImageView *)getImageView1;
 -(UIImageView *)getImageView2;
 -(void)oscillateEffect:(int)count;
--(int)getY1;
 -(UIImageView *)getIvOscillate1;
 -(UIImageView *)getIvOscillate2;
+-(void)setSpeed:(float)secs;
 @end

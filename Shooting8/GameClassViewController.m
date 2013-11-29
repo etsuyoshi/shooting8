@@ -92,7 +92,7 @@
 #import "ItemClass.h"
 #import "PowerGaugeClass.h"
 #import "MyMachineClass.h"
-#import "BackGroundClass.h"
+#import "BackGroundClass2.h"
 #import "ScoreBoardClass.h"
 #import "GoldBoardClass.h"
 #import "UIView+Animation.h"
@@ -143,7 +143,7 @@ UIPanGestureRecognizer *panGesture;
 //UILongPressGestureRecognizer *longPress_frame;
 Boolean isTouched;
 
-BackGroundClass *BackGround;
+BackGroundClass2 *BackGround;
 MyMachineClass *MyMachine;
 NSMutableArray *EnemyArray;
 //NSMutableArray *BeamArray;
@@ -328,9 +328,10 @@ UIView *viewMyEffect;
     
     //背景インスタンス定義
     NSLog(@"init background instance from game view controller");
-    BackGround = [[BackGroundClass alloc]init:WorldTypeForest
+    BackGround = [[BackGroundClass2 alloc]init:WorldTypeForest
                                         width:self.view.bounds.size.width
-                                       height:self.view.bounds.size.height];
+                                       height:self.view.bounds.size.height
+                                          secs:5];
     
     
     [self.view addSubview:[BackGround getImageView1]];
@@ -1028,8 +1029,8 @@ UIView *viewMyEffect;
                     case ItemTypeWeapon2:{//wpLaser
                         if(![MyMachine getStatus:ItemTypeWeapon2]){
                             [MyMachine setStatus:@"1" key:ItemTypeWeapon2];
-                            [BackGround oscillateEffect];//背景を揺らす
-                        
+                            [BackGround oscillateEffect:10];//背景を10回揺らす
+                            
                             [viewMyEffect addSubview:[MyMachine getLaserImageView]];
                             [MyMachine getLaserImageView].center = CGPointMake(viewMyEffect.bounds.size.width/2,-[MyMachine getLaserImageView].bounds.size.height/2 + 40);
                         }
@@ -1269,7 +1270,7 @@ UIView *viewMyEffect;
 //    NSLog(@"magnetMode = %d", isMagnetMode);
     if(count == 0){
         NSLog(@"start animation from game class view controller");
-        [BackGround startAnimation:3.0f];//3sec-Round
+        [BackGround startAnimation];//3sec-Round
     }
     if(isGameMode){
 //        NSLog(@"count = %f", count);
@@ -2648,6 +2649,4 @@ UIView *viewMyEffect;
     [self.view bringSubviewToFront:ivItemAcq];
     
 }
-
-
 @end

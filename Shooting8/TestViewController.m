@@ -199,14 +199,14 @@ int tempCount = 0;
     BackGround = [[BackGroundClass2 alloc]init:WorldTypeForest
                                          width:self.view.bounds.size.width
                                         height:self.view.bounds.size.height
-                                          secs:3];
+                                          secs:3.0f];//3secで一回転する背景
     
     
     [self.view addSubview:[BackGround getImageView1]];
     [self.view addSubview:[BackGround getImageView2]];
     [self.view bringSubviewToFront:[BackGround getImageView1]];
     [self.view bringSubviewToFront:[BackGround getImageView2]];
-    [BackGround startAnimation:6.0f];//test:osci
+    [BackGround startAnimation];
     
     NSLog(@"complete start animation");
     
