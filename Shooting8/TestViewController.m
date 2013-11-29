@@ -682,23 +682,34 @@ int tempCount = 0;
     }
     else if((int)counter % 30 == 0){
 //    if((int)counter % 50 == 0 && [BackGround getY1] > 0){
-        NSLog(@"oscillate");
+        
 //        [BackGround oscillateEffect:10];
-        [self pauseAnimations:notif.layer];//一旦停止
+        
+//        [notif.layer removeAllAnimations];
+        
+        if(notif.layer.speed > 0){
+            NSLog(@"oscillate at speed=%f", notif.layer.speed);
+            [self pauseAnimations];//:notif.layer];//一旦停止
+        
+            ivOscillate = [[UIImageView alloc]initWithFrame:notif.frame];
+            
+//            ivOscillate = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0,
+//                                                                       notif.bounds.size.width,
+//                                                                       notif.bounds.size.height)];
+//            ivOscillate.center = ((CALayer *)[notif.layer presentationLayer]).position;
+            [ivOscillate setBackgroundColor:[UIColor colorWithRed:1.0f green:0 blue:0 alpha:0.5f]];
+            [self.view addSubview:ivOscillate];
+            
+            
+            [self oscillate:5];
+        }
         
         
-//        ivOscillate = [[UIImageView alloc]initWithFrame:notif.frame];
-        
-        ivOscillate = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0,
-                                                                   notif.bounds.size.width,
-                                                                   notif.bounds.size.height)];
-        ivOscillate.center = ((CALayer *)[notif.layer presentationLayer]).position;
-        [ivOscillate setBackgroundColor:[UIColor colorWithRed:1.0f green:0 blue:0 alpha:0.5f]];
-        [self.view addSubview:ivOscillate];
-        
-        [self oscillate:5];
-        
-        
+//    }else if(counter % 40 == 0){
+//        if(notif.layer.speed == 0){
+//            NSLog(@"resume at speed = %f", notif.layer.speed);
+//            [self resumeAnimations];
+//        }
     }
     NSLog(@"count : %d , y=%f", counter, ((CALayer *)[notif.layer presentationLayer]).position.y);
 #else
@@ -748,7 +759,7 @@ int tempCount = 0;
         CAAnimation *animationKeyFrame = [notif.layer animationForKey:@"position"];
         if(animationKeyFrame){
                 NSLog(@"completion at %f", ((CALayer *)[notif.layer presentationLayer]).position.y);
-//                [notif.layer removeAnimationForKey:@"position"];
+                [notif.layer removeAnimationForKey:@"position"];
 //                //            notif.center = CGPointMake(0, 0);
 //                //            [self animationDidStop:appearance finished:YES];
 //                [self nextAnimation];
@@ -763,8 +774,8 @@ int tempCount = 0;
         [appearance setValue:@"animation1" forKey:@"id"];
         //        appearance.delegate = self;
         //        [UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
-        appearance.duration = 1.0f;
-        appearance.repeatCount = 0;//repeat infinitely
+        appearance.duration = 2.0f;
+        appearance.repeatCount = HUGE_VAL;//repeat infinitely
         //        appearance.fromValue = [NSNumber numberWithFloat:0];
         //        appearance.toValue = [NSNumber numberWithFloat:340];//]1.0f*M_PI];
         appearance.fromValue = [NSValue valueWithCGPoint:CGPointMake(200, 0)];//start
@@ -780,22 +791,28 @@ int tempCount = 0;
     
 }
 
-- (void)pauseAnimations:(CALayer *)layer
+- (void)pauseAnimations//:(CALayer *)layer
 {
-    NSLog(@"pausing : lay=%f", ((CALayer *)[layer presentationLayer]).position.y);
-    CFTimeInterval pausedTime = [layer convertTime:CACurrentMediaTime() fromLayer:nil];
-    layer.speed = 0.0;    // 時よ止まれ
-    layer.timeOffset = pausedTime;
+//    NSLog(@"pausing : lay=%f", ((CALayer *)[layer presentationLayer]).position.y);
+//    CFTimeInterval pausedTime = [layer convertTime:CACurrentMediaTime() fromLayer:nil];
+//    layer.speed = 0.0;    // 時よ止まれ
+//    layer.timeOffset = pausedTime;
+    NSLog(@"pausing : lay=%f", ((CALayer *)[notif.layer presentationLayer]).position.y);
+    CFTimeInterval pausedTime = [notif.layer convertTime:CACurrentMediaTime() fromLayer:nil];
+    notif.layer.speed = 0.0;    // 時よ止まれ
+    notif.layer.timeOffset = pausedTime;
+
 }
 
-- (void)resumeAnimations:(CALayer *)layer
+- (void)resumeAnimations//:(CALayer *)layer
 {
-    NSLog(@"resume : lay=%f", ((CALayer *)[layer presentationLayer]).position.y);
-    CFTimeInterval pausedTime = [layer timeOffset];
-    layer.speed = 1.0;    // そして時は動き出す
-    layer.timeOffset = 0.0;
-    CFTimeInterval timeSincePause = [layer convertTime:CACurrentMediaTime() fromLayer:nil] - pausedTime;
-    layer.beginTime = timeSincePause;
+    NSLog(@"resume : lay=%f", ((CALayer *)[notif.layer presentationLayer]).position.y);
+    CFTimeInterval pausedTime = [notif.layer timeOffset];
+    notif.layer.speed = 1.0;    // そして時は動き出す
+    notif.layer.timeOffset = 0.0;
+    notif.layer.beginTime = 0.0;//これをしないとループアニメーションの二回目以降でストップ後の再開時にストップ場所から開始されない
+    CFTimeInterval timeSincePause = [notif.layer convertTime:CACurrentMediaTime() fromLayer:nil] - pausedTime;
+    notif.layer.beginTime = timeSincePause;
 }
 
 -(void)oscillate:(int)repCount{
@@ -822,7 +839,7 @@ int tempCount = 0;
                 NSLog(@"at oscillate : notif.center=%f, lay=%f", notif.center.y,
                       ((CALayer *)[notif.layer presentationLayer]).position.y);
 //                [self nextAnimation];
-                [self resumeAnimations:notif.layer];//再開
+                [self resumeAnimations];//:notif.layer];//再開
                 //次のnextAnimationから正常に実行されていない？->確認？
                 //notif.layer上のアニメーションをpauseではなく、stopさせる方法は？次からは現在位置を取得して新規アニメーションで実行
                 //nextAnimationを再開する前にnotif.layer presentationLayer . positionにポジショニング？

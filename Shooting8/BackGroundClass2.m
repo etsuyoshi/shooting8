@@ -153,6 +153,37 @@ int imageMargin;
 }
 
 
+-(void)pauseAnimations{
+    //about1
+    CFTimeInterval pausedTime1 = [iv_background1.layer convertTime:CACurrentMediaTime() fromLayer:nil];
+    iv_background1.layer.speed = 0.0;
+    iv_background1.layer.timeOffset = pausedTime1;
+    //abount2
+    CFTimeInterval pausedTime2 = [iv_background2.layer convertTime:CACurrentMediaTime() fromLayer:nil];
+    iv_background2.layer.speed = 0.0f;
+    iv_background2.layer.timeOffset = pausedTime2;
+
+}
+
+
+-(void)resumeAnimations{
+    //about1
+    CFTimeInterval pausedTime1 = [iv_background1.layer timeOffset];
+    iv_background1.layer.speed = 1.0f;
+    iv_background1.layer.timeOffset = 0.0f;
+    iv_background1.layer.beginTime = 0.0f;
+    CFTimeInterval timeSincePause1 = [iv_background1.layer convertTime:CACurrentMediaTime() fromLayer:nil] - pausedTime1;
+    iv_background1.layer.beginTime = timeSincePause1;
+    //about2
+    CFTimeInterval pausedTime2 = [iv_background2.layer timeOffset];
+    iv_background2.layer.speed = 1.0f;
+    iv_background2.layer.timeOffset = 0.0f;
+    iv_background2.layer.beginTime = 0.0f;
+    CFTimeInterval timeSincePause2 = [iv_background2.layer convertTime:CACurrentMediaTime() fromLayer:nil] - pausedTime2;
+    iv_background2.layer.beginTime = timeSincePause2;
+}
+
+
 -(void)oscillateEffect:(int)count{
     int _count = count-1;
 //    CGPoint nowPos1 = iv_background1.center;
@@ -268,74 +299,50 @@ int imageMargin;
             [iv_background1.layer removeAnimationForKey:@"position"];
             NSLog(@"recursive1 layer=%f,iv=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
                   iv_background1.center.y);
-            
-//            if(iv_background1.center.y >= 2*originalFrameSize){
-//            if(((CALayer *)[iv_background1.layer presentationLayer]).position.y >= 2*originalFrameSize){
-////                [self stopAnimation];
-//                [iv_background1.layer removeAnimationForKey:@"position"];
-////                iv_background1.center = CGPointMake(x1, 0);//-2*originalFrameSize);
-//                NSLog(@"2 layer=%f,iv=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
-//                      iv_background1.center.y);
-//            }
-//            iv_background1.center = CGPointMake(x1, ((CALayer *)[iv_background1.layer presentationLayer]).position.y);
-//            NSLog(@"3 layer=%f,iv=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
-//                  iv_background1.center.y);
+            //recurrent構造にせずにrepeatCount=0にすれば繰り返し実行
             [self animation1:secs start:-2*originalFrameSize];
         }else{
-            NSLog(@"強制終了");//ここに制御が移ってない
-            [iv_background1.layer removeAnimationForKey:@"position"];
-            NSLog(@"recursive1 layer=%f,iv=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
-                  iv_background1.center.y);
+            //ここには制御が移らない
+//            NSLog(@"強制終了");
+//            [iv_background1.layer removeAnimationForKey:@"position"];
+//            NSLog(@"recursive1 layer=%f,iv=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
+//                  iv_background1.center.y);
         }
         
     }];
     
     {
         
-        // CAKeyframeAnimationオブジェクトを生成
 //        CAKeyframeAnimation *animation;
 //        animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
-//        CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"position"];
-//        animation.fillMode = kCAFillModeForwards;
-//        animation.removedOnCompletion = NO;
-////        animation.duration = secs;
-//        animation.duration = (float)secs * (2*originalFrameSize-y0)/(4*originalFrameSize);
-//        animation.repeatCount = 0;//repeat infinitely
-//        
-//        // アニメーションの始点と終点をセット
-//        animation.fromValue = [NSValue valueWithCGPoint:kStartPos];//CGPointMake(0, 0)]; // 始点
-//        animation.toValue = [NSValue valueWithCGPoint:kEndPos];//CGPointMake(320, 480)]; // 終点
-        
-        
-        CAKeyframeAnimation *animation;
-        animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+        CABasicAnimation * animation = [CABasicAnimation animationWithKeyPath:@"position"];
         animation.fillMode = kCAFillModeForwards;
         animation.removedOnCompletion = NO;
         animation.duration = (float)secs * (2*originalFrameSize-y0)/(4*originalFrameSize);
         animation.repeatCount = 0;
         
-        // 放物線のパスを生成
-        //    CGFloat jumpHeight = kStartPos.y * 0.2;
-        //                        CGPoint peakPos = CGPointMake((kStartPos.x + kEndPos.x)/2, (kStartPos.y * kEndPos.y)/2);//test
-        //        CGPoint peakPos = CGPointMake((kStartPos.x + kEndPos.x)/2, (kStartPos.y + kEndPos.y) / 2);//test
-        CGMutablePathRef curvedPath = CGPathCreateMutable();
-        CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
-        CGPoint wayPos1 = CGPointMake((kStartPos.x + kEndPos.x)/3,
-                                     (kStartPos.y + kEndPos.y)/3);
-        CGPoint wayPos2 = CGPointMake((kStartPos.x + kEndPos.x)*2/3,
-                                      (kStartPos.y + kEndPos.y)*2/3);
-        CGPathAddCurveToPoint(curvedPath, NULL,
-                              wayPos1.x, wayPos1.y,
-//                              kLeftPos1.x, kLeftPos1.y,
-                              wayPos2.x, wayPos2.y,
-//                              kRightPos1.x, kRightPos1.y,
-                              kEndPos.x, kEndPos.y);
+        //below validate in case of CAKeyframeAnimation
+//        CGMutablePathRef curvedPath = CGPathCreateMutable();
+//        CGPathMoveToPoint(curvedPath, NULL, kStartPos.x, kStartPos.y);//始点に移動
+//        CGPoint wayPos1 = CGPointMake((kStartPos.x + kEndPos.x)/3,
+//                                     (kStartPos.y + kEndPos.y)/3);
+//        CGPoint wayPos2 = CGPointMake((kStartPos.x + kEndPos.x)*2/3,
+//                                      (kStartPos.y + kEndPos.y)*2/3);
+//        CGPathAddCurveToPoint(curvedPath, NULL,
+//                              wayPos1.x, wayPos1.y,
+////                              kLeftPos1.x, kLeftPos1.y,
+//                              wayPos2.x, wayPos2.y,
+////                              kRightPos1.x, kRightPos1.y,
+//                              kEndPos.x, kEndPos.y);
+//        
+//        // パスをCAKeyframeAnimationオブジェクトにセット
+//        animation.path = curvedPath;
+//        
+//        // パスを解放
+//        CGPathRelease(curvedPath);
         
-        // パスをCAKeyframeAnimationオブジェクトにセット
-        animation.path = curvedPath;
-        
-        // パスを解放
-        CGPathRelease(curvedPath);
+        animation.fromValue = [NSValue valueWithCGPoint:kStartPos];
+        animation.toValue = [NSValue valueWithCGPoint:kEndPos];
         
         // レイヤーにアニメーションを追加
         [iv_background1.layer addAnimation:animation forKey:@"position"];
@@ -378,7 +385,7 @@ int imageMargin;
     
 }
 
--(void)startAnimation:(float)secs{
+-(void)startAnimation:(float)secs{//no need arg -> alternatives:gSecs
     //1*original->2*original
     //moving-distance=1*original : duration=routine/4
     [self animation1:secs start:iv_background1.center.y];
