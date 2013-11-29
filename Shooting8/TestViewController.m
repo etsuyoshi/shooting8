@@ -196,17 +196,19 @@ int tempCount = 0;
     }
     [CATransaction commit];
     
-//    BackGround = [[BackGroundClass2 alloc]init:WorldTypeForest
-//                                         width:self.view.bounds.size.width
-//                                        height:self.view.bounds.size.height
-//                                          secs:3];
-//    
-//    
-//    [self.view addSubview:[BackGround getImageView1]];
-//    [self.view addSubview:[BackGround getImageView2]];
-//    [self.view bringSubviewToFront:[BackGround getImageView1]];
-//    [self.view bringSubviewToFront:[BackGround getImageView2]];
-//    [BackGround startAnimation:6.0f];//test:osci
+    BackGround = [[BackGroundClass2 alloc]init:WorldTypeForest
+                                         width:self.view.bounds.size.width
+                                        height:self.view.bounds.size.height
+                                          secs:3];
+    
+    
+    [self.view addSubview:[BackGround getImageView1]];
+    [self.view addSubview:[BackGround getImageView2]];
+    [self.view bringSubviewToFront:[BackGround getImageView1]];
+    [self.view bringSubviewToFront:[BackGround getImageView2]];
+    [BackGround startAnimation:6.0f];//test:osci
+    
+    NSLog(@"complete start animation");
     
 #endif //background_test
     
@@ -683,26 +685,39 @@ int tempCount = 0;
     else if((int)counter % 30 == 0){
 //    if((int)counter % 50 == 0 && [BackGround getY1] > 0){
         
-//        [BackGround oscillateEffect:10];
+        if([BackGround getImageView1].layer.speed > 0){
+            NSLog(@"speed = %f", [BackGround getImageView1].layer.speed);
+            NSLog(@"oscillate from controller");
+            [BackGround pauseAnimations];
+            
+//            [BackGround addIvOscillate];
+            [self.view addSubview:[BackGround getIvOscillate1]];
+            [self.view addSubview:[BackGround getIvOscillate1]];
+            [self.view bringSubviewToFront:[BackGround getIvOscillate1]];
+            [self.view bringSubviewToFront:[BackGround getIvOscillate2]];
+            [BackGround oscillateEffect:10];
+        }else{
+            NSLog(@"speed = %f", [BackGround getImageView1].layer.speed);
+        }
         
 //        [notif.layer removeAllAnimations];
         
-        if(notif.layer.speed > 0){
-            NSLog(@"oscillate at speed=%f", notif.layer.speed);
-            [self pauseAnimations];//:notif.layer];//一旦停止
-        
-            ivOscillate = [[UIImageView alloc]initWithFrame:notif.frame];
-            
-//            ivOscillate = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0,
-//                                                                       notif.bounds.size.width,
-//                                                                       notif.bounds.size.height)];
-//            ivOscillate.center = ((CALayer *)[notif.layer presentationLayer]).position;
-            [ivOscillate setBackgroundColor:[UIColor colorWithRed:1.0f green:0 blue:0 alpha:0.5f]];
-            [self.view addSubview:ivOscillate];
-            
-            
-            [self oscillate:5];
-        }
+//        if(notif.layer.speed > 0){
+//            NSLog(@"oscillate notif at speed=%f", notif.layer.speed);
+//            [self pauseAnimations];//:notif.layer];//一旦停止
+//        
+//            ivOscillate = [[UIImageView alloc]initWithFrame:notif.frame];
+//            
+////            ivOscillate = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0,
+////                                                                       notif.bounds.size.width,
+////                                                                       notif.bounds.size.height)];
+////            ivOscillate.center = ((CALayer *)[notif.layer presentationLayer]).position;
+//            [ivOscillate setBackgroundColor:[UIColor colorWithRed:1.0f green:0 blue:0 alpha:0.5f]];
+//            [self.view addSubview:ivOscillate];
+//            
+//            
+//            [self oscillate:5];
+//        }
         
         
 //    }else if(counter % 40 == 0){
@@ -711,7 +726,7 @@ int tempCount = 0;
 //            [self resumeAnimations];
 //        }
     }
-    NSLog(@"count : %d , y=%f", counter, ((CALayer *)[notif.layer presentationLayer]).position.y);
+//    NSLog(@"count : %d , y=%f", counter, ((CALayer *)[notif.layer presentationLayer]).position.y);
 #else
     NSLog(@"aaa");
     //nothing
@@ -852,6 +867,7 @@ int tempCount = 0;
     
     {
         //        appearance =[CABasicAnimation animationWithKeyPath:@"transform.translation.y"];
+        //ref:http://stackoverflow.com/questions/7788289/running-cabasicanimation-sequentially
         CABasicAnimation *appearance = [CABasicAnimation animationWithKeyPath:@"position"];
         [appearance setValue:@"animation1" forKey:@"id"];
         //        appearance.delegate = self;
