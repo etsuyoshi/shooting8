@@ -57,6 +57,7 @@ UIImageView *ivAnimateEffect;
 #endif
 
 #ifdef BACKGROUND_TEST
+UIImageView *ivOscillate;
 UIImageView *notif;
 CABasicAnimation * appearance;
 #endif
@@ -155,56 +156,57 @@ int tempCount = 0;
     
     
 #ifdef BACKGROUND_TEST
-//    notif = [[UIImageView alloc] initWithFrame:CGRectMake(100, 0, 100, 100)];
-//    [notif setBackgroundColor:[UIColor colorWithRed:0 green:1.0f blue:0 alpha:0.9f]];
-//    [self.view addSubview:notif];
-//    
-//    
-//    [CATransaction begin];
-//    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
-//    [CATransaction setCompletionBlock:^{
-//        CAAnimation *animationKeyFrame = [notif.layer animationForKey:@"position"];
-//        if(animationKeyFrame){
-//            NSLog(@"completion");
+    notif = [[UIImageView alloc] initWithFrame:CGRectMake(100, 0, 100, 100)];
+    [notif setBackgroundColor:[UIColor colorWithRed:0 green:1.0f blue:0 alpha:0.9f]];
+    [self.view addSubview:notif];
+    
+    
+    [CATransaction begin];
+    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+    [CATransaction setCompletionBlock:^{
+        CAAnimation *animationKeyFrame = [notif.layer animationForKey:@"position"];
+        if(animationKeyFrame){
+            NSLog(@"completion");
 //            [notif.layer removeAnimationForKey:@"position"];
-//            notif.center = CGPointMake(0, 0);
-////            [self animationDidStop:appearance finished:YES];
-//            [self nextAnimation];
-//        }else{
-//            NSLog(@"not completion");
-//        }
-//    }];
+//            notif.center = CGPointMake(0, 0);//これは実行されない
+//            [self animationDidStop:appearance finished:YES];
+            [self nextAnimation];
+        }else{
+            NSLog(@"not completion");
+        }
+    }];
+    
+    {
+//        appearance =[CABasicAnimation animationWithKeyPath:@"transform.translation.y"];
+        CABasicAnimation *appearance = [CABasicAnimation animationWithKeyPath:@"position"];
+        [appearance setValue:@"animation1" forKey:@"id"];
+//        appearance.delegate = self;
+//        [UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
+        appearance.duration = 1.0f;
+//        appearance.fromValue = [NSNumber numberWithFloat:0];
+//        appearance.toValue = [NSNumber numberWithFloat:340];//]1.0f*M_PI];
+        appearance.fromValue = [NSValue valueWithCGPoint:CGPointMake(100, 0)];//start
+        appearance.toValue = [NSValue valueWithCGPoint:CGPointMake(100, 300)];//end
+        appearance.repeatCount = 1;
+        appearance.fillMode = kCAFillModeForwards;
+        appearance.removedOnCompletion = NO;
+//        [notif.layer addAnimation:appearance forKey:@"transform.translation.y"];
+        [notif.layer addAnimation:appearance forKey:@"position"];
+        
+    }
+    [CATransaction commit];
+    
+//    BackGround = [[BackGroundClass2 alloc]init:WorldTypeForest
+//                                         width:self.view.bounds.size.width
+//                                        height:self.view.bounds.size.height
+//                                          secs:3];
 //    
-//    {
-////        appearance =[CABasicAnimation animationWithKeyPath:@"transform.translation.y"];
-//        appearance = [CABasicAnimation animationWithKeyPath:@"position"];
-//        [appearance setValue:@"animation1" forKey:@"id"];
-////        appearance.delegate = self;
-////        [UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
-//        appearance.duration = 1.0f;
-////        appearance.fromValue = [NSNumber numberWithFloat:0];
-////        appearance.toValue = [NSNumber numberWithFloat:340];//]1.0f*M_PI];
-//        appearance.fromValue = [NSValue valueWithCGPoint:CGPointMake(100, 0)];//start
-//        appearance.toValue = [NSValue valueWithCGPoint:CGPointMake(100, 300)];//end
-//        appearance.repeatCount = 1;
-//        appearance.fillMode = kCAFillModeForwards;
-//        appearance.removedOnCompletion = NO;
-////        [notif.layer addAnimation:appearance forKey:@"transform.translation.y"];
-//        [notif.layer addAnimation:appearance forKey:@"position"];
-//        
-//    }
-    
-    BackGround = [[BackGroundClass2 alloc]init:WorldTypeForest
-                                         width:self.view.bounds.size.width
-                                        height:self.view.bounds.size.height
-                                          secs:3];
-    
-    
-    [self.view addSubview:[BackGround getImageView1]];
-    [self.view addSubview:[BackGround getImageView2]];
-    [self.view bringSubviewToFront:[BackGround getImageView1]];
-    [self.view bringSubviewToFront:[BackGround getImageView2]];
-    [BackGround startAnimation:6.0f];
+//    
+//    [self.view addSubview:[BackGround getImageView1]];
+//    [self.view addSubview:[BackGround getImageView2]];
+//    [self.view bringSubviewToFront:[BackGround getImageView1]];
+//    [self.view bringSubviewToFront:[BackGround getImageView2]];
+//    [BackGround startAnimation:6.0f];//test:osci
     
 #endif //background_test
     
@@ -676,11 +678,29 @@ int tempCount = 0;
 ////        [notif.layer addAnimation:appearance forKey:@"position"];
 //        
         
-    }else if((int)counter % 10 == 0){
+//    }else if((int)counter % 10 == 0){
+    }
+    else if((int)counter % 30 == 0){
+//    if((int)counter % 50 == 0 && [BackGround getY1] > 0){
         NSLog(@"oscillate");
-        [BackGround oscillateEffect];
+//        [BackGround oscillateEffect:10];
+        [self pauseAnimations:notif.layer];//一旦停止
+        
+        
+//        ivOscillate = [[UIImageView alloc]initWithFrame:notif.frame];
+        
+        ivOscillate = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0,
+                                                                   notif.bounds.size.width,
+                                                                   notif.bounds.size.height)];
+        ivOscillate.center = ((CALayer *)[notif.layer presentationLayer]).position;
+        [ivOscillate setBackgroundColor:[UIColor colorWithRed:1.0f green:0 blue:0 alpha:0.5f]];
+        [self.view addSubview:ivOscillate];
+        
+        [self oscillate:5];
+        
         
     }
+    NSLog(@"count : %d , y=%f", counter, ((CALayer *)[notif.layer presentationLayer]).position.y);
 #else
     NSLog(@"aaa");
     //nothing
@@ -727,11 +747,11 @@ int tempCount = 0;
     [CATransaction setCompletionBlock:^{
         CAAnimation *animationKeyFrame = [notif.layer animationForKey:@"position"];
         if(animationKeyFrame){
-            NSLog(@"completion");
-            [notif.layer removeAnimationForKey:@"position"];
-//            notif.center = CGPointMake(0, 0);
-//            [self animationDidStop:appearance finished:YES];
-            [self nextAnimation];
+                NSLog(@"completion at %f", ((CALayer *)[notif.layer presentationLayer]).position.y);
+//                [notif.layer removeAnimationForKey:@"position"];
+//                //            notif.center = CGPointMake(0, 0);
+//                //            [self animationDidStop:appearance finished:YES];
+//                [self nextAnimation];
         }else{
             NSLog(@"not completion");
         }
@@ -739,23 +759,99 @@ int tempCount = 0;
     
     {
         //        appearance =[CABasicAnimation animationWithKeyPath:@"transform.translation.y"];
-        appearance = [CABasicAnimation animationWithKeyPath:@"position"];
+        CABasicAnimation *appearance = [CABasicAnimation animationWithKeyPath:@"position"];
         [appearance setValue:@"animation1" forKey:@"id"];
         //        appearance.delegate = self;
         //        [UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
         appearance.duration = 1.0f;
+        appearance.repeatCount = 0;//repeat infinitely
         //        appearance.fromValue = [NSNumber numberWithFloat:0];
         //        appearance.toValue = [NSNumber numberWithFloat:340];//]1.0f*M_PI];
         appearance.fromValue = [NSValue valueWithCGPoint:CGPointMake(200, 0)];//start
         appearance.toValue = [NSValue valueWithCGPoint:CGPointMake(200, 400)];//end
-        appearance.repeatCount = 0;//sequential infinitely
+//        appearance.repeatCount = 0;//sequential infinitely->already done in catransaction
         appearance.fillMode = kCAFillModeForwards;
         appearance.removedOnCompletion = NO;
         //        [notif.layer addAnimation:appearance forKey:@"transform.translation.y"];
         [notif.layer addAnimation:appearance forKey:@"position"];
         
     }
+    [CATransaction commit];
     
+}
+
+- (void)pauseAnimations:(CALayer *)layer
+{
+    NSLog(@"pausing : lay=%f", ((CALayer *)[layer presentationLayer]).position.y);
+    CFTimeInterval pausedTime = [layer convertTime:CACurrentMediaTime() fromLayer:nil];
+    layer.speed = 0.0;    // 時よ止まれ
+    layer.timeOffset = pausedTime;
+}
+
+- (void)resumeAnimations:(CALayer *)layer
+{
+    NSLog(@"resume : lay=%f", ((CALayer *)[layer presentationLayer]).position.y);
+    CFTimeInterval pausedTime = [layer timeOffset];
+    layer.speed = 1.0;    // そして時は動き出す
+    layer.timeOffset = 0.0;
+    CFTimeInterval timeSincePause = [layer convertTime:CACurrentMediaTime() fromLayer:nil] - pausedTime;
+    layer.beginTime = timeSincePause;
+}
+
+-(void)oscillate:(int)repCount{
+    
+    
+    CGPoint nowPos = ((CALayer *)[notif.layer presentationLayer]).position;
+    CGPoint rightPos = CGPointMake(nowPos.x + 50,
+                                   nowPos.y);
+    CGPoint leftPos = CGPointMake(nowPos.x - 50,
+                                   nowPos.y);
+    [CATransaction begin];
+    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+    [CATransaction setCompletionBlock:^{
+        CAAnimation *animationKeyFrame = [ivOscillate.layer animationForKey:@"position"];
+        if(animationKeyFrame){
+            NSLog(@"oscillate %d : completion", repCount);
+            [ivOscillate.layer removeAnimationForKey:@"position"];
+            //            notif.center = CGPointMake(0, 0);
+            //            [self animationDidStop:appearance finished:YES];
+            if(repCount > 0){
+                [self oscillate:repCount-1];
+            }else{
+                [ivOscillate removeFromSuperview];
+                NSLog(@"at oscillate : notif.center=%f, lay=%f", notif.center.y,
+                      ((CALayer *)[notif.layer presentationLayer]).position.y);
+//                [self nextAnimation];
+                [self resumeAnimations:notif.layer];//再開
+                //次のnextAnimationから正常に実行されていない？->確認？
+                //notif.layer上のアニメーションをpauseではなく、stopさせる方法は？次からは現在位置を取得して新規アニメーションで実行
+                //nextAnimationを再開する前にnotif.layer presentationLayer . positionにポジショニング？
+                //ー＞.center = ... or search for positioning
+            }
+        }else{
+            NSLog(@"not completion");
+        }
+    }];
+    
+    {
+        //        appearance =[CABasicAnimation animationWithKeyPath:@"transform.translation.y"];
+        CABasicAnimation *appearance = [CABasicAnimation animationWithKeyPath:@"position"];
+        [appearance setValue:@"animation1" forKey:@"id"];
+        //        appearance.delegate = self;
+        //        [UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:)];
+        appearance.duration = 0.1f;
+        //        appearance.fromValue = [NSNumber numberWithFloat:0];
+        //        appearance.toValue = [NSNumber numberWithFloat:340];//]1.0f*M_PI];
+        appearance.fromValue = [NSValue valueWithCGPoint:nowPos];//start
+        appearance.toValue = [NSValue valueWithCGPoint:((repCount%2==0)?rightPos:leftPos)];//end
+//        appearance.repeatCount = 0;//sequential infinitely
+        appearance.fillMode = kCAFillModeForwards;
+        appearance.removedOnCompletion = NO;
+        //        [notif.layer addAnimation:appearance forKey:@"transform.translation.y"];
+        [ivOscillate.layer addAnimation:appearance forKey:@"position"];
+        
+    }
+    [CATransaction commit];
 }
 #endif
 
