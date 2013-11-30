@@ -686,16 +686,16 @@ int tempCount = 0;
 //    if((int)counter % 50 == 0 && [BackGround getY1] > 0){
         
         if([BackGround getImageView1].layer.speed > 0){
-            NSLog(@"speed = %f", [BackGround getImageView1].layer.speed);
-            NSLog(@"oscillate from controller");
-            [BackGround pauseAnimations];
-            
-//            [BackGround addIvOscillate];
-            [self.view addSubview:[BackGround getIvOscillate1]];
-            [self.view addSubview:[BackGround getIvOscillate2]];
-            [self.view bringSubviewToFront:[BackGround getIvOscillate1]];
-            [self.view bringSubviewToFront:[BackGround getIvOscillate2]];
-            [BackGround oscillateEffect:10];
+//            NSLog(@"speed = %f", [BackGround getImageView1].layer.speed);
+//            NSLog(@"oscillate from controller");
+//            [BackGround pauseAnimations];
+//            
+////            [BackGround addIvOscillate];
+//            [self.view addSubview:[BackGround getIvOscillate1]];
+//            [self.view addSubview:[BackGround getIvOscillate2]];
+//            [self.view bringSubviewToFront:[BackGround getIvOscillate1]];
+//            [self.view bringSubviewToFront:[BackGround getIvOscillate2]];
+//            [BackGround oscillateEffect:10];
         }else{
             NSLog(@"speed = %f", [BackGround getImageView1].layer.speed);
         }

@@ -11,7 +11,7 @@
 
 @implementation BackGroundClass2
 @synthesize wType;
-int oscillateWidth = 5;
+int oscillateWidth = 20;
 int imageMargin;
 -(id)init{//引数なしで呼び出された場合のポリモーフィズム
     self = [self init:0 width:320 height:480 secs:3];
@@ -23,7 +23,7 @@ int imageMargin;
     /*速度調整用変数：通常gSecsに従ってanimさせるが、(アイテム取得等の)外部調整によりnewSecsを編集し、適切なタイミングでgSecsとnewSecsが異なるかどうか判定し、異なれば速さを調整(1,2同時に速度調整するため)
      */
     gSecs = secs;
-    newSecs = secs;
+    nowSpeed = 1.0f;
     self = [super init];
     imageMargin = 5;
     originalFrameSize = height;//フレーム縦サイズ
@@ -118,10 +118,15 @@ int imageMargin;
     UIImageView *subIv_oscillate22 = [[UIImageView alloc]initWithFrame:subIv_background22.frame];
     
     //test:image
-    subIv_background11.image = image1;//[UIImage imageNamed:@"back_nangoku.png"];//image1;
-    subIv_background12.image = image2;//[UIImage imageNamed:@"back_snow.png"];
-    subIv_background21.image = image1;//[UIImage imageNamed:@"back_desert.png"];
-    subIv_background22.image = image2;//[UIImage imageNamed:@"back_forest2.png"];
+//    subIv_background11.image = image1;//[UIImage imageNamed:@"back_nangoku.png"];//image1;
+//    subIv_background12.image = image2;//[UIImage imageNamed:@"back_snow.png"];
+//    subIv_background21.image = image1;//[UIImage imageNamed:@"back_desert.png"];
+//    subIv_background22.image = image2;//[UIImage imageNamed:@"back_forest2.png"];
+    subIv_background11.image = [UIImage imageNamed:@"back_nangoku.png"];//image1;
+    subIv_background12.image = [UIImage imageNamed:@"back_snow.png"];
+    subIv_background21.image = [UIImage imageNamed:@"back_desert.png"];
+    subIv_background22.image = [UIImage imageNamed:@"back_forest2.png"];
+
 //    subIv_oscillate11.image = image1;//[UIImage imageNamed:@"back_nangoku.png"];//image1;
 //    subIv_oscillate12.image = image2;//[UIImage imageNamed:@"back_snow.png"];
 //    subIv_oscillate21.image = image1;//[UIImage imageNamed:@"back_desert.png"];
@@ -199,14 +204,14 @@ int imageMargin;
 -(void)resumeAnimations{
     //about1
     CFTimeInterval pausedTime1 = [iv_background1.layer timeOffset];
-    iv_background1.layer.speed = 1.0f;
+    iv_background1.layer.speed = nowSpeed;
     iv_background1.layer.timeOffset = 0.0f;
     iv_background1.layer.beginTime = 0.0f;
     CFTimeInterval timeSincePause1 = [iv_background1.layer convertTime:CACurrentMediaTime() fromLayer:nil] - pausedTime1;
     iv_background1.layer.beginTime = timeSincePause1;
     //about2
     CFTimeInterval pausedTime2 = [iv_background2.layer timeOffset];
-    iv_background2.layer.speed = 1.0f;
+    iv_background2.layer.speed = nowSpeed;
     iv_background2.layer.timeOffset = 0.0f;
     iv_background2.layer.beginTime = 0.0f;
     CFTimeInterval timeSincePause2 = [iv_background2.layer convertTime:CACurrentMediaTime() fromLayer:nil] - pausedTime2;
@@ -359,10 +364,16 @@ int imageMargin;
              *以下removeによりoscillateされたときに初期化されてしまう？
              */
             [iv_background1.layer removeAnimationForKey:@"position"];
-            NSLog(@"recursive1 layer=%f,iv=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
-                  iv_background1.center.y);
-            //recurrent構造にせずにrepeatCount=HUGE_VALにすれば繰り返し実行
-            [self animation1:-2*originalFrameSize];
+            //speedup
+            [self setSpeed:nowSpeed+0.15f];
+            //recurrent構造にせずにrepeatCount=HUGE_VALにすれば繰り返し実行できるが、最初の位置からの移動で場合分けが必要になる
+            
+            NSLog(@"recursive1 layer=%f,iv1=%f, lay2=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
+                  iv_background1.center.y,
+                  ((CALayer *)[iv_background2.layer presentationLayer]).position.y);
+//            [self animation1:-2*originalFrameSize];
+            //微妙に呼び出し時間がかかって再起呼出しした後の表示場所が2の上端とズレるのでリアルタイムに2の場所を把握して逆算して表示
+            [self animation1:((CALayer *)[iv_background2.layer presentationLayer]).position.y - 2 * originalFrameSize];
         }else{
             //ここには制御が移らない
 //            NSLog(@"強制終了");
@@ -581,8 +592,16 @@ int imageMargin;
 }
 
 
--(void)setSpeed:(float)secs{
-    newSecs = secs;
+-(void)setSpeed:(float)speed{
+    if(iv_background1.layer.speed > 0){
+    nowSpeed = speed;
+    iv_background1.layer.timeOffset = [iv_background1.layer convertTime:CACurrentMediaTime() fromLayer:nil];
+    iv_background1.layer.beginTime = CACurrentMediaTime();
+    iv_background1.layer.speed=nowSpeed;
+    iv_background2.layer.timeOffset = [iv_background2.layer convertTime:CACurrentMediaTime() fromLayer:nil];
+    iv_background2.layer.beginTime = CACurrentMediaTime();
+    iv_background2.layer.speed=nowSpeed;
+    }
 }
 
 @end

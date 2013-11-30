@@ -24,7 +24,7 @@ typedef NS_ENUM(NSInteger, WorldType) {
     int y_loc1;
     int y_loc2;
     float gSecs;
-    float newSecs;
+    float nowSpeed;
     int originalFrameSize;
     NSString *imageName;
     UIImageView *iv_background1;
@@ -45,5 +45,5 @@ typedef NS_ENUM(NSInteger, WorldType) {
 -(void)oscillateEffect:(int)count;
 -(UIImageView *)getIvOscillate1;
 -(UIImageView *)getIvOscillate2;
--(void)setSpeed:(float)secs;
+-(void)setSpeed:(float)speed;
 @end
