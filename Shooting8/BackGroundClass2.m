@@ -11,7 +11,7 @@
 
 @implementation BackGroundClass2
 @synthesize wType;
-int oscillateWidth = 20;
+int oscillateWidth = 15;
 int imageMargin;
 -(id)init{//引数なしで呼び出された場合のポリモーフィズム
     self = [self init:0 width:320 height:480 secs:3];
@@ -19,7 +19,6 @@ int imageMargin;
     return self;
 }
 -(id)init:(WorldType)_type width:(int)width height:(int)height secs:(float)secs{
-    oscillateWidth = 5;
     /*速度調整用変数：通常gSecsに従ってanimさせるが、(アイテム取得等の)外部調整によりnewSecsを編集し、適切なタイミングでgSecsとnewSecsが異なるかどうか判定し、異なれば速さを調整(1,2同時に速度調整するため)
      */
     gSecs = secs;
@@ -55,12 +54,14 @@ int imageMargin;
             //宇宙空間の描画方法
             image1 = [UIImage imageNamed:@"cosmos_star4_repair.png"];
             image2 = [UIImage imageNamed:@"cosmos_star4_repair.png"];
+            [iv_background1 setBackgroundColor:[UIColor blackColor]];
             break;
         }
         case WorldTypeUniverse2:{
             //宇宙バージョン
             image1 = [UIImage imageNamed:@"back_univ.png"];
             image2 = [UIImage imageNamed:@"back_univ2.png"];//attention!
+            [iv_background1 setBackgroundColor:[UIColor blackColor]];
             
             break;
         }
@@ -68,6 +69,7 @@ int imageMargin;
             //南国バージョン
             image1 = [UIImage imageNamed:@"back_nangoku.png"];
             image2 = [UIImage imageNamed:@"back_nangoku.png"];
+            [iv_background1 setBackgroundColor:[UIColor blueColor]];
             
             break;
         }
@@ -76,6 +78,7 @@ int imageMargin;
             //雪山バージョン
             image1 = [UIImage imageNamed:@"back_snow.png"];
             image2 = [UIImage imageNamed:@"back_snow.png"];
+            [iv_background1 setBackgroundColor:[UIColor whiteColor]];
             
             break;
         }
@@ -83,6 +86,8 @@ int imageMargin;
             //砂漠バージョン
             image1 = [UIImage imageNamed:@"back_desert.png"];
             image2 = [UIImage imageNamed:@"back_desert.png"];
+            [iv_background1 setBackgroundColor:[UIColor yellowColor]];
+            
             
             break;
         }
@@ -90,6 +95,7 @@ int imageMargin;
             //森バージョン
             image1 = [UIImage imageNamed:@"back_forest2.png"];
             image2 = [UIImage imageNamed:@"back_forest2.png"];
+            [iv_background1 setBackgroundColor:[UIColor greenColor]];
             break;
         }
     }
@@ -117,24 +123,25 @@ int imageMargin;
     UIImageView *subIv_oscillate21 = [[UIImageView alloc]initWithFrame:subIv_background21.frame];
     UIImageView *subIv_oscillate22 = [[UIImageView alloc]initWithFrame:subIv_background22.frame];
     
+    subIv_background11.image = image1;//[UIImage imageNamed:@"back_nangoku.png"];//image1;
+    subIv_background12.image = image2;//[UIImage imageNamed:@"back_snow.png"];
+    subIv_background21.image = image1;//[UIImage imageNamed:@"back_desert.png"];
+    subIv_background22.image = image2;//[UIImage imageNamed:@"back_forest2.png"];
     //test:image
-//    subIv_background11.image = image1;//[UIImage imageNamed:@"back_nangoku.png"];//image1;
-//    subIv_background12.image = image2;//[UIImage imageNamed:@"back_snow.png"];
-//    subIv_background21.image = image1;//[UIImage imageNamed:@"back_desert.png"];
-//    subIv_background22.image = image2;//[UIImage imageNamed:@"back_forest2.png"];
-    subIv_background11.image = [UIImage imageNamed:@"back_nangoku.png"];//image1;
-    subIv_background12.image = [UIImage imageNamed:@"back_snow.png"];
-    subIv_background21.image = [UIImage imageNamed:@"back_desert.png"];
-    subIv_background22.image = [UIImage imageNamed:@"back_forest2.png"];
+//    subIv_background11.image = [UIImage imageNamed:@"back_nangoku.png"];//image1;
+//    subIv_background12.image = [UIImage imageNamed:@"back_snow.png"];
+//    subIv_background21.image = [UIImage imageNamed:@"back_desert.png"];
+//    subIv_background22.image = [UIImage imageNamed:@"back_forest2.png"];
 
-//    subIv_oscillate11.image = image1;//[UIImage imageNamed:@"back_nangoku.png"];//image1;
-//    subIv_oscillate12.image = image2;//[UIImage imageNamed:@"back_snow.png"];
-//    subIv_oscillate21.image = image1;//[UIImage imageNamed:@"back_desert.png"];
-//    subIv_oscillate22.image = image2;//[UIImage imageNamed:@"back_forest2.png"];
     subIv_oscillate11.image = image1;//[UIImage imageNamed:@"back_nangoku.png"];//image1;
     subIv_oscillate12.image = image2;//[UIImage imageNamed:@"back_snow.png"];
     subIv_oscillate21.image = image1;//[UIImage imageNamed:@"back_desert.png"];
     subIv_oscillate22.image = image2;//[UIImage imageNamed:@"back_forest2.png"];
+    //test:image
+//    subIv_oscillate11.image = [UIImage imageNamed:@"back_nangoku.png"];//image1;
+//    subIv_oscillate12.image = [UIImage imageNamed:@"back_snow.png"];
+//    subIv_oscillate21.image = [UIImage imageNamed:@"back_desert.png"];
+//    subIv_oscillate22.image = [UIImage imageNamed:@"back_forest2.png"];
 
 
     //通常時表示用iv
@@ -204,14 +211,14 @@ int imageMargin;
 -(void)resumeAnimations{
     //about1
     CFTimeInterval pausedTime1 = [iv_background1.layer timeOffset];
-    iv_background1.layer.speed = nowSpeed;
+    iv_background1.layer.speed = 1.0f;
     iv_background1.layer.timeOffset = 0.0f;
     iv_background1.layer.beginTime = 0.0f;
     CFTimeInterval timeSincePause1 = [iv_background1.layer convertTime:CACurrentMediaTime() fromLayer:nil] - pausedTime1;
     iv_background1.layer.beginTime = timeSincePause1;
     //about2
     CFTimeInterval pausedTime2 = [iv_background2.layer timeOffset];
-    iv_background2.layer.speed = nowSpeed;
+    iv_background2.layer.speed = 1.0f;//nowSpeed;
     iv_background2.layer.timeOffset = 0.0f;
     iv_background2.layer.beginTime = 0.0f;
     CFTimeInterval timeSincePause2 = [iv_background2.layer convertTime:CACurrentMediaTime() fromLayer:nil] - pausedTime2;
@@ -341,11 +348,11 @@ int imageMargin;
     [CATransaction commit];
 }
 -(void)animation1:(int)y0{
-    
+    NSLog(@"animation1 start at gsecs=%f", gSecs);
     //一定速度に
     //cabasicanimationで中間地点を指定しない
     //recursiveに
-    NSLog(@"animation1");
+//    NSLog(@"animation1");
     CGPoint kStartPos =CGPointMake(iv_background1.bounds.size.width/2,
                                    y0);//-2 * originalFrameSize);
     //iv_background1.center;//((CALayer *)[iv_background1.layer presentationLayer]).position;//
@@ -357,23 +364,23 @@ int imageMargin;
     [CATransaction setCompletionBlock:^{//終了処理
         CAAnimation* animationKeyFrame = [iv_background1.layer animationForKey:@"position"];
         if(animationKeyFrame){
-            NSLog(@"recursive1 layer=%f,iv=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
-                  iv_background1.center.y);
-            
+            NSLog(@"animation1 finished at gsecs = %f", gSecs);
             /*
              *以下removeによりoscillateされたときに初期化されてしまう？
              */
             [iv_background1.layer removeAnimationForKey:@"position"];
             //speedup
-            [self setSpeed:nowSpeed+0.15f];
+//            [self setSpeed:nowSpeed+0.15f];
+            gSecs -= 0.01f;
             //recurrent構造にせずにrepeatCount=HUGE_VALにすれば繰り返し実行できるが、最初の位置からの移動で場合分けが必要になる
             
-            NSLog(@"recursive1 layer=%f,iv1=%f, lay2=%f", ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
-                  iv_background1.center.y,
-                  ((CALayer *)[iv_background2.layer presentationLayer]).position.y);
+//            NSLog(@"recursive lay1=%f, lay2=%f",
+//                  ((CALayer *)[iv_background1.layer presentationLayer]).position.y,
+//                  ((CALayer *)[iv_background2.layer presentationLayer]).position.y);
+            
 //            [self animation1:-2*originalFrameSize];
             //微妙に呼び出し時間がかかって再起呼出しした後の表示場所が2の上端とズレるのでリアルタイムに2の場所を把握して逆算して表示
-            [self animation1:((CALayer *)[iv_background2.layer presentationLayer]).position.y - 2 * originalFrameSize];
+            [self animation1:((CALayer *)[iv_background2.layer presentationLayer]).position.y - 2 * originalFrameSize+imageMargin];
         }else{
             //ここには制御が移らない
 //            NSLog(@"強制終了");
@@ -406,7 +413,7 @@ int imageMargin;
 }
 
 -(void)animation2:(int)y2{
-    NSLog(@"animation2 start");
+    NSLog(@"animation2 start at gsecs=%f", gSecs);
     CGPoint kStartPos2 = CGPointMake(iv_background2.center.x,
                                      y2);//-2 * originalFrameSize);
     CGPoint kEndPos2 = CGPointMake(iv_background2.center.x,
@@ -416,10 +423,11 @@ int imageMargin;
     [CATransaction setCompletionBlock:^{
         CAAnimation *animationKeyFrame = [iv_background2.layer animationForKey:@"position"];
         if(animationKeyFrame){
-            NSLog(@"finisheded 2 recursive animation");
+            NSLog(@"animation2 finished at gsecs = %f", gSecs);
             [iv_background2.layer removeAnimationForKey:@"position"];
             //recurrent構造にせずにrepeatCount=HUGE_VALにすれば無限ループ
-            [self animation2:-2 * originalFrameSize];
+//            [self animation2:-2 * originalFrameSize];
+            [self animation2:((CALayer *)[iv_background1.layer presentationLayer]).position.y - 2 * originalFrameSize + imageMargin];
         }
     }];
     
@@ -594,13 +602,14 @@ int imageMargin;
 
 -(void)setSpeed:(float)speed{
     if(iv_background1.layer.speed > 0){
-    nowSpeed = speed;
-    iv_background1.layer.timeOffset = [iv_background1.layer convertTime:CACurrentMediaTime() fromLayer:nil];
-    iv_background1.layer.beginTime = CACurrentMediaTime();
-    iv_background1.layer.speed=nowSpeed;
-    iv_background2.layer.timeOffset = [iv_background2.layer convertTime:CACurrentMediaTime() fromLayer:nil];
-    iv_background2.layer.beginTime = CACurrentMediaTime();
-    iv_background2.layer.speed=nowSpeed;
+        nowSpeed = speed;
+        iv_background1.layer.timeOffset = [iv_background1.layer convertTime:CACurrentMediaTime() fromLayer:nil];
+        iv_background1.layer.beginTime = CACurrentMediaTime();
+        iv_background1.layer.speed=nowSpeed;
+        
+        iv_background2.layer.timeOffset = [iv_background2.layer convertTime:CACurrentMediaTime() fromLayer:nil];
+        iv_background2.layer.beginTime = CACurrentMediaTime();
+        iv_background2.layer.speed=nowSpeed;
     }
 }
 

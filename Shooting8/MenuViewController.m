@@ -11,7 +11,7 @@
 #import "BGMClass.h"
 #import "MenuViewController.h"
 #import "GameClassViewController.h"
-#import "BackGroundClass.h"
+#import "BackGroundClass2.h"
 #import "ItemListViewController.h"
 #import "CreateComponentClass.h"
 #import "InviteFriendsViewController.h"
@@ -60,7 +60,7 @@ NSMutableArray *titleArray;
 UIView *subView;
 UIButton *closeButton;//閉じるボタン
 BGMClass *bgmClass;
-BackGroundClass *backGround;
+BackGroundClass2 *backGround;
 AttrClass *attr;
 
 //CreateComponentClass *createComponentClass;
@@ -189,9 +189,10 @@ AttrClass *attr;
 -(void)viewDidAppear:(BOOL)animated{
     
     
-    backGround = [[BackGroundClass alloc]init:WorldTypeForest
+    backGround = [[BackGroundClass2 alloc]init:WorldTypeUniverse1
                                         width:self.view.bounds.size.width
-                                       height:self.view.bounds.size.height];
+                                       height:self.view.bounds.size.height
+                                          secs:2.0f];
     
     
     [self.view addSubview:[backGround getImageView1]];
@@ -199,7 +200,7 @@ AttrClass *attr;
     [self.view bringSubviewToFront:[backGround getImageView1]];
     [self.view bringSubviewToFront:[backGround getImageView2]];
     
-    [backGround startAnimation:1.0f];//3sec-Round
+    [backGround startAnimation];//3sec-Round
     
     
     //時間を遅らせてBGM

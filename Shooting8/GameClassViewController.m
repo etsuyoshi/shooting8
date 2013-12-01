@@ -331,7 +331,7 @@ UIView *viewMyEffect;
     BackGround = [[BackGroundClass2 alloc]init:WorldTypeForest
                                         width:self.view.bounds.size.width
                                        height:self.view.bounds.size.height
-                                          secs:5];
+                                          secs:5.0f];
     
     
     [self.view addSubview:[BackGround getImageView1]];
@@ -1028,8 +1028,9 @@ UIView *viewMyEffect;
                     }
                     case ItemTypeWeapon2:{//wpLaser
                         if(![MyMachine getStatus:ItemTypeWeapon2]){
+                            [self oscillateBackgroundEffect];
+                            
                             [MyMachine setStatus:@"1" key:ItemTypeWeapon2];
-                            [BackGround oscillateEffect:10];//背景を10回揺らす
                             
                             [viewMyEffect addSubview:[MyMachine getLaserImageView]];
                             [MyMachine getLaserImageView].center = CGPointMake(viewMyEffect.bounds.size.width/2,-[MyMachine getLaserImageView].bounds.size.height/2 + 40);
@@ -2582,7 +2583,7 @@ UIView *viewMyEffect;
 //            _item = [[ItemClass alloc] init:arc4random() % 16 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
 //        }
             //test:item2
-//            _item = [[ItemClass alloc] init:ItemTypeWeapon2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
+            _item = [[ItemClass alloc] init:ItemTypeWeapon2 x_init:_xBeam y_init:_yBeam width:ITEM_SIZE height:ITEM_SIZE];
         }
         
 //        //test:item
@@ -2648,5 +2649,19 @@ UIView *viewMyEffect;
     [self.view addSubview:ivItemAcq];
     [self.view bringSubviewToFront:ivItemAcq];
     
+}
+
+-(void)oscillateBackgroundEffect{
+    [BackGround pauseAnimations];
+    
+    //            [BackGround addIvOscillate];
+    [self.view addSubview:[BackGround getIvOscillate1]];
+    [self.view addSubview:[BackGround getIvOscillate2]];
+    [self.view sendSubviewToBack:[BackGround getIvOscillate1]];
+    [self.view sendSubviewToBack:[BackGround getIvOscillate2]];
+    
+    [self.view sendSubviewToBack:[BackGround getImageView1]];
+    [self.view sendSubviewToBack:[BackGround getImageView2]];
+    [BackGround oscillateEffect:10];
 }
 @end
