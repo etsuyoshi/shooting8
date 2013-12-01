@@ -208,11 +208,41 @@ UIView *viewMyEffect;
     if (self) {
         // Custom initialization
     }
-    
+    //if home-button is pressed:
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(pressedHomeButton)
                                                  name: @"didEnterBackground"
                                                object: nil];
+    
+    worldType = arc4random() % WorldTypeCount;
+    switch (worldType) {
+        case WorldTypeForest:{
+            [self.view setBackgroundColor:[UIColor greenColor]];
+            break;
+        }
+        case WorldTypeUniverse1:{
+            [self.view setBackgroundColor:[UIColor blackColor]];
+            break;
+        }
+        case WorldTypeUniverse2:{
+            [self.view setBackgroundColor:[UIColor blackColor]];
+            break;
+        }
+        case WorldTypeNangoku:{
+            [self.view setBackgroundColor:[UIColor blueColor]];
+            break;
+        }
+        case WorldTypeDesert:{
+            [self.view setBackgroundColor:[UIColor yellowColor]];
+            break;
+        }
+        case WorldTypeSnow:{
+            [self.view setBackgroundColor:[UIColor whiteColor]];
+            break;
+        }
+        default:
+            break;
+    }
     return self;
 }
 //ステータスバー非表示の一環
@@ -328,7 +358,7 @@ UIView *viewMyEffect;
     
     //背景インスタンス定義
     NSLog(@"init background instance from game view controller");
-    BackGround = [[BackGroundClass2 alloc]init:WorldTypeForest
+    BackGround = [[BackGroundClass2 alloc]init:worldType
                                         width:self.view.bounds.size.width
                                        height:self.view.bounds.size.height
                                           secs:5.0f];
@@ -1912,7 +1942,8 @@ UIView *viewMyEffect;
 }
 -(void)exit{
     //    [super viewWillDisappear:NO];//storyboard遷移からの場合
-    
+    [BackGround pauseAnimations];
+    [BackGround exitAnimations];
     //BGM stop
     [bgmClass stop];
     

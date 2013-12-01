@@ -9,12 +9,13 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 typedef NS_ENUM(NSInteger, WorldType) {
-    WorldTypeUniverse1,
+    WorldTypeUniverse1,//0
     WorldTypeUniverse2,
     WorldTypeDesert,
     WorldTypeForest,
     WorldTypeNangoku,
-    WorldTypeSnow
+    WorldTypeSnow,
+    WorldTypeCount//6
 };
 
 
@@ -46,4 +47,5 @@ typedef NS_ENUM(NSInteger, WorldType) {
 -(UIImageView *)getIvOscillate1;
 -(UIImageView *)getIvOscillate2;
 -(void)setSpeed:(float)speed;
+-(void)exitAnimations;
 @end

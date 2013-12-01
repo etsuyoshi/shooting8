@@ -98,6 +98,11 @@ int imageMargin;
             [iv_background1 setBackgroundColor:[UIColor greenColor]];
             break;
         }
+        case WorldTypeCount:{
+            image1 = nil;
+            image2 = nil;
+            break;
+        }
     }
     //#endif
     
@@ -205,6 +210,18 @@ int imageMargin;
     iv_background2.layer.speed = 0.0f;
     iv_background2.layer.timeOffset = pausedTime2;
 
+}
+
+-(void)exitAnimations{
+    [iv_background1.layer removeAnimationForKey:@"position"];
+    [iv_background2.layer removeAnimationForKey:@"position"];
+    [iv_oscillate1.layer removeAnimationForKey:@"position"];
+    [iv_oscillate2.layer removeAnimationForKey:@"position"];
+    
+    [iv_background1 removeFromSuperview];
+    [iv_background2 removeFromSuperview];
+    [iv_oscillate1 removeFromSuperview];
+    [iv_oscillate2 removeFromSuperview];
 }
 
 

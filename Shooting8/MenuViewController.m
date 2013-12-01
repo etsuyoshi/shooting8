@@ -485,8 +485,11 @@ AttrClass *attr;
 }
 
 -(void)gotoGame{
+
     GameClassViewController *gameView = [[GameClassViewController alloc] init];
     [self presentViewController: gameView animated:YES completion: nil];
+
+    [backGround exitAnimations];
 
 }
 
@@ -520,6 +523,8 @@ AttrClass *attr;
             TestViewController *tvc = [[TestViewController alloc]init];
             [self presentViewController: tvc animated:YES completion: nil];
 #else
+            [backGround pauseAnimations];//exitAnimationsはgotoGameの中で実行(画面が白くなってしまう)
+
             //background stopAnimation(0.01sec必要)を実行しないとゲーム画面でアニメーションが開始されない(既存のiv animationが残っているため)
             //stopAnimationを実行するための0.01sを稼ぐためにここで0.1s-Delayさせる
             [self performSelector:@selector(gotoGame) withObject:nil afterDelay:0.1f];
